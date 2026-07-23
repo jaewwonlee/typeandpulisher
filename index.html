@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAP</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p>안녕하세요, 탭입니다.<br />Hello, We are TAP.</p>
+    <header>
+        <span>TYPE AND PUBLISHER</span>
+        <span>타입앤드퍼블리셔</span>
+    </header>
+
+    <main class="container">
+        <div class="error" id="error-face">\(o_o)/</div>
+        <div class="sorry">
+            <span>Under Constructure ...</span>
+            <span>제작 중이에요!</span>
+        </div>
+    </main>
+    
+    <address>
+        <p>
+            <span>TAP</span>
+            <span>|</span>
+            <a href="mailto:typeandpublisher@gmail.com">Email</a>
+            <a href="https://www.instagram.com/typeandpublisher" target="_blank">Instagram</a>
+        </p>
+    </address>
+
+    <script>
+        const faces = ["\\(o_o)/", "(^_^;)", "(￣▽￣;)", "(；ﾟДﾟ)", "(；´∀｀)"];
+        const errorFace = document.querySelector("#error-face");
+
+        errorFace.textContent = faces[Math.floor(Math.random() * faces.length)];
+    </script>
+
 </body>
 </html>
