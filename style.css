@@ -5,11 +5,11 @@
 	font-family: Helvetica, "Noto Sans KR", sans-serif;
 }
 
-.noto-sans-kr-<uniquifier> {
-  font-family: "Noto Sans KR", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+.noto-sans-kr-regular {
+    font-family: "Noto Sans KR", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 body {
@@ -58,8 +58,7 @@ address a {
 }
 
 .error {
-    font-family: "Noto Sans KR";
-    font-size: 90px;
+    font-size: 88px;
     line-height: 1;
 }
 
