@@ -12,6 +12,11 @@
     font-style: normal;
 }
 
+::selection {
+    background-color: #FF00EA;
+    color: #fff;
+}
+
 body {
     --columns: 4;
 
@@ -23,7 +28,13 @@ body {
     font-size: 16px;
     color: #FF00EA;
     margin: 16px;
+    -ms-overflow-style: none; 
+	overflow: hidden;
 }
+
+body::-webkit-scrollbar { 
+	display: none; 
+} 
 
 header {
     grid-column: 1 / 4;
