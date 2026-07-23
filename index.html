@@ -6,7 +6,7 @@
     <title>TAP</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
     </header>
 
     <main class="container">
-        <div class="error" id="error-face">\(o_o)/</div>
+        <div class="error noto-sans-kr-regular" id="error-face">\(o_o)/</div>
         <div class="sorry">
             <span>Under Constructure ...</span>
             <span>제작 중이에요!</span>
@@ -33,7 +33,7 @@
     </address>
 
     <script>
-        const faces = ["\\(o_o)/", "(^_^;)", "(￣▽￣;)", "(；ﾟДﾟ)", "(；´∀｀)"];
+        const faces = ["\\(o_o)/", "(^_^;)", "(￣▽￣;)", "(；´∀｀)"];
         const errorFace = document.querySelector("#error-face");
 
         errorFace.textContent = faces[Math.floor(Math.random() * faces.length)];
