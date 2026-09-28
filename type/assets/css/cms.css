@@ -12,7 +12,7 @@
 @font-face { font-family:'Glyph-umm';src:url('../fonts/umm-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
 @font-face { font-family:'Glyph-witz';src:url('../fonts/Witz.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:26%;line-gap-override:0%; }
 .glyphs__big,.glyphs__cell { font-family:var(--font-glyph,var(--font-display)); }
-html, body { background:#fff; }
+html, body { background-color:#fff; }
 .hero { background:var(--sub); padding-bottom:28px; }
 [hidden] { display: none !important; }
 
@@ -34,7 +34,8 @@ html, body { background:#fff; }
 .topbar__nav .type-menu__links a:focus-visible .type-menu__name { text-decoration-line:underline; text-decoration-color:var(--item-main, #111); text-underline-offset:2px; }
 .hero__headline,.typing__text { min-width:0; max-width:100%; overflow-wrap:anywhere; }
 .info__body { text-align:left; width:100%; padding:0; color:inherit; line-height:1.5; overflow-wrap:anywhere; }
-.info__col,.caption-row > *,.head-row > * { min-width:0; overflow-wrap:anywhere; }
+.info__col,.head-row > * { min-width:0; overflow-wrap:anywhere; }
+.caption-row > * { min-width:0; word-break:keep-all; overflow-wrap:break-word; }
 .info__table { table-layout:fixed; overflow-wrap:anywhere; }
 .typing__meta { flex-wrap:wrap; gap:12px 20px; }
 .language-toggle { cursor: pointer; transition: opacity 160ms ease; }

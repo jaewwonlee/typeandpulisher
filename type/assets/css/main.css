@@ -72,15 +72,17 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* 맥 터치패드로 끌어당겼을 때 드러나는 영역(캔버스) 색 */
-  background: var(--white);
+  /* 맥 터치패드로 끌어당겼을 때 드러나는 영역(캔버스) 색.
+     Safari는 러버밴드 배경색을 background 축약형보다 background-color 단독
+     속성에서 훨씬 안정적으로 인식한다. */
+  background-color: var(--white);
 }
 
 body {
   font-family: var(--font-ui);
   font-size: var(--fs-body);
   color: var(--ink);
-  background: var(--white);
+  background-color: var(--white);
   -webkit-font-smoothing: antialiased;
   transition: --main 0.3s ease, --sub 0.3s ease;
 }
