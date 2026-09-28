@@ -1,5 +1,5 @@
-import { createUsageGallery } from './usage-gallery.mjs?v=4';
-import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=4';
+import { createUsageGallery } from './usage-gallery.mjs?v=5';
+import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=5';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
 const slug = document.body.dataset.slug;

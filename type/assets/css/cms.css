@@ -18,14 +18,14 @@ html, body { background:#fff; }
 /* Match the supplied TAP/Type dropdown, anchored to the right gutter. */
 .topbar { position:relative; gap:16px; color:var(--on-accent,#fff); }
 .topbar__mark { filter:invert(var(--mark-invert,0)); }
-.topbar__brand { flex-shrink:0; font-size:14pt; }
-.topbar__nav { display:flex; align-items:center; gap:0; color:inherit; font-size:14pt; line-height:1.3; }
+.topbar__brand { flex-shrink:0; font-size:14px; }
+.topbar__nav { display:flex; align-items:center; gap:0; color:inherit; font-size:14px; line-height:1.3; }
 .topbar__home { opacity:.4; }
 .type-menu { position:relative; }
 .type-menu summary { display:flex; list-style:none; cursor:pointer; }
 .type-menu summary::-webkit-details-marker { display:none; }
 .type-menu__links { position:absolute; top:100%; right:0; z-index:20; width:180px; max-width:calc(100vw - 32px); background:#fff; }
-.type-menu__links a { display:block; border-top:1px solid #111; padding:8px; color:#bcbcbc; font-size:14pt; line-height:1.3; }
+.type-menu__links a { display:block; border-top:1px solid #111; padding:8px; color:#bcbcbc; font-size:14px; line-height:1.3; }
 .topbar__nav .type-menu__links a:hover,
 .topbar__nav .type-menu__links a:focus-visible { background:#f1f1f1; color:#111; text-decoration:none; }
 .hero__headline,.typing__text { min-width:0; max-width:100%; overflow-wrap:anywhere; }
