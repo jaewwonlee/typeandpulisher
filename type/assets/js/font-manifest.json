@@ -2,31 +2,26 @@
   "cake": {
     "font": "/type/assets/fonts/Cake-Regular.woff2",
     "core": "/type/assets/js/cake-core.json",
-    "all": "/type/assets/js/cake-all.json",
-    "count": 11477
+    "count": 204
   },
   "giul": {
     "font": "/type/assets/fonts/Giul-Regular.woff2",
     "core": "/type/assets/js/giul-core.json",
-    "all": "/type/assets/js/giul-all.json",
-    "count": 11543
+    "count": 204
   },
   "rooms": {
     "font": "/type/assets/fonts/Rooms-Regular.woff2",
     "core": "/type/assets/js/rooms-core.json",
-    "all": "/type/assets/js/rooms-all.json",
-    "count": 11560
+    "count": 216
   },
   "umm": {
     "font": "/type/assets/fonts/umm-Regular.woff2",
     "core": "/type/assets/js/umm-core.json",
-    "all": "/type/assets/js/umm-all.json",
-    "count": 11396
+    "count": 200
   },
   "witz": {
     "font": "/type/assets/fonts/Witz.woff2",
     "core": "/type/assets/js/witz-core.json",
-    "all": "/type/assets/js/witz-all.json",
-    "count": 11519
+    "count": 216
   }
 }

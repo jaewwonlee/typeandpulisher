@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio } from '../type/assets/js/cms-data.mjs';
+import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain } from '../type/assets/js/cms-data.mjs';
 const seed = JSON.parse(fs.readFileSync(new URL('../cms-seed.json', import.meta.url), 'utf8'));
 const csv = rows => rows.map(row => row.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(',')).join('\r\n');
 test('CSV handles bilingual paragraphs, escaped quotes, commas, BOM, and empty last field', () => {
@@ -34,4 +34,24 @@ test('Only safe assets and Vimeo players are embedded; unlisted hashes survive',
   assert.deepEqual(ratio('32:9'),[32,9]);
   assert.deepEqual(ratio('9:16'),[9,16]);
   assert.deepEqual(ratio('0:0'),[16,9]);
+});
+test('16:9 frame contains wide and narrow videos without cropping', () => {
+  assert.deepEqual(videoContain('16:9'),{width:100,height:100});
+  assert.deepEqual(videoContain('32:9'),{width:100,height:50});
+  assert.deepEqual(videoContain('4:3'),{width:75,height:100});
+  assert.deepEqual(videoContain('9:16'),{width:31.640625,height:100});
+});
+test('All pages preserve the six-row original information layout and original core order', () => {
+  const original = JSON.parse(fs.readFileSync(new URL('../type/assets/js/witz-core-glyphs.json',import.meta.url),'utf8'));
+  for (const row of seed.rows) {
+    const slug = row[0];
+    const html = fs.readFileSync(new URL(`../type/${slug}/index.html`,import.meta.url),'utf8');
+    const labels = [...html.matchAll(/<th scope="row">([^<]+)<\/th>/g)].map(m=>m[1]);
+    assert.deepEqual(labels,['디자인','제작 연도','버전','포맷','글리프','문의']);
+    assert.match(html,/2025–2026/);
+    const core = JSON.parse(fs.readFileSync(new URL(`../type/assets/js/${slug}-core.json`,import.meta.url),'utf8'));
+    assert.deepEqual(core,original.filter(cp=>core.includes(cp)));
+    assert.ok(core.length<=216 && core.length>=200);
+    assert.ok(!html.includes('data-full'));
+  }
 });

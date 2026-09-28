@@ -1,8 +1,8 @@
-import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, ratio, accentInk } from './cms-data.mjs';
+import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=2';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
 const slug = document.body.dataset.slug;
-const cacheKey = `tap-type-cms-v1:${SHEET_ID}:${SHEET_GID}`;
+const cacheKey = `tap-type-cms-v2:${SHEET_ID}:${SHEET_GID}`;
 let records = seed.records, current, busy = false, language = 'ko', languageTimer;
 let loadedFont = seed.glyphs?.[slug]?.font, fontRequest = 0;
 const $ = selector => document.querySelector(selector);
@@ -44,6 +44,7 @@ async function applyFont(record) {
     if (ticket !== fontRequest) return;
     document.fonts.add(face);
     document.body.style.setProperty('--font-display', `'${face.family}',var(--font-ui)`);
+    document.body.style.setProperty('--font-glyph', `'${face.family}',var(--font-ui)`);
   } catch (error) { loadedFont = null; console.warn('웹폰트를 불러오지 못했습니다.', error); }
 }
 
@@ -65,8 +66,7 @@ function applyDetail() {
   renderIntro();
   const tbody = $('.info__table tbody');
   tbody.replaceChildren();
-  for (const [label, key] of [['디자인','디자이너 국문'],['제작 연도','제작 연도'],['버전','버전'],['굵기 및 스타일','굵기 및 스타일'],['분류','서체 분류'],['주요 용도','주요 용도'],['지원 문자','지원 문자'],['문의','문의 이메일']]) {
-    if (!r[key]) continue;
+  for (const [label, key] of [['디자인','디자이너 국문'],['제작 연도','제작 연도'],['버전','버전'],['포맷','포맷'],['글리프','글리프'],['문의','문의 이메일']]) {
     const tr = document.createElement('tr'), th = document.createElement('th'), td = document.createElement('td');
     th.scope = 'row'; th.textContent = label; td.textContent = r[key]; tr.append(th, td); tbody.append(tr);
   }
@@ -85,9 +85,10 @@ function applyDetail() {
   setText('.video .head-row .col-a', r['영상 제목']);
   setText('.video .caption-row .col-a', r['영상 소개 국문']);
   setText('.video .caption-row .col-b', ['영상 채널','영상 색상','영상 사운드','영상 길이','영상 제작연도'].map(k => r[k]).filter(Boolean).join(', '));
-  const [w, h] = ratio(r['영상 비율']);
-  $('.video__frame').style.aspectRatio = `${w} / ${h}`;
-  $('.video__frame').classList.toggle('video__frame--portrait', w < h);
+  const fit = videoContain(r['영상 비율']);
+  $('.video__frame').style.aspectRatio = '16 / 9';
+  iframe.style.width = `${fit.width}%`;
+  iframe.style.height = `${fit.height}%`;
   const imageURL = safeAsset(r['사용 예시 이미지']);
   const usage = $('.usage__frame');
   let image = usage.querySelector('img');

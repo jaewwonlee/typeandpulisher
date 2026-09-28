@@ -1,8 +1,16 @@
 @font-face { font-family: 'Type-cake'; src: url('../fonts/Cake-Regular.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'Type-giul'; src: url('../fonts/Giul-Regular.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'Type-rooms'; src: url('../fonts/Rooms-Regular.woff2') format('woff2'); font-display: swap; }
+/* Rooms ships with hhea ascent=200, descent=-600. Override only browser metrics,
+   preserving the actual outlines, so text does not spill above its line box. */
+@font-face { font-family: 'Type-rooms'; src: url('../fonts/Rooms-Regular.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
 @font-face { font-family: 'Type-umm'; src: url('../fonts/umm-Regular.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'Type-witz'; src: url('../fonts/Witz.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family:'Glyph-cake';src:url('../fonts/Cake-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+@font-face { font-family:'Glyph-giul';src:url('../fonts/Giul-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+@font-face { font-family:'Glyph-rooms';src:url('../fonts/Rooms-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+@font-face { font-family:'Glyph-umm';src:url('../fonts/umm-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+@font-face { font-family:'Glyph-witz';src:url('../fonts/Witz.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+.glyphs__big,.glyphs__cell { font-family:var(--font-glyph,var(--font-display)); }
 html, body, .hero { background: #fff; }
 [hidden] { display: none !important; }
 .hero { min-height: 55vh; }
@@ -20,7 +28,8 @@ html, body, .hero { background: #fff; }
 :focus-visible { outline: 2px solid var(--pink); outline-offset: 5px; }
 .topbar a:focus-visible { outline-color: var(--on-accent,#fff); }
 .typing__text:focus-visible { outline: 1px dashed var(--pink); outline-offset: 8px; }
-.video__frame--portrait { max-width: 540px; margin-inline: auto; }
+.video__frame { aspect-ratio:16 / 9; background:#000; }
+.video__frame iframe { inset:auto; top:50%; left:50%; transform:translate(-50%,-50%); }
 .usage__frame img { max-width: 100%; object-fit: contain; }
 .font-notice { font-size: var(--fs-meta); margin-top: 16px; }
 .type-index { max-width: 1400px; margin-inline: auto; padding-block: 72px; }

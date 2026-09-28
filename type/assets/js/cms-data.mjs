@@ -57,10 +57,15 @@ export function ratio(value) {
   return m && +m[1] > 0 && +m[2] > 0 ? [+m[1], +m[2]] : [16, 9];
 }
 
+export function videoContain(value) {
+  const [w, h] = ratio(value), relative = (w / h) / (16 / 9);
+  return { width: Math.min(100, relative * 100), height: Math.min(100, 100 / relative) };
+}
+
 export function recordsFromCSV(text) {
   const rows = parseCSV(text);
   const headers = rows.shift()?.map(h => h.trim());
-  const required = ['주소', '서체명 국문', '서체명 영문', '대표색', '첫 화면 문구', '서체 소개 국문', '서체 소개 영문', '웹폰트 파일', 'Vimeo URL'];
+  const required = ['주소', '서체명 국문', '서체명 영문', '대표색', '첫 화면 문구', '서체 소개 국문', '서체 소개 영문', '웹폰트 파일', 'Vimeo URL', '포맷', '글리프', '문의 이메일', '제작 연도'];
   if (!headers || required.some(h => !headers.includes(h)) || new Set(headers).size !== headers.length) throw new Error('CMS headers changed');
   const result = rows.filter(r => r.some(v => v.trim())).map(row => Object.fromEntries(headers.map((h, i) => [h, row[i] || ''])));
   for (const record of result) {
