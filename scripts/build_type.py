@@ -1,7 +1,6 @@
 """Generate static Pages routes and glyph maps. pip install beautifulsoup4 fonttools brotli"""
 from pathlib import Path
 import json
-from html import escape
 from bs4 import BeautifulSoup
 from fontTools.ttLib import TTFont
 
@@ -25,7 +24,7 @@ for record in records:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
                 if el[attr].endswith(('.css', '.js')):
-                    el[attr] += '?v=2'
+                    el[attr] += '?v=3'
     soup.select_one('link[rel="preload"]')['href'] = font_path
     soup.title.string = f"{record['서체명 영문']} {record['서체명 국문']} | TAP"
     soup.select_one('meta[name="description"]')['content'] = record['서체 소개 국문']
@@ -33,22 +32,32 @@ for record in records:
     soup.head.append(canonical)
     for prop, content in [('og:title', soup.title.string), ('og:description', record['서체 소개 국문']), ('og:url', canonical['href']), ('og:type', 'website')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=2'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=3'))
     soup.body['data-slug'] = slug
     soup.body['style'] = f"--pink:{record['대표색']};--pink-soft:{record['대표색']}33;--font-display:'Type-{slug}',var(--font-ui);--font-glyph:'Glyph-{slug}',var(--font-ui)"
     brand = soup.select_one('.topbar__brand')
     brand.name = 'a'
     brand['href'] = '/'
     nav = soup.select_one('.topbar__nav')
-    nav.name = 'nav'
-    nav['aria-label'] = '서체 메뉴'
+    nav.name = 'div'
     nav.clear()
-    for name, href in [('TAP', '/'), ('Type', '/type/')] + [(r['서체명 영문'], f"/type/{r['주소']}/") for r in records]:
+    home = soup.new_tag('a', href='/', attrs={'class':'topbar__home'})
+    home.string = 'TAP'
+    nav.append(home)
+    menu = soup.new_tag('details', attrs={'class':'type-menu'})
+    summary = soup.new_tag('summary', attrs={'aria-label':'서체 페이지 메뉴'})
+    summary.append('/'); summary.append('Type')
+    menu.append(summary)
+    links = soup.new_tag('nav', attrs={'class':'type-menu__links','aria-label':'서체 페이지'})
+    for r in records:
+        name, href = r['서체명 영문'], f"/type/{r['주소']}/"
         a = soup.new_tag('a', href=href)
-        a.string = name
+        a.string = 'TAP/' + name
         if href == f'/type/{slug}/':
             a['aria-current'] = 'page'
-        nav.append(a)
+        links.append(a)
+    menu.append(links)
+    nav.append(menu)
     soup.select_one('.hero__title').string = f"{record['서체명 영문']} {record['서체명 국문']}"
     soup.select_one('.hero__headline').string = record['첫 화면 문구']
     intro = soup.select_one('.info__body')
@@ -97,7 +106,7 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=2')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=3')
     soup.body.append(script)
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -112,15 +121,13 @@ for record in records:
     path.write_text(str(soup))
 (ROOT / 'type/assets/js/font-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
 
-links = ''.join(f'''<a href="/type/{r['주소']}/" data-type-link="{r['주소']}" style="color:{r['대표색']};--card-soft:{r['대표색']}33"><span class="type-list__name">{escape(r['서체명 영문'])} {escape(r['서체명 국문'])}</span><span class="type-list__designer">{escape(r['디자이너 국문'])}</span></a>''' for r in records)
-seed_json = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
-(ROOT / 'type/index.html').write_text(f'''<!doctype html>
+(ROOT / 'type/index.html').write_text('''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Type | TAP</title><meta name="description" content="타입앤퍼블리셔의 다섯 서체: Cake, Giul, Rooms, Umm, Witz">
-<link rel="canonical" href="https://typeandpublisher.kr/type/">
-<link rel="stylesheet" href="/type/assets/css/reset.css?v=2"><link rel="stylesheet" href="/type/assets/css/main.css?v=2"><link rel="stylesheet" href="/type/assets/css/preview.css?v=2"><link rel="stylesheet" href="/type/assets/css/cms.css?v=2">
-</head><body style="--pink:#111111;--pink-soft:#11111133">
-<header class="topbar"><a class="topbar__brand" href="/">타입앤퍼블리셔</a><nav class="topbar__nav" aria-label="주 메뉴"><a href="/">TAP</a><a href="/type/" aria-current="page">Type</a></nav></header>
-<main class="container type-index"><h1>Type 서체</h1><nav class="type-list" aria-label="서체 목록">{links}</nav></main>
-<script id="type-seed" type="application/json">{seed_json}</script><script type="module" src="/type/assets/js/cms.js?v=2"></script>
+<title>Type | TAP</title><meta name="robots" content="noindex">
+<script>
+const pages = ['cake','giul','rooms','umm','witz'];
+location.replace('/type/' + pages[Math.floor(Math.random() * pages.length)] + '/');
+</script>
+<noscript><meta http-equiv="refresh" content="0;url=/type/cake/"></noscript>
+</head><body>
 </body></html>''')

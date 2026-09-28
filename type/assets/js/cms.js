@@ -1,4 +1,4 @@
-import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=2';
+import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=3';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
 const slug = document.body.dataset.slug;
@@ -7,17 +7,6 @@ let records = seed.records, current, busy = false, language = 'ko', languageTime
 let loadedFont = seed.glyphs?.[slug]?.font, fontRequest = 0;
 const $ = selector => document.querySelector(selector);
 const setText = (selector, value) => { const el = $(selector); if (el && el.textContent !== value) el.textContent = value || ''; };
-
-function applyIndex() {
-  document.querySelectorAll('[data-type-link]').forEach(link => {
-    const row = records.find(r => r['주소'] === link.dataset.typeLink);
-    if (!row) return;
-    link.style.color = row['대표색'];
-    link.style.setProperty('--card-soft', row['대표색'] + '33');
-    link.querySelector('.type-list__name').textContent = row['서체명 영문'] + ' ' + row['서체명 국문'];
-    link.querySelector('.type-list__designer').textContent = row['디자이너 국문'];
-  });
-}
 
 function renderIntro() {
   const intro = $('.info__body');
@@ -104,10 +93,18 @@ function apply(next) {
   records = next;
   document.querySelectorAll('.topbar__nav a').forEach(a => {
     const record = records.find(r => a.getAttribute('href') === `/type/${r['주소']}/`);
-    if (record) a.textContent = record['서체명 영문'];
+    if (record) a.textContent = 'TAP/' + record['서체명 영문'];
   });
-  if (slug) applyDetail(); else applyIndex();
+  if (slug) applyDetail();
 }
+
+const menu = $('.type-menu');
+document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) menu.open = false; });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }
+});
+document.addEventListener('keydown', event => { if (event.key === 'Tab') { document.body.classList.add('keyboard-mode'); } });
+document.addEventListener('pointerdown', () => { document.body.classList.remove('keyboard-mode'); });
 
 $('.language-toggle')?.addEventListener('click', () => {
   const intro = $('.info__body');

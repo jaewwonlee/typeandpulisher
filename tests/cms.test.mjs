@@ -1,3 +1,4 @@
+import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -49,9 +50,22 @@ test('All pages preserve the six-row original information layout and original co
     const labels = [...html.matchAll(/<th scope="row">([^<]+)<\/th>/g)].map(m=>m[1]);
     assert.deepEqual(labels,['디자인','제작 연도','버전','포맷','글리프','문의']);
     assert.match(html,/2025–2026/);
+    assert.match(html,/<details class="type-menu">/);
+    assert.equal([...html.matchAll(/>TAP\/(Cake|Giul|Rooms|Umm|Witz)<\/a>/g)].length,5);
     const core = JSON.parse(fs.readFileSync(new URL(`../type/assets/js/${slug}-core.json`,import.meta.url),'utf8'));
     assert.deepEqual(core,original.filter(cp=>core.includes(cp)));
     assert.ok(core.length<=216 && core.length>=200);
     assert.ok(!html.includes('data-full'));
   }
+});
+
+test('Type index replaces history with one of exactly five detail routes', () => {
+  const html = fs.readFileSync(new URL('../type/index.html',import.meta.url),'utf8');
+  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+  for (const [i,slug] of ['cake','giul','rooms','umm','witz'].entries()) {
+    let destination;
+    vm.runInNewContext(script,{Math:{random:()=>i/5+.01,floor:Math.floor},location:{replace:url=>destination=url}});
+    assert.equal(destination,`/type/${slug}/`);
+  }
+  assert.match(html,/<body>\s*<\/body>/);
 });

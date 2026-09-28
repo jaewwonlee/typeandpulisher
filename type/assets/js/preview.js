@@ -7,10 +7,8 @@
 (function initTyping() {
   // Witz의 잉크 영역은 대략 -0.244em ~ 0.840em (=1.084em).
   // 행간이 이보다 좁으면 위아래 획이 잘려 보이므로 그만큼 여백을 더한다.
-  const INK_RATIO = 1.15;
+  const INK_RATIO = document.body.dataset.slug === 'cake' ? 1.7 : (document.body.dataset.slug === 'rooms' ? 1.5 : 1.16);
 
-  // 좁은 화면에서는 초기 크기를 화면 폭에 맞춰 줄인다(슬라이더 범위는 그대로)
-  const initialScale = window.innerWidth <= 768 ? Math.min(1, window.innerWidth / 900) : 1;
 
   document.querySelectorAll('.typing__box').forEach((box) => {
     const text = box.querySelector('.typing__text');
@@ -45,8 +43,10 @@
       });
     }
 
+    let manuallySized = false;
+    const defaults = { size: Number(inputs.size.value), leading: Number(inputs.leading.value) };
     Object.values(inputs).forEach((input) => {
-      if (input) input.addEventListener('input', applyStyle);
+      if (input) input.addEventListener('input', () => { manuallySized = true; applyStyle(); });
     });
 
     // 첫 포커스 시 예시 문구 전체 선택 → 바로 덮어쓸 수 있게
@@ -63,14 +63,18 @@
       text.dataset.touched = 'true';
     });
 
-    if (initialScale < 1) {
-      ['size', 'leading'].forEach((key) => {
-        const input = inputs[key];
-        if (input) input.value = Math.round(parseFloat(input.value) * initialScale);
-      });
+    function fitInitialSize() {
+      if (manuallySized) return;
+      const split = box.closest('.typing__row--split');
+      const referenceWidth = window.innerWidth <= 768 ? 868 : (split && window.innerWidth > 1024 ? 720 : 1464);
+      const scale = Math.min(1, box.clientWidth / referenceWidth);
+      inputs.leading.value = Math.round(defaults.leading * scale);
+      inputs.size.value = Math.round(Math.min(defaults.size, defaults.leading / INK_RATIO) * scale);
+      applyStyle();
     }
+    fitInitialSize();
+    new ResizeObserver(fitInitialSize).observe(box);
 
-    applyStyle();
   });
 })();
 

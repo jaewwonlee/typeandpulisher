@@ -1,10 +1,9 @@
-@font-face { font-family: 'Type-cake'; src: url('../fonts/Cake-Regular.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'Type-giul'; src: url('../fonts/Giul-Regular.woff2') format('woff2'); font-display: swap; }
-/* Rooms ships with hhea ascent=200, descent=-600. Override only browser metrics,
-   preserving the actual outlines, so text does not spill above its line box. */
+@font-face { font-family: 'Type-cake'; src: url('../fonts/Cake-Regular.woff2') format('woff2'); font-display: swap; ascent-override:92%; descent-override:78%; line-gap-override:0%; }
+@font-face { font-family: 'Type-giul'; src: url('../fonts/Giul-Regular.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
+/* Normalize browser line metrics across supplied fonts; preserve their outlines. */
 @font-face { font-family: 'Type-rooms'; src: url('../fonts/Rooms-Regular.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
-@font-face { font-family: 'Type-umm'; src: url('../fonts/umm-Regular.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'Type-witz'; src: url('../fonts/Witz.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Type-umm'; src: url('../fonts/umm-Regular.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
+@font-face { font-family: 'Type-witz'; src: url('../fonts/Witz.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
 @font-face { font-family:'Glyph-cake';src:url('../fonts/Cake-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
 @font-face { font-family:'Glyph-giul';src:url('../fonts/Giul-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
 @font-face { font-family:'Glyph-rooms';src:url('../fonts/Rooms-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
@@ -13,36 +12,44 @@
 .glyphs__big,.glyphs__cell { font-family:var(--font-glyph,var(--font-display)); }
 html, body, .hero { background: #fff; }
 [hidden] { display: none !important; }
-.hero { min-height: 55vh; }
+
 .hero__headline, .info__body, .typing__text, .caption-row { white-space: pre-wrap; }
-.topbar { height: auto; min-height: 44px; gap: 16px; padding-block: 10px; color:var(--on-accent,#fff); }
+/* Match the supplied TAP/Type dropdown, anchored to the right gutter. */
+.topbar { position:relative; gap:16px; color:var(--on-accent,#fff); }
 .topbar__mark { filter:invert(var(--mark-invert,0)); }
-.topbar__brand { flex-shrink: 0; }
-.topbar__nav { flex-wrap: wrap; justify-content: flex-end; gap: 8px 16px; color: inherit; }
-.topbar__nav a:hover { color:inherit; text-decoration:underline; }
-.topbar__nav a[aria-current='page'] { text-decoration: underline; text-underline-offset: 4px; }
-.info__body { text-align: left; width: 100%; padding: 0; color: inherit; }
+.topbar__brand { flex-shrink:0; }
+.topbar__nav { display:flex; align-items:center; gap:0; color:inherit; font-size:24px; line-height:1.3; }
+.topbar__home { opacity:.4; }
+.type-menu { position:relative; }
+.type-menu summary { display:flex; list-style:none; cursor:pointer; }
+.type-menu summary::-webkit-details-marker { display:none; }
+.type-menu__links { position:absolute; top:100%; right:0; z-index:20; width:180px; max-width:calc(100vw - 32px); background:#fff; }
+.type-menu__links a { display:block; border-top:1px solid #111; padding:8px; color:#bcbcbc; font-size:24px; line-height:1.3; }
+.topbar__nav .type-menu__links a:hover,
+.topbar__nav .type-menu__links a:focus-visible { background:#f1f1f1; color:#111; text-decoration:none; }
+.hero__headline,.typing__text { min-width:0; max-width:100%; overflow-wrap:anywhere; }
+.info__body { text-align:left; width:100%; padding:0; color:inherit; line-height:1.5; overflow-wrap:anywhere; }
+.info__col,.caption-row > *,.head-row > * { min-width:0; overflow-wrap:anywhere; }
+.info__table { table-layout:fixed; overflow-wrap:anywhere; }
+.typing__meta { flex-wrap:wrap; gap:12px 20px; }
 .language-toggle { cursor: pointer; transition: opacity 160ms ease; }
 .language-toggle.is-changing { opacity: 0; }
 .language-toggle:disabled { cursor: default; }
 :focus-visible { outline: 2px solid var(--pink); outline-offset: 5px; }
 .topbar a:focus-visible { outline-color: var(--on-accent,#fff); }
-.typing__text:focus-visible { outline: 1px dashed var(--pink); outline-offset: 8px; }
+.typing__text:focus,.typing__text:focus-visible { outline:none; }
+.keyboard-mode .typing__text:focus { outline:1px solid var(--pink); outline-offset:8px; }
 .video__frame { aspect-ratio:16 / 9; background:#000; }
 .video__frame iframe { inset:auto; top:50%; left:50%; transform:translate(-50%,-50%); }
 .usage__frame img { max-width: 100%; object-fit: contain; }
 .font-notice { font-size: var(--fs-meta); margin-top: 16px; }
-.type-index { max-width: 1400px; margin-inline: auto; padding-block: 72px; }
-.type-index h1 { margin-bottom: 48px; font-size: 36px; font-weight: 400; }
-.type-list { display: grid; }
-.type-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding-block: 28px; border-top: 1px solid currentColor; }
-.type-list__name { font-size: clamp(28px, 5vw, 60px); }
-.type-list a:hover { background: var(--card-soft); }
-@media(max-width:768px) {
- .topbar { align-items: flex-start; flex-direction: column; gap: 12px; }
- .topbar__nav { justify-content: flex-start; }
- .hero { min-height: 40vh; }
- .hero__headline { font-size: clamp(32px, 9vw, 68px); }
- .type-list a { align-items: flex-start; flex-direction: column; gap: 8px; }
+@media(max-width:1024px) and (min-width:769px) {
+ .typing__row--split,.info__grid { grid-template-columns:1fr; }
+ .info__grid { gap:32px; }
+ .head-row,.caption-row { column-gap:16px; }
+ .col-end { white-space:normal; }
 }
 @media(prefers-reduced-motion:reduce) { .language-toggle { transition: none; } }
+
+/* Cake has deep descending Korean outlines (up to .78em below baseline). */
+body[data-slug="cake"] .hero__headline { line-height:1.75; }
