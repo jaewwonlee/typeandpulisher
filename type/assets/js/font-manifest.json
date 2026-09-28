@@ -7,7 +7,7 @@
   "giul": {
     "font": "/type/assets/fonts/Giul-Regular.woff2",
     "core": "/type/assets/js/giul-core.json",
-    "count": 204
+    "count": 201
   },
   "rooms": {
     "font": "/type/assets/fonts/Rooms-Regular.woff2",
@@ -17,7 +17,7 @@
   "umm": {
     "font": "/type/assets/fonts/umm-Regular.woff2",
     "core": "/type/assets/js/umm-core.json",
-    "count": 200
+    "count": 179
   },
   "witz": {
     "font": "/type/assets/fonts/Witz.woff2",

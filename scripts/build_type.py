@@ -24,7 +24,7 @@ for record in records:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
                 if el[attr].endswith(('.css', '.js')):
-                    el[attr] += '?v=5'
+                    el[attr] += '?v=13'
     soup.select_one('link[rel="preload"]')['href'] = font_path
     soup.title.string = f"TAP | {record['서체명 영문']} {record['서체명 국문']}"
     soup.select_one('meta[name="description"]')['content'] = record['서체 소개 국문']
@@ -32,12 +32,12 @@ for record in records:
     soup.head.append(canonical)
     for prop, content in [('og:title', soup.title.string), ('og:description', record['서체 소개 국문']), ('og:url', canonical['href']), ('og:type', 'website')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=5'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=13'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', href='/favicon.png'))
     headline = soup.select_one('.hero__headline')
     headline.wrap(soup.new_tag('div', attrs={'class':'hero__stage'}))
     soup.body['data-slug'] = slug
-    soup.body['style'] = f"--pink:{record['대표색']};--pink-soft:{record['대표색']}33;--font-display:'Type-{slug}',var(--font-ui);--font-glyph:'Glyph-{slug}',var(--font-ui)"
+    soup.body['style'] = f"--main:{record['대표색']};--sub:{record['대표색']}33;--font-display:'Type-{slug}',var(--font-ui);--font-glyph:'Glyph-{slug}',var(--font-ui)"
     brand = soup.select_one('.topbar__brand')
     brand.name = 'a'
     brand['href'] = '/'
@@ -55,7 +55,11 @@ for record in records:
     for r in records:
         name, href = r['서체명 영문'], f"/type/{r['주소']}/"
         a = soup.new_tag('a', href=href)
-        a.string = 'TAP/' + name
+        a.append('Type/')
+        name_span = soup.new_tag('span', attrs={'class': 'type-menu__name'})
+        name_span.string = name
+        a.append(name_span)
+        a['style'] = f"--item-main:{r['대표색']}"
         if href == f'/type/{slug}/':
             a['aria-current'] = 'page'
         links.append(a)
@@ -107,9 +111,9 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=5')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=13')
     soup.body.append(script)
-    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=5', defer=''))
+    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=13', defer=''))
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(str(soup))

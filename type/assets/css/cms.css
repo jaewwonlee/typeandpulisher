@@ -4,14 +4,16 @@
 @font-face { font-family: 'Type-rooms'; src: url('../fonts/Rooms-Regular.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
 @font-face { font-family: 'Type-umm'; src: url('../fonts/umm-Regular.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
 @font-face { font-family: 'Type-witz'; src: url('../fonts/Witz.woff2') format('woff2'); font-display: swap; ascent-override:94%; descent-override:22%; line-gap-override:0%; }
-@font-face { font-family:'Glyph-cake';src:url('../fonts/Cake-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+/* 각 폰트 실제 잉크 범위(fontTools로 실측)에 맞춰 ascent/descent-override를 개별 지정한다.
+   기본 94%/22%로는 cake/rooms/witz의 받침이 깊은 한글 글자가 위아래로 넘친다. */
+@font-face { font-family:'Glyph-cake';src:url('../fonts/Cake-Regular.woff2') format('woff2');font-display:swap;ascent-override:92%;descent-override:78%;line-gap-override:0%; }
 @font-face { font-family:'Glyph-giul';src:url('../fonts/Giul-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
-@font-face { font-family:'Glyph-rooms';src:url('../fonts/Rooms-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+@font-face { font-family:'Glyph-rooms';src:url('../fonts/Rooms-Regular.woff2') format('woff2');font-display:swap;ascent-override:96%;descent-override:50%;line-gap-override:0%; }
 @font-face { font-family:'Glyph-umm';src:url('../fonts/umm-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
-@font-face { font-family:'Glyph-witz';src:url('../fonts/Witz.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
+@font-face { font-family:'Glyph-witz';src:url('../fonts/Witz.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:26%;line-gap-override:0%; }
 .glyphs__big,.glyphs__cell { font-family:var(--font-glyph,var(--font-display)); }
 html, body { background:#fff; }
-.hero { background:var(--pink-soft); padding-bottom:28px; }
+.hero { background:var(--sub); padding-bottom:28px; }
 [hidden] { display: none !important; }
 
 .hero__headline, .info__body, .typing__text, .caption-row { white-space: pre-wrap; }
@@ -24,10 +26,12 @@ html, body { background:#fff; }
 .type-menu { position:relative; }
 .type-menu summary { display:flex; list-style:none; cursor:pointer; }
 .type-menu summary::-webkit-details-marker { display:none; }
-.type-menu__links { position:absolute; top:100%; right:0; z-index:20; width:180px; max-width:calc(100vw - 32px); background:#fff; }
-.type-menu__links a { display:block; border-top:1px solid #111; padding:8px; color:#bcbcbc; font-size:14px; line-height:1.3; }
+.type-menu__links { position:absolute; top:calc(100% + 8px); right:0; z-index:20; max-width:calc(100vw - 32px); display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.type-menu__links a { display:block; background:#fff; padding:3px 6px; color:#111; font-size:14px; line-height:1.3; text-decoration:none; white-space:nowrap; }
 .topbar__nav .type-menu__links a:hover,
-.topbar__nav .type-menu__links a:focus-visible { background:#f1f1f1; color:#111; text-decoration:none; }
+.topbar__nav .type-menu__links a:focus-visible { color:#111; }
+.topbar__nav .type-menu__links a:hover .type-menu__name,
+.topbar__nav .type-menu__links a:focus-visible .type-menu__name { text-decoration-line:underline; text-decoration-color:var(--item-main, #111); text-underline-offset:2px; }
 .hero__headline,.typing__text { min-width:0; max-width:100%; overflow-wrap:anywhere; }
 .info__body { text-align:left; width:100%; padding:0; color:inherit; line-height:1.5; overflow-wrap:anywhere; }
 .info__col,.caption-row > *,.head-row > * { min-width:0; overflow-wrap:anywhere; }
@@ -36,11 +40,11 @@ html, body { background:#fff; }
 .language-toggle { cursor: pointer; transition: opacity 160ms ease; }
 .language-toggle.is-changing { opacity: 0; }
 .language-toggle:disabled { cursor: default; }
-:focus-visible { outline: 2px solid var(--pink); outline-offset: 5px; }
+:focus-visible { outline: 2px solid var(--main); outline-offset: 5px; }
 .topbar a:focus-visible { outline-color: var(--on-accent,#fff); }
 .typing__text:focus,.typing__text:focus-visible { outline:none; }
-.keyboard-mode .typing__text:focus { outline:1px solid var(--pink); outline-offset:8px; }
-.video__frame { aspect-ratio:16 / 9; background:#000; }
+.keyboard-mode .typing__text:focus { outline:1px solid var(--main); outline-offset:8px; }
+.video__frame { aspect-ratio:16 / 9; background:#111; }
 .video__frame iframe { inset:auto; top:50%; left:50%; transform:translate(-50%,-50%); }
 .usage__frame img { max-width: 100%; object-fit: contain; }
 .font-notice { font-size: var(--fs-meta); margin-top: 16px; }
@@ -58,7 +62,7 @@ body[data-slug="cake"] .hero__headline { line-height:1.75; }
 .info__table th,.info__table td { padding:0; line-height:1.5; }
 .hero__stage { height:clamp(220px,55svh,680px); display:flex; align-items:center; padding:24px 0; }
 .hero__headline { width:100%; padding:0; flex:none; }
-.usage__frame,.usage__frame--empty { aspect-ratio:16 / 9; padding:0; background:var(--pink-soft); overflow:hidden; }
+.usage__frame,.usage__frame--empty { aspect-ratio:16 / 9; padding:0; background:var(--sub); overflow:hidden; }
 .usage__frame img { position:absolute; inset:0; width:100%; height:100%; max-height:none; object-fit:contain; }
 .usage__frame .placeholder { background:transparent; position:absolute; inset:0; width:100%; height:100%; min-height:0; padding:16px; gap:clamp(8px,3vw,40px); justify-content:center; }
 .usage__frame .placeholder__face { font-size:clamp(28px,6.5vw,96px); }

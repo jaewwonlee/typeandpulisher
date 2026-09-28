@@ -6,7 +6,7 @@
 /* ---------- 공통 요소 ---------- */
 .rule {
   height: 1px;
-  background: var(--pink);
+  background: var(--main);
 }
 
 .section-label {
@@ -26,7 +26,7 @@
   justify-content: space-between;
   height: 44px;
   padding-inline: var(--gutter);
-  background: var(--pink);
+  background: var(--main);
   color: var(--white);
   font-size: var(--fs-meta);
 }
@@ -46,7 +46,7 @@
 .topbar__nav {
   display: flex;
   gap: 4px;
-  color: var(--pink-soft);
+  color: var(--sub);
 }
 
 .topbar__nav a:hover {
@@ -55,7 +55,7 @@
 
 /* ---------- Hero ---------- */
 .hero {
-  background: var(--pink-soft);
+  background: var(--sub);
   padding-top: 28px;
   padding-bottom: 96px;
 }
@@ -68,13 +68,31 @@
 
 .hero__headline {
   font-family: var(--font-display);
-  color: var(--pink);
+  color: var(--main);
   font-size: clamp(30px, 8.2vw, 126px);
   line-height: 1.32;
   text-align: center;
   word-break: keep-all;
   overflow-wrap: break-word;
   padding-top: 0.9em;
+}
+
+/* CMS 실시간 갱신으로 텍스트가 바뀔 때 팝업 대신 크로스페이드로 전환한다. */
+.hero__title,
+.hero__headline {
+  transition: opacity 0.15s ease;
+}
+
+.hero__title.is-fading,
+.hero__headline.is-fading {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title,
+  .hero__headline {
+    transition: none;
+  }
 }
 
 /* ---------- 서체 소개 / 서체 정보 ---------- */
@@ -167,7 +185,7 @@
   appearance: none;
   width: 68px;
   height: 1px;
-  background: var(--pink);
+  background: var(--main);
   cursor: pointer;
 }
 
@@ -177,7 +195,7 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--pink);
+  background: var(--main);
   cursor: pointer;
 }
 
@@ -186,12 +204,12 @@
   height: 9px;
   border: none;
   border-radius: 50%;
-  background: var(--pink);
+  background: var(--main);
   cursor: pointer;
 }
 
 .typing__control input[type='range']::-moz-range-track {
-  background: var(--pink);
+  background: var(--main);
   height: 1px;
 }
 
@@ -199,7 +217,7 @@
    폰트 크기를 키워도 획이 잘리지 않게 한다. */
 .typing__text {
   font-family: var(--font-display);
-  color: var(--pink-soft);
+  color: var(--sub);
   text-align: center;
   outline: none;
   cursor: text;
@@ -210,7 +228,7 @@
 }
 
 .typing__text:focus {
-  color: var(--pink);
+  color: var(--main);
 }
 
 /* ---------- 글리프 ---------- */
@@ -231,7 +249,7 @@
   width: 260px;
   padding: 4px 0;
   border: 0;
-  border-bottom: 1px solid var(--pink);
+  border-bottom: 1px solid var(--main);
   background: transparent;
   font-family: inherit;
   font-size: inherit;
@@ -272,7 +290,7 @@
   position: absolute;
   left: 0;
   top: 16px;
-  color: var(--pink);
+  color: var(--main);
   font-size: var(--fs-body);
 }
 
@@ -286,8 +304,8 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 1px;
-  background: var(--pink);
-  border: 1px solid var(--pink);
+  background: var(--main);
+  border: 1px solid var(--main);
 }
 
 .glyphs__cell {
@@ -305,7 +323,7 @@
 
 .glyphs__cell:hover,
 .glyphs__cell.is-active {
-  background: var(--pink-soft);
+  background: var(--sub);
 }
 
 .glyphs__foot {
@@ -322,7 +340,7 @@
   background: transparent;
   font-family: inherit;
   font-size: inherit;
-  color: var(--pink);
+  color: var(--main);
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
@@ -391,8 +409,8 @@
 /* 포스터/이미지가 아직 없을 때 쓰는 공용 플레이스홀더.
    페이지마다 --key / --key-bg 만 바꾸면 그대로 재사용된다. */
 .placeholder {
-  --key: var(--pink);
-  --key-bg: var(--pink-soft);
+  --key: var(--main);
+  --key-bg: var(--sub);
   flex: 1 1 auto;
   align-self: stretch;
   display: flex;
@@ -460,7 +478,7 @@
   align-items: center;
   justify-content: center;
   padding: 96px 96px;
-  background: var(--pink-soft);
+  background: var(--sub);
 }
 
 .usage__frame--empty {
@@ -479,7 +497,7 @@
   transform: translateY(-50%);
   border: 0;
   background: transparent;
-  color: var(--pink);
+  color: var(--main);
   font-size: 40px;
   line-height: 1;
   cursor: pointer;
@@ -531,7 +549,7 @@
 }
 
 .footer__links a:hover {
-  color: var(--pink);
+  color: var(--main);
 }
 
 /* 마크는 카피라이트 위에 가운데 정렬, 블록 전체는 오른쪽 끝에 붙는다 */

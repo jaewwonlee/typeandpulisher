@@ -84,15 +84,50 @@
   const countLabel = document.querySelector('.glyphs__count');
   const searchInput = document.querySelector('.glyphs__search input');
   const bigPreview = document.querySelector('.glyphs__big');
+  const previewBody = bigPreview?.closest('.glyphs__preview-body');
   const codeLabel = document.querySelector('.glyphs__code');
   let codepoints = [];
+  let activeCp = null;
+  let inkMetrics = {}; // cp -> [topEm, bottomEm], fontTools로 빌드 시 미리 실측한 값
   const toCode = cp => 'U+' + cp.toString(16).toUpperCase().padStart(4, '0');
+  // 폰트마다(글자마다) 실제 잉크 위치가 다르므로, line-height/ascent 근사값 대신
+  // 빌드 시 fontTools로 실측해둔 글자별 잉크 범위(topEm/bottomEm)로 위아래 여백을 맞춘다.
+  // (런타임 DOM/SVG 측정은 브라우저별 metrics 박스 근사치를 반환해 신뢰할 수 없었다.)
+  // 0-height inline-block에 vertical-align:baseline을 주면 그 top이 정확히 baseline에 걸린다.
+  function getBaselineY(el) {
+    const probe = document.createElement('span');
+    probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline;';
+    el.appendChild(probe);
+    const y = probe.getBoundingClientRect().top;
+    probe.remove();
+    return y;
+  }
+  function centerBigPreview() {
+    if (!bigPreview || !previewBody) return;
+    bigPreview.style.transform = '';
+    if (!bigPreview.textContent || activeCp == null) return;
+    const m = inkMetrics[activeCp];
+    if (!m) return;
+    const [topEm, bottomEm] = m;
+    const fontSize = parseFloat(getComputedStyle(bigPreview).fontSize);
+    const baselineY = getBaselineY(bigPreview);
+    const inkCenterY = baselineY + (bottomEm - topEm) / 2 * fontSize;
+    const containerRect = previewBody.getBoundingClientRect();
+    const containerCenterY = (containerRect.top + containerRect.bottom) / 2;
+    bigPreview.style.transform = `translateY(${containerCenterY - inkCenterY}px)`;
+  }
   function setActive(cp, cell) {
+    activeCp = cp;
     bigPreview.textContent = String.fromCodePoint(cp);
     codeLabel.textContent = toCode(cp);
     grid.querySelectorAll('.glyphs__cell.is-active').forEach(el => el.classList.remove('is-active'));
     cell?.classList.add('is-active');
+    bigPreview.style.transform = '';
+    requestAnimationFrame(centerBigPreview);
   }
+  document.fonts?.ready?.then(centerBigPreview);
+  document.fonts?.addEventListener?.('loadingdone', centerBigPreview);
+  window.addEventListener('resize', centerBigPreview);
   grid.addEventListener('click', event => {
     const cell = event.target.closest('.glyphs__cell');
     if (cell) setActive(Number(cell.dataset.cp), cell);
@@ -115,10 +150,14 @@
     searchInput.removeAttribute('aria-invalid');
     countLabel.textContent = `주요 글리프 ${codepoints.length}자`;
   });
-  fetch(grid.dataset.core)
-    .then(response => { if (!response.ok) throw new Error('Glyph HTTP ' + response.status); return response.json(); })
-    .then(cps => {
+  const metricsURL = grid.dataset.core.replace(/-core\.json$/, '-glyph-metrics.json');
+  Promise.all([
+    fetch(grid.dataset.core).then(response => { if (!response.ok) throw new Error('Glyph HTTP ' + response.status); return response.json(); }),
+    fetch(metricsURL).then(response => response.ok ? response.json() : {}).catch(() => ({})),
+  ])
+    .then(([cps, metrics]) => {
       codepoints = cps;
+      inkMetrics = metrics;
       const fragment = document.createDocumentFragment();
       cps.forEach(cp => {
         const cell = document.createElement('button');

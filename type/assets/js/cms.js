@@ -9,6 +9,16 @@ let loadedFont = seed.glyphs?.[slug]?.font, fontRequest = 0;
 const $ = selector => document.querySelector(selector);
 const gallery = createUsageGallery($('.usage__frame'));
 const setText = (selector, value) => { const el = $(selector); if (el && el.textContent !== value) el.textContent = value || ''; };
+// CMS 실시간 갱신으로 값이 바뀔 때 팝업 대신 짧게 페이드 아웃/인 한다.
+const setTextFade = (selector, value) => {
+  const el = $(selector);
+  if (!el) return;
+  const next = value || '';
+  if (el.textContent === next) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = next; return; }
+  el.classList.add('is-fading');
+  setTimeout(() => { el.textContent = next; el.classList.remove('is-fading'); }, 150);
+};
 
 function renderIntro() {
   const intro = $('.info__body');
@@ -43,8 +53,8 @@ function applyDetail() {
   current = records.find(r => r['주소'] === slug);
   if (!current) return;
   const r = current;
-  document.body.style.setProperty('--pink', r['대표색']);
-  document.body.style.setProperty('--pink-soft', r['대표색'] + '33');
+  document.body.style.setProperty('--main', r['대표색']);
+  document.body.style.setProperty('--sub', r['대표색'] + '33');
   document.body.style.setProperty('--on-accent', accentInk(r['대표색']));
   document.body.style.setProperty('--mark-invert', accentInk(r['대표색']) === '#111111' ? '1' : '0');
   const title = r['서체명 영문'] + ' ' + r['서체명 국문'];
@@ -52,8 +62,8 @@ function applyDetail() {
   $('meta[name="description"]').content = r['서체 소개 국문'];
   $('meta[property="og:title"]').content = document.title;
   $('meta[property="og:description"]').content = r['서체 소개 국문'];
-  setText('.hero__title', title);
-  setText('.hero__headline', r['첫 화면 문구']);
+  setTextFade('.hero__title', title);
+  setTextFade('.hero__headline', r['첫 화면 문구']);
   renderIntro();
   const tbody = $('.info__table tbody');
   tbody.replaceChildren();
@@ -89,7 +99,10 @@ function apply(next) {
   records = next;
   document.querySelectorAll('.topbar__nav a').forEach(a => {
     const record = records.find(r => a.getAttribute('href') === `/type/${r['주소']}/`);
-    if (record) a.textContent = 'TAP/' + record['서체명 영문'];
+    if (record) {
+      a.replaceChildren('Type/', Object.assign(document.createElement('span'), { className: 'type-menu__name', textContent: record['서체명 영문'] }));
+      a.style.setProperty('--item-main', record['대표색']);
+    }
   });
   if (slug) applyDetail();
 }
