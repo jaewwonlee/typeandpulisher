@@ -10,21 +10,22 @@
 @font-face { font-family:'Glyph-umm';src:url('../fonts/umm-Regular.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
 @font-face { font-family:'Glyph-witz';src:url('../fonts/Witz.woff2') format('woff2');font-display:swap;ascent-override:94%;descent-override:22%;line-gap-override:0%; }
 .glyphs__big,.glyphs__cell { font-family:var(--font-glyph,var(--font-display)); }
-html, body, .hero { background: #fff; }
+html, body { background:#fff; }
+.hero { background:var(--pink-soft); padding-bottom:28px; }
 [hidden] { display: none !important; }
 
 .hero__headline, .info__body, .typing__text, .caption-row { white-space: pre-wrap; }
 /* Match the supplied TAP/Type dropdown, anchored to the right gutter. */
 .topbar { position:relative; gap:16px; color:var(--on-accent,#fff); }
 .topbar__mark { filter:invert(var(--mark-invert,0)); }
-.topbar__brand { flex-shrink:0; }
-.topbar__nav { display:flex; align-items:center; gap:0; color:inherit; font-size:24px; line-height:1.3; }
+.topbar__brand { flex-shrink:0; font-size:14pt; }
+.topbar__nav { display:flex; align-items:center; gap:0; color:inherit; font-size:14pt; line-height:1.3; }
 .topbar__home { opacity:.4; }
 .type-menu { position:relative; }
 .type-menu summary { display:flex; list-style:none; cursor:pointer; }
 .type-menu summary::-webkit-details-marker { display:none; }
 .type-menu__links { position:absolute; top:100%; right:0; z-index:20; width:180px; max-width:calc(100vw - 32px); background:#fff; }
-.type-menu__links a { display:block; border-top:1px solid #111; padding:8px; color:#bcbcbc; font-size:24px; line-height:1.3; }
+.type-menu__links a { display:block; border-top:1px solid #111; padding:8px; color:#bcbcbc; font-size:14pt; line-height:1.3; }
 .topbar__nav .type-menu__links a:hover,
 .topbar__nav .type-menu__links a:focus-visible { background:#f1f1f1; color:#111; text-decoration:none; }
 .hero__headline,.typing__text { min-width:0; max-width:100%; overflow-wrap:anywhere; }
@@ -53,3 +54,15 @@ html, body, .hero { background: #fff; }
 
 /* Cake has deep descending Korean outlines (up to .78em below baseline). */
 body[data-slug="cake"] .hero__headline { line-height:1.75; }
+
+.info__table th,.info__table td { padding:0; line-height:1.5; }
+.hero__stage { height:clamp(220px,55svh,680px); display:flex; align-items:center; padding:24px 0; }
+.hero__headline { width:100%; padding:0; flex:none; }
+.usage__frame,.usage__frame--empty { aspect-ratio:16 / 9; padding:0; background:var(--pink-soft); overflow:hidden; }
+.usage__frame img { position:absolute; inset:0; width:100%; height:100%; max-height:none; object-fit:contain; }
+.usage__frame .placeholder { background:transparent; position:absolute; inset:0; width:100%; height:100%; min-height:0; padding:16px; gap:clamp(8px,3vw,40px); justify-content:center; }
+.usage__frame .placeholder__face { font-size:clamp(28px,6.5vw,96px); }
+.usage__frame .placeholder__text { font-size:clamp(13px,1.6vw,24px); }
+.usage__nav { z-index:2; background:rgba(255,255,255,.85); }
+.usage__status { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:13px; background:#ffffffdd; padding:2px 8px; }
+@media(max-width:380px) { .topbar { gap:8px; } .topbar__brand { gap:4px; } }

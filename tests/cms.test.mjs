@@ -2,7 +2,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain } from '../type/assets/js/cms-data.mjs';
+import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain, imageURLs } from '../type/assets/js/cms-data.mjs';
 const seed = JSON.parse(fs.readFileSync(new URL('../cms-seed.json', import.meta.url), 'utf8'));
 const csv = rows => rows.map(row => row.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(',')).join('\r\n');
 test('CSV handles bilingual paragraphs, escaped quotes, commas, BOM, and empty last field', () => {
@@ -50,6 +50,10 @@ test('All pages preserve the six-row original information layout and original co
     const labels = [...html.matchAll(/<th scope="row">([^<]+)<\/th>/g)].map(m=>m[1]);
     assert.deepEqual(labels,['디자인','제작 연도','버전','포맷','글리프','문의']);
     assert.match(html,/2025–2026/);
+    assert.match(html,/<title>TAP \| /);
+    assert.match(html,/href="\/favicon.png"/);
+    assert.match(html,/Under Constructure/);
+    assert.match(html,/class="hero__stage"/);
     assert.match(html,/<details class="type-menu">/);
     assert.equal([...html.matchAll(/>TAP\/(Cake|Giul|Rooms|Umm|Witz)<\/a>/g)].length,5);
     const core = JSON.parse(fs.readFileSync(new URL(`../type/assets/js/${slug}-core.json`,import.meta.url),'utf8'));
@@ -68,4 +72,13 @@ test('Type index replaces history with one of exactly five detail routes', () =>
     assert.equal(destination,`/type/${slug}/`);
   }
   assert.match(html,/<body>\s*<\/body>/);
+});
+
+test('Gallery splits line-separated image URLs and rejects unsafe entries', () => {
+  assert.deepEqual(imageURLs(' https://example.com/a.png\r\n\n/type/assets/images/tap-symbol.svg '), ['https://example.com/a.png','/type/assets/images/tap-symbol.svg']);
+  assert.deepEqual(imageURLs(''), []);
+  assert.throws(() => imageURLs('https://example.com/a.png\njavascript:alert(1)'));
+  const rows = structuredClone(seed.rows);
+  rows[0][seed.headers.indexOf('사용 예시 이미지')] = 'https://example.com/a.png\nhttps://example.com/b.png';
+  assert.equal(recordsFromCSV(csv([seed.headers,...rows])).length, 5);
 });

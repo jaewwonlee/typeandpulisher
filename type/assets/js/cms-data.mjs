@@ -39,6 +39,13 @@ export function safeAsset(value) {
   return '';
 }
 
+export function imageURLs(value) {
+  const lines = String(value || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+  const urls = lines.map(safeAsset);
+  if (urls.some(url => !url)) throw new Error('Invalid image URL');
+  return urls;
+}
+
 export function vimeoEmbed(value) {
   try {
     const u = new URL(value);
@@ -73,7 +80,8 @@ export function recordsFromCSV(text) {
     record['대표색'] = record['대표색'].trim();
     if (!SLUGS.includes(record['주소']) || !/^#[\da-f]{6}$/i.test(record['대표색']) || !record['서체명 영문'].trim()) throw new Error('Invalid CMS row');
     if (record['Vimeo URL'] && !vimeoEmbed(record['Vimeo URL'])) throw new Error('Invalid Vimeo URL');
-    for (const key of ['웹폰트 파일', '사용 예시 이미지']) if (record[key] && !safeAsset(record[key])) throw new Error('Invalid asset URL');
+    if (record['웹폰트 파일'] && !safeAsset(record['웹폰트 파일'])) throw new Error('Invalid font URL');
+    imageURLs(record['사용 예시 이미지']);
   }
   // A cleared or half-pasted sheet must not replace the last complete snapshot.
   if (result.length !== SLUGS.length || new Set(result.map(r => r['주소'])).size !== SLUGS.length) throw new Error('Incomplete CMS rows');

@@ -1,4 +1,5 @@
-import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=3';
+import { createUsageGallery } from './usage-gallery.mjs?v=4';
+import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=4';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
 const slug = document.body.dataset.slug;
@@ -6,6 +7,7 @@ const cacheKey = `tap-type-cms-v2:${SHEET_ID}:${SHEET_GID}`;
 let records = seed.records, current, busy = false, language = 'ko', languageTimer;
 let loadedFont = seed.glyphs?.[slug]?.font, fontRequest = 0;
 const $ = selector => document.querySelector(selector);
+const gallery = createUsageGallery($('.usage__frame'));
 const setText = (selector, value) => { const el = $(selector); if (el && el.textContent !== value) el.textContent = value || ''; };
 
 function renderIntro() {
@@ -46,7 +48,7 @@ function applyDetail() {
   document.body.style.setProperty('--on-accent', accentInk(r['대표색']));
   document.body.style.setProperty('--mark-invert', accentInk(r['대표색']) === '#111111' ? '1' : '0');
   const title = r['서체명 영문'] + ' ' + r['서체명 국문'];
-  document.title = title + ' | TAP';
+  document.title = 'TAP | ' + title;
   $('meta[name="description"]').content = r['서체 소개 국문'];
   $('meta[property="og:title"]').content = document.title;
   $('meta[property="og:description"]').content = r['서체 소개 국문'];
@@ -78,13 +80,7 @@ function applyDetail() {
   $('.video__frame').style.aspectRatio = '16 / 9';
   iframe.style.width = `${fit.width}%`;
   iframe.style.height = `${fit.height}%`;
-  const imageURL = safeAsset(r['사용 예시 이미지']);
-  const usage = $('.usage__frame');
-  let image = usage.querySelector('img');
-  if (imageURL && !image) { image = document.createElement('img'); image.loading = 'lazy'; usage.append(image); }
-  if (image) { image.hidden = !imageURL; if (imageURL && image.getAttribute('src') !== imageURL) image.src = imageURL; image.alt = r['사용 예시 설명'] || title + ' 사용 예시'; }
-  usage.querySelector('.placeholder').hidden = !!imageURL;
-  usage.classList.toggle('usage__frame--empty', !imageURL);
+  gallery.update(r['사용 예시 이미지'], r['사용 예시 설명'] || title + ' 사용 예시');
   setText('.usage .head-row .col-a', r['사용 예시 설명']);
   void applyFont(r);
 }
