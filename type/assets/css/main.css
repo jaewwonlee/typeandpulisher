@@ -61,7 +61,8 @@
   --font-display: 'Witz', var(--font-ui);
 
   /* type scale (1512px 원본 기준) */
-  --fs-head: 28px;   /* 섹션 제목 / 헤더 행 */
+  --fs-head: 28px;   /* 히어로 타이틀 */
+  --fs-label: 24px;  /* 섹션 라벨 / 헤더 행 */
   --fs-body: 18px;   /* 본문, 표 */
   --fs-meta: 13px;   /* 상단바, 컨트롤, 캡션, 푸터 */
 
@@ -112,6 +113,7 @@ a {
 @media (max-width: 768px) {
   :root {
     --fs-head: 20px;
+    --fs-label: 18px;
     --fs-body: 15px;
     --fs-meta: 11px;
     --gutter: 16px;
