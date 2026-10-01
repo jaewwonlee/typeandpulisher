@@ -41,7 +41,7 @@ for record in records:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
                 if el[attr].endswith(('.css', '.js')):
-                    el[attr] += '?v=24'
+                    el[attr] += '?v=25'
     soup.select_one('link[rel="preload"]')['href'] = font_path
     soup.title.string = f"TAP | {record['서체명 영문']} {record['서체명 국문']}"
     soup.select_one('meta[name="description"]')['content'] = record['서체 소개 국문']
@@ -49,7 +49,7 @@ for record in records:
     soup.head.append(canonical)
     for prop, content in [('og:title', soup.title.string), ('og:description', record['서체 소개 국문']), ('og:url', canonical['href']), ('og:type', 'website')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=24'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=25'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', href='/favicon.png'))
     headline = soup.select_one('.hero__headline')
     headline.wrap(soup.new_tag('div', attrs={'class':'hero__stage'}))
@@ -128,9 +128,9 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=24')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=25')
     soup.body.append(script)
-    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=24', defer=''))
+    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=25', defer=''))
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(str(soup))
