@@ -3,7 +3,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain, imageURLs } from '../type/assets/js/cms-data.mjs';
+import { rowsFromCSV, infoFromRows, archiveFromRows, contactLink, INFO_HEADERS, ARCHIVE_HEADERS } from '../type/assets/js/site-data.mjs';
 const seed = JSON.parse(fs.readFileSync(new URL('../cms-seed.json', import.meta.url), 'utf8'));
+const manifest = JSON.parse(fs.readFileSync(new URL('../type/assets/js/font-manifest.json', import.meta.url), 'utf8'));
 const csv = rows => rows.map(row => row.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(',')).join('\r\n');
 test('CSV handles bilingual paragraphs, escaped quotes, commas, BOM, and empty last field', () => {
   const values = [['국문','영문','빈칸'],['줄1\n줄2','"Room", margin','']];
@@ -15,7 +17,7 @@ test('CMS preserves all five rows, exact descriptions, videos and colors', () =>
   assert.equal(records.length,5);
   assert.equal(records[0]['서체 소개 국문'],seed.rows[0][7]);
   assert.equal(records[4]['Vimeo URL'],'https://vimeo.com/1230525322');
-  assert.equal(records[2]['대표색'],'#123456');
+  assert.equal(records[2]['대표색'],seed.rows[2][seed.headers.indexOf('대표색')]);
 });
 test('Incomplete paste, duplicate addresses, bad colors and changed headers cannot replace live data', () => {
   assert.throws(() => recordsFromCSV(csv([seed.headers,...seed.rows.slice(1)])));
@@ -55,10 +57,12 @@ test('All pages preserve the six-row original information layout and original co
     assert.match(html,/Under Constructure/);
     assert.match(html,/class="hero__stage"/);
     assert.match(html,/<details class="type-menu">/);
-    assert.equal([...html.matchAll(/>TAP\/(Cake|Giul|Rooms|Umm|Witz)<\/a>/g)].length,5);
+    assert.equal([...html.matchAll(/>Type\/<span class="type-menu__name">(Cake|Giul|Rooms|Umm|Witz)<\/span><\/a>/g)].length,5);
+    assert.ok(!html.includes('kiosk'));
     const core = JSON.parse(fs.readFileSync(new URL(`../type/assets/js/${slug}-core.json`,import.meta.url),'utf8'));
     assert.deepEqual(core,original.filter(cp=>core.includes(cp)));
-    assert.ok(core.length<=216 && core.length>=200);
+    assert.equal(core.length, manifest[slug].count);
+    assert.ok(core.length<=216);
     assert.ok(!html.includes('data-full'));
   }
 });
@@ -81,4 +85,47 @@ test('Gallery splits line-separated image URLs and rejects unsafe entries', () =
   const rows = structuredClone(seed.rows);
   rows[0][seed.headers.indexOf('사용 예시 이미지')] = 'https://example.com/a.png\nhttps://example.com/b.png';
   assert.equal(recordsFromCSV(csv([seed.headers,...rows])).length, 5);
+});
+
+test('Info/Archive tabs keep last good data when headers change and group rows by 구분', () => {
+  assert.throws(() => rowsFromCSV(csv([['구분','국문']]), INFO_HEADERS));
+  assert.throws(() => rowsFromCSV('<html>Sign in</html>', INFO_HEADERS));
+  assert.deepEqual(rowsFromCSV(csv([INFO_HEADERS]), INFO_HEADERS), []);
+  const rows = rowsFromCSV(csv([INFO_HEADERS,
+    ['소개','첫 문단\n둘째 줄','First',' ',''],
+    ['구성원','김민서','Minseo Kim','',''],
+    ['활동','TAP 결성','TAP Founded','','25. 10'],
+    ['연락처','이메일','Email','typeandpublisher@gmail.com',''],
+    ['연락처','인스타그램','Instagram','https://www.instagram.com/typeandpublisher/',''],
+    ['연락처','나쁨','Bad','javascript:alert(1)',''],
+    ['이미지','캡션','','http://insecure.example/a.png',''],
+    ['모르는 구분','x','y','',''],
+  ]), INFO_HEADERS);
+  const info = infoFromRows(rows);
+  assert.equal(info.title.ko, '타입앤퍼블리셔');
+  assert.equal(info.intro[0].ko, '첫 문단\n둘째 줄');
+  assert.deepEqual(info.works, [{ date: '25. 10', ko: 'TAP 결성', en: 'TAP Founded' }]);
+  assert.deepEqual(info.contacts.map(c => c.link.text), ['typeandpublisher@gmail.com', '@typeandpublisher']);
+  assert.equal(info.image, null);
+  assert.equal(contactLink('https://vimeo.com/user263951849').text, 'https://vimeo.com/user263951849');
+});
+
+test('Archive rows split images per line, drop unsafe ones and fall back to the first image as thumbnail', () => {
+  const [item] = archiveFromRows(rowsFromCSV(csv([ARCHIVE_HEADERS,
+    ['1','과천 나들이','MMCA Picnic','Event','','https://example.com/a.jpg\njavascript:alert(1)\n/archive/b.jpg','국문','English'],
+    ['','','','','','','',''],
+  ]), ARCHIVE_HEADERS));
+  assert.deepEqual(item.images, ['https://example.com/a.jpg', '/archive/b.jpg']);
+  assert.equal(item.thumb, 'https://example.com/a.jpg');
+});
+
+test('New pages share the topbar menu and mark their own route', () => {
+  for (const [path, label, href] of [['../index.html','Info','/'],['../archive/index.html','Archive','/archive/'],['../publish/index.html','Publish','/publish/']]) {
+    const html = fs.readFileSync(new URL(path, import.meta.url), 'utf8');
+    assert.match(html, new RegExp(`<summary aria-label="페이지 메뉴">/${label}</summary>`));
+    assert.match(html, new RegExp(`<a aria-current="page" href="${href}">TAP/<span class="type-menu__name">${label}</span></a>`));
+    assert.equal([...html.matchAll(/aria-current="page"/g)].length, 1);
+    assert.ok(!html.includes('kiosk'));
+  }
+  assert.match(fs.readFileSync(new URL('../publish/index.html', import.meta.url), 'utf8'), /<p class="soon">출간 예정<\/p>/);
 });
