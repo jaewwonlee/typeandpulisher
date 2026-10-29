@@ -20,7 +20,14 @@ export const el = (tag, className, text) => {
 
 // 타입 페이지 cms.js와 같은 방식: 정적 사본 → 마지막 정상 데이터(localStorage) → 시트를 30초마다 재조회.
 // 시트에 내용 행이 하나도 없으면 페이지에 넣어둔 정적 사본을 그대로 보여준다.
-export function watchTab({ gid, headers, seed, render }) {
+export function watchTab({ name, gid, headers, seed, render }) {
+  // 주소 끝에 ?dummy 를 붙이면 시트 대신 /dummy/<name>.json 을 보여준다. 시트와 캐시는 건드리지 않는다.
+  if (new URLSearchParams(location.search).has('dummy')) {
+    render(seed);
+    fetch(`/dummy/${name}.json`, { cache: 'no-store' }).then(r => r.json()).then(render)
+      .catch(error => console.warn('더미 데이터를 불러오지 못했습니다.', error));
+    return;
+  }
   const cacheKey = `tap-site-cms-v1:${SHEET_ID}:${gid}`;
   let current = '', busy = false;
   const show = rows => {

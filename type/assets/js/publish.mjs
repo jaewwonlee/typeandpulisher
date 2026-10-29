@@ -13,4 +13,4 @@ function render(rows) {
 }
 
 initMenu();
-watchTab({ gid: TABS.publish, headers: PUBLISH_HEADERS, seed: [], render });
+watchTab({ name: 'publish', gid: TABS.publish, headers: PUBLISH_HEADERS, seed: [], render });

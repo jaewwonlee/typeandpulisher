@@ -86,17 +86,19 @@ function renderDesk(d) {
     cell('about-d__intro', ...paragraphs(d.intro, 'ko')),
     cell('about-d__intro about-d__intro--en', ...paragraphs(d.intro, 'en')));
   if (d.members.length) {
-    const list = key => { const ul = el('ul', 'members'); for (const m of d.members) ul.append(el('li', '', m[key] || m.ko)); return ul; };
-    grid.append(cell('about-d__head', el('h2', '', '구성원')), cell('about-d__head', el('h2', '', 'Member')), cell('', list('ko')), cell('', list('en')));
+    const list = key => { const ul = el('ul', `members members--${key}`); for (const m of d.members) ul.append(el('li', '', m[key] || m.ko)); return ul; };
+    grid.append(cell('about-d__head', el('h2', '', '구성원')), cell('about-d__head', el('h2', '', 'Member')),
+      cell('about-d__list', list('ko')), cell('about-d__list', list('en')));
   }
   if (d.works.length) {
-    grid.append(cell('about-d__head', el('h2', '', '활동')), cell('about-d__head'));
-    for (const w of d.works) {
+    grid.append(cell('about-d__head about-d__head--works', el('h2', '', '활동')), cell('about-d__head about-d__head--works'));
+    d.works.forEach((w, i) => {
       const ko = el('ul', 'works'), li = el('li');
       li.append(el('span', '', w.date), el('span', '', w.ko));
       ko.append(li);
-      grid.append(cell('works-row', ko), cell('works-row', el('p', '', w.en || w.ko)));
-    }
+      const row = i ? 'works-row' : 'works-row works-row--first';
+      grid.append(cell(row, ko), cell(row, el('p', '', w.en || w.ko)));
+    });
   }
   const main = el('div', 'about-d__main');
   main.append(grid, document.querySelector('#site-end').content.cloneNode(true));
@@ -124,4 +126,4 @@ mobile.addEventListener('click', event => {
     toggles.forEach(t => t.classList.remove('is-changing'));
   }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 160);
 });
-watchTab({ gid: TABS.info, headers: INFO_HEADERS, seed: seedFrom('info-seed'), render });
+watchTab({ name: 'info', gid: TABS.info, headers: INFO_HEADERS, seed: seedFrom('info-seed'), render });

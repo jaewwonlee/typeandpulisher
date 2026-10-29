@@ -3,9 +3,9 @@ import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=1';
 
 const table = document.querySelector('.archive-table');
 const thumb = document.querySelector('.list-thumb img');
-let items = [], open = null;
+let items = [], open = null, hovered = null;
 
-// 데스크톱 왼쪽 위 칸: 마우스를 올리거나 펼친 항목의 썸네일을 보여준다.
+// 데스크톱 왼쪽 위 칸: 마우스를 올린(또는 키보드로 고른) 항목의 썸네일만 보여주고, 평소에는 비워둔다.
 function showThumb(item) {
   const src = item?.thumb || '';
   thumb.hidden = !src;
@@ -58,14 +58,19 @@ function render(rows) {
       render(rows);
       if (open) table.querySelector('[aria-expanded="true"]')?.focus();
     });
-    button.addEventListener('pointerenter', () => showThumb(item));
-    button.addEventListener('focus', () => showThumb(item));
+    const enter = () => { hovered = key; showThumb(item); };
+    const leave = () => { if (hovered === key) { hovered = null; showThumb(null); } };
+    button.addEventListener('pointerenter', enter);
+    button.addEventListener('pointerleave', leave);
+    button.addEventListener('focus', enter);
+    button.addEventListener('blur', leave);
     return row;
   });
   if (!list.length) list.push(el('p', 'archive-empty', '준비 중이에요.'));
   table.replaceChildren(head, ...list);
-  showThumb(items.find((item, i) => (item.no || String(i + 1)) === open) || items.find(item => item.thumb));
+  // 클릭으로 다시 그려져도 마우스가 올라가 있던 항목의 썸네일은 유지한다.
+  showThumb(items.find((item, i) => (item.no || String(i + 1)) === hovered));
 }
 
 initMenu();
-watchTab({ gid: TABS.archive, headers: ARCHIVE_HEADERS, seed: seedFrom('archive-seed'), render });
+watchTab({ name: 'archive', gid: TABS.archive, headers: ARCHIVE_HEADERS, seed: seedFrom('archive-seed'), render });
