@@ -1,4 +1,4 @@
-import { imageURLs } from './cms-data.mjs?v=5';
+import { imageURLs } from './cms-data.mjs?v=6';
 
 export function createUsageGallery(frame) {
   const placeholder = frame.querySelector('.placeholder');

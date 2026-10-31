@@ -1,4 +1,4 @@
-import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=1';
+import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=2';
 import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=1';
 
 const body = document.body;
@@ -126,4 +126,4 @@ mobile.addEventListener('click', event => {
     toggles.forEach(t => t.classList.remove('is-changing'));
   }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 160);
 });
-watchTab({ name: 'info', gid: TABS.info, headers: INFO_HEADERS, seed: seedFrom('info-seed'), render });
+watchTab({ name: 'info', gid: TABS.info, headers: INFO_HEADERS, headerRow: 1, seed: seedFrom('info-seed'), render });

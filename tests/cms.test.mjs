@@ -2,7 +2,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain, imageURLs } from '../type/assets/js/cms-data.mjs';
+import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain, imageURLs, imageSource } from '../type/assets/js/cms-data.mjs';
 import { rowsFromCSV, infoFromRows, archiveFromRows, contactLink, INFO_HEADERS, ARCHIVE_HEADERS } from '../type/assets/js/site-data.mjs';
 const seed = JSON.parse(fs.readFileSync(new URL('../cms-seed.json', import.meta.url), 'utf8'));
 const manifest = JSON.parse(fs.readFileSync(new URL('../type/assets/js/font-manifest.json', import.meta.url), 'utf8'));
@@ -87,30 +87,39 @@ test('Gallery splits line-separated image URLs and rejects unsafe entries', () =
   assert.equal(recordsFromCSV(csv([seed.headers,...rows])).length, 5);
 });
 
-test('Info/Archive tabs keep last good data when headers change and group rows by 구분', () => {
-  assert.throws(() => rowsFromCSV(csv([['구분','국문']]), INFO_HEADERS));
-  assert.throws(() => rowsFromCSV('<html>Sign in</html>', INFO_HEADERS));
-  assert.deepEqual(rowsFromCSV(csv([INFO_HEADERS]), INFO_HEADERS), []);
-  const rows = rowsFromCSV(csv([INFO_HEADERS,
-    ['소개','첫 문단\n둘째 줄','First',' ',''],
-    ['구성원','김민서','Minseo Kim','',''],
-    ['활동','TAP 결성','TAP Founded','','25. 10'],
-    ['연락처','이메일','Email','typeandpublisher@gmail.com',''],
-    ['연락처','인스타그램','Instagram','https://www.instagram.com/typeandpublisher/',''],
-    ['연락처','나쁨','Bad','javascript:alert(1)',''],
-    ['이미지','캡션','','http://insecure.example/a.png',''],
-    ['모르는 구분','x','y','',''],
-  ]), INFO_HEADERS);
+test('Info tab reads the header row under the group row and splits blocks by column', () => {
+  const group = ['기본 정보', ...Array(7).fill(''), '구성원', '', '활동', '', '', '연락처', '', ''];
+  assert.equal(group.length, INFO_HEADERS.length);
+  assert.throws(() => rowsFromCSV(csv([group, ['구분','국문']]), INFO_HEADERS, 1));
+  assert.throws(() => rowsFromCSV('<html>Sign in</html>', INFO_HEADERS, 1));
+  assert.deepEqual(rowsFromCSV(csv([group, INFO_HEADERS]), INFO_HEADERS, 1), []);
+  const row = values => INFO_HEADERS.map(h => values[h] || '');
+  const rows = rowsFromCSV(csv([group, INFO_HEADERS,
+    row({ '제목 국문': '타입앤퍼블리셔', '소개 국문': '첫 문단\n\n둘째 문단', '소개 영문': 'First', '대표 이미지': 'https://drive.google.com/file/d/AbC_12-x/view?usp=sharing', '이미지 설명': '캡션',
+      '구성원 국문': '김민서', '구성원 영문': 'Minseo Kim', '활동 날짜': '25. 10', '활동 국문': 'TAP 결성', '활동 영문': 'TAP Founded', '연락처 항목 국문': '이메일', '연락처 항목 영문': 'Email', '연락처 주소': 'typeandpublisher@gmail.com' }),
+    row({ '구성원 국문': '박시은', '연락처 항목 국문': '인스타그램', '연락처 주소': 'https://www.instagram.com/typeandpublisher/' }),
+    row({ '연락처 항목 국문': '나쁨', '연락처 주소': 'javascript:alert(1)' }),
+  ]), INFO_HEADERS, 1);
   const info = infoFromRows(rows);
-  assert.equal(info.title.ko, '타입앤퍼블리셔');
-  assert.equal(info.intro[0].ko, '첫 문단\n둘째 줄');
+  assert.equal(info.title.en, 'Typeandpublisher');
+  assert.deepEqual(info.intro, [{ ko: '첫 문단', en: 'First' }, { ko: '둘째 문단', en: '' }]);
+  assert.equal(info.image.src, 'https://lh3.googleusercontent.com/d/AbC_12-x=w2400');
+  assert.deepEqual(info.members.map(m => m.ko), ['김민서', '박시은']);
   assert.deepEqual(info.works, [{ date: '25. 10', ko: 'TAP 결성', en: 'TAP Founded' }]);
   assert.deepEqual(info.contacts.map(c => c.link.text), ['typeandpublisher@gmail.com', '@typeandpublisher']);
-  assert.equal(info.image, null);
   assert.equal(contactLink('https://vimeo.com/user263951849').text, 'https://vimeo.com/user263951849');
 });
 
-test('Archive rows split images per line, drop unsafe ones and fall back to the first image as thumbnail', () => {
+test('Google Drive share links become image addresses; other hosts are unchanged', () => {
+  assert.equal(imageSource('https://drive.google.com/open?id=XYZ'), 'https://lh3.googleusercontent.com/d/XYZ=w2400');
+  assert.equal(imageSource('https://drive.google.com/uc?export=view&id=XYZ'), 'https://lh3.googleusercontent.com/d/XYZ=w2400');
+  assert.equal(imageSource('https://drive.google.com/drive/folders/XYZ'), 'https://drive.google.com/drive/folders/XYZ');
+  assert.equal(imageSource('https://example.com/a.jpg'), 'https://example.com/a.jpg');
+  assert.equal(imageSource('javascript:alert(1)'), '');
+  assert.deepEqual(imageURLs('https://drive.google.com/file/d/A1/view\n/images/b.jpg'), ['https://lh3.googleusercontent.com/d/A1=w2400', '/images/b.jpg']);
+});
+
+test('Archive rows split photos per line, drop unsafe ones and fall back to the first photo as thumbnail', () => {
   const [item] = archiveFromRows(rowsFromCSV(csv([ARCHIVE_HEADERS,
     ['1','과천 나들이','MMCA Picnic','Event','','https://example.com/a.jpg\njavascript:alert(1)\n/archive/b.jpg','국문','English'],
     ['','','','','','','',''],

@@ -1,4 +1,4 @@
-import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=1';
+import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=2';
 import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=1';
 
 const table = document.querySelector('.archive-table');

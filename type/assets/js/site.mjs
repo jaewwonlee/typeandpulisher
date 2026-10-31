@@ -1,5 +1,5 @@
-import { SHEET_ID } from './cms-data.mjs?v=5';
-import { rowsFromCSV } from './site-data.mjs?v=1';
+import { SHEET_ID } from './cms-data.mjs?v=6';
+import { rowsFromCSV } from './site-data.mjs?v=2';
 
 // Info / Archive / Publish 공통: 상단 메뉴 닫기와 시트 탭 실시간 반영.
 
@@ -20,7 +20,7 @@ export const el = (tag, className, text) => {
 
 // 타입 페이지 cms.js와 같은 방식: 정적 사본 → 마지막 정상 데이터(localStorage) → 시트를 30초마다 재조회.
 // 시트에 내용 행이 하나도 없으면 페이지에 넣어둔 정적 사본을 그대로 보여준다.
-export function watchTab({ name, gid, headers, seed, render }) {
+export function watchTab({ name, gid, headers, headerRow = 0, seed, render }) {
   // 주소 끝에 ?dummy 를 붙이면 시트 대신 /dummy/<name>.json 을 보여준다. 시트와 캐시는 건드리지 않는다.
   if (new URLSearchParams(location.search).has('dummy')) {
     render(seed);
@@ -28,7 +28,7 @@ export function watchTab({ name, gid, headers, seed, render }) {
       .catch(error => console.warn('더미 데이터를 불러오지 못했습니다.', error));
     return;
   }
-  const cacheKey = `tap-site-cms-v1:${SHEET_ID}:${gid}`;
+  const cacheKey = `tap-site-cms-v2:${SHEET_ID}:${gid}`;
   let current = '', busy = false;
   const show = rows => {
     const next = rows.length ? rows : seed;
@@ -40,7 +40,7 @@ export function watchTab({ name, gid, headers, seed, render }) {
   show(seed);
   try {
     const saved = JSON.parse(localStorage.getItem(cacheKey));
-    if (saved && typeof saved.csv === 'string') show(rowsFromCSV(saved.csv, headers));
+    if (saved && typeof saved.csv === 'string') show(rowsFromCSV(saved.csv, headers, headerRow));
   } catch { /* 저장소를 못 써도 페이지는 뜬다. */ }
 
   async function refresh() {
@@ -52,7 +52,7 @@ export function watchTab({ name, gid, headers, seed, render }) {
       const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
       if (!response.ok) throw new Error(`CMS HTTP ${response.status}`);
       const csv = await response.text();
-      show(rowsFromCSV(csv, headers));
+      show(rowsFromCSV(csv, headers, headerRow));
       try { localStorage.setItem(cacheKey, JSON.stringify({ csv, savedAt: Date.now() })); } catch { /* 선택 사항 */ }
       document.documentElement.dataset.cmsState = 'live';
     } catch (error) {

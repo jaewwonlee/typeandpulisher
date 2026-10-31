@@ -1,4 +1,4 @@
-import { TABS, PUBLISH_HEADERS } from './site-data.mjs?v=1';
+import { TABS, PUBLISH_HEADERS } from './site-data.mjs?v=2';
 import { initMenu, watchTab } from './site.mjs?v=1';
 
 // 출간물 디자인이 정해지기 전까지는 시트의 제목만 반영하고 본문은 '출간 예정'으로 둔다.
