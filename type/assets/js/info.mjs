@@ -1,5 +1,5 @@
-import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=2';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=1';
+import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=3';
+import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=2';
 
 const body = document.body;
 const mobile = document.querySelector('.about-m');
@@ -23,12 +23,30 @@ const contactLinks = (contacts, label) => {
   }
   return dl;
 };
+// 사진이 여러 장이면 누를 때마다 다음 장으로 넘어간다(모바일·데스크톱 같은 순번).
+let slide = 0;
 const image = (data, className) => {
-  if (!data.image) return '';
+  if (!data.images.length) return '';
+  slide %= data.images.length;
   const figure = el('figure', className), img = el('img');
-  img.src = data.image.src; img.alt = data.image.caption || ''; img.decoding = 'async';
-  figure.append(img);
-  if (data.image.caption) figure.append(el('figcaption', '', data.image.caption));
+  // 구글 드라이브 이미지(lh3)는 Referer가 붙으면 간헐적으로 403을 준다.
+  img.referrerPolicy = 'no-referrer'; img.src = data.images[slide]; img.alt = data.caption; img.decoding = 'async';
+  if (data.images.length > 1) {
+    const button = el('button', 'photo-slider');
+    button.type = 'button';
+    button.setAttribute('aria-label', `사진 ${slide + 1}/${data.images.length}, 눌러서 다음 사진`);
+    button.addEventListener('click', () => {
+      slide = (slide + 1) % data.images.length;
+      document.querySelectorAll('.photo-slider').forEach(b => {
+        b.querySelector('img').src = data.images[slide];
+        b.setAttribute('aria-label', `사진 ${slide + 1}/${data.images.length}, 눌러서 다음 사진`);
+      });
+      Object.assign(new Image(), { referrerPolicy: 'no-referrer', src: data.images[(slide + 1) % data.images.length] });
+    });
+    button.append(img);
+    figure.append(button);
+  } else figure.append(img);
+  if (data.caption) figure.append(el('figcaption', '', data.caption));
   return figure;
 };
 

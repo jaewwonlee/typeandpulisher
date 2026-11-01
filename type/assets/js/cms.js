@@ -1,4 +1,4 @@
-import { createUsageGallery } from './usage-gallery.mjs?v=5';
+import { createUsageGallery } from './usage-gallery.mjs?v=6';
 import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=6';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);

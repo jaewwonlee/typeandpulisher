@@ -8,7 +8,7 @@ body.site {
   --on-accent: #000000;
   --mark-invert: 1;
   --line: #000000;
-  --frame-line: 1px;   /* 데스크톱 구조선(상단·세로선)은 2px, 표 행 구분선은 항상 1px */
+  --frame-line: 1px;   /* 데스크톱 구조선(상단·세로선)은 1.5px, 표 행 구분선은 항상 1px */
   --fs-text: 14px;
   --lh-text: 1.6;
   --ls-text: -0.015em;
@@ -21,7 +21,7 @@ body.site {
   letter-spacing: var(--ls-text);
 }
 
-/* 상단바: 모바일 높이 50 · 여백 16, 글자 14/132% */
+/* 상단바: 모바일 높이 50 · 여백 16, 글자 14/132%. 스크롤해도 위에 붙어 있다(cms.css). */
 .site .topbar {
   flex-shrink: 0;
   height: 50px;
@@ -95,6 +95,7 @@ body.site {
 .about-m__image { margin-top: 30px; }
 .about-m__image img,
 .about-d__image img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.photo-slider { display: block; width: 100%; padding: 0; }
 .about-m__intro { margin-top: 20px; }
 .about-m__intro p + p,
 .about-d__intro p + p { margin-top: 1.6em; }
@@ -120,7 +121,7 @@ body.site {
 .archive-head,
 .archive-row__button {
   display: grid;
-  grid-template-columns: var(--no) minmax(0, 1fr) auto;
+  grid-template-columns: var(--no) minmax(0, 1fr) minmax(0, max-content);
   align-items: baseline;
   width: 100%;
   padding: 5px 0 6px;   /* 1px 선 포함 행 간격 34(데스크톱 44) */
@@ -134,7 +135,9 @@ body.site {
 .archive-head__en,
 .archive-row__en { display: none; }
 .archive-row__category { text-align: right; padding-left: 12px; }
-.archive-row__ko { overflow-wrap: anywhere; }
+/* 항목은 항상 한 줄, 넘치면 … */
+.archive-head > span,
+.archive-row__button > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .archive-row__button:hover :is(.archive-row__ko, .archive-row__en),
 .archive-row__button[aria-expanded="true"] :is(.archive-row__ko, .archive-row__en) { text-decoration: underline; text-underline-offset: 2px; }
 .archive-row__panel { padding: 10px 0 16px; }
@@ -147,8 +150,8 @@ body.site {
 /* ---------- Desktop ---------- */
 @media (min-width: 1024px) {
   body.site {
-    --frame-line: 2px;
-    --fs-text: 20px;
+    --frame-line: 1.5px;
+    --fs-text: 16px;
     --ls-text: 0;
   }
   .desk-only { display: revert !important; }
@@ -156,16 +159,21 @@ body.site {
   /* 데스크톱은 국문·영문을 나란히 보여주므로 언어 전환이 없다. */
   .site[data-lang] .bi > [lang] { display: revert; }
 
-  /* 상단바 높이 66(위 여백 24) 아래로 2px 가로선 */
+  /* 상단바 높이 66(위 여백 24), 아래 가로선도 상단바와 함께 고정 */
   .site .topbar { height: 66px; padding-top: 24px; font-size: 14px; }
-  .site-page {
-    margin-inline: var(--gutter);
-    padding: 0 0 24px;
-    border-top: var(--frame-line) solid var(--line);
+  .site .topbar::after {
+    content: '';
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 0;
+    height: var(--frame-line);
+    background: var(--line);
   }
+  .site-page { margin-inline: var(--gutter); padding: 0 0 24px; }
   .site-end { width: 348px; align-self: flex-end; padding: 64px 0 0; }
 
-  /* Info: 사진·제목·연락처 | 국문 | 영문, 세 칸 472 · 칸 사이 24 + 2px 세로선 */
+  /* Info: 사진·제목·연락처 | 국문 | 영문, 세 칸 472 · 칸 사이 24 + 세로선 */
   .about-m { display: none; }
   .about-d {
     flex: 1;
@@ -226,12 +234,22 @@ body.site {
     grid-template-columns: 224px minmax(0, 1fr);
     column-gap: 24px;
   }
-  .list-side { display: flex; flex-direction: column; padding-top: 94px; }
-  .list-thumb { aspect-ratio: 224 / 132; }
-  .list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  /* 왼쪽 칸(썸네일 + 제목 카드)은 스크롤을 따라온다. 화면이 낮으면 둘 사이 간격을 줄인다. */
+  .list-side {
+    position: sticky;
+    top: 66px;
+    align-self: start;
+    height: calc(100svh - 66px);
+    display: flex;
+    flex-direction: column;
+    padding-top: 94px;
+  }
+  /* 사진 비율과 상관없이 칸 크기는 고정(호버해도 아래 카드가 밀리지 않게) */
+  .list-thumb { position: relative; flex-shrink: 0; overflow: hidden; aspect-ratio: 224 / 132; }
+  .list-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .list-side__card {
     flex: 1;
-    margin-top: 205px;
+    margin-top: min(205px, max(24px, 100svh - 762px));
     padding: 27px 19px 0 0;
     border-top: var(--frame-line) solid var(--line);
     border-right: var(--frame-line) solid var(--line);
@@ -262,9 +280,9 @@ body.site {
   /* 번호 | 국문 제목 ‖ 영문 제목 | 카테고리, 행 5/32/6 */
   .archive-table { --no: 156px; }
   .archive-head,
-  .archive-row__button { grid-template-columns: var(--no) calc((100% - var(--no)) * 0.4151) minmax(0, 1fr) auto; }
+  .archive-row__button { grid-template-columns: var(--no) calc((100% - var(--no)) * 0.4151) minmax(0, 1fr) minmax(0, max-content); }
   .archive-head__en,
-  .archive-row__en { display: block; padding-left: 24px; }
+  .archive-row__en { display: block; padding-left: 24px; padding-right: 12px; }
   .archive-row__panel { padding: 18px 0 68px; border-top: 1px solid var(--line); }
   .archive-row__text {
     grid-template-columns: calc(var(--no) + (100% - var(--no)) * 0.4151) minmax(0, 1fr);

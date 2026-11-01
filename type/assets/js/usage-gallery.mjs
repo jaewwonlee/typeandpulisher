@@ -5,6 +5,7 @@ export function createUsageGallery(frame) {
   const prev = frame.querySelector('.usage__nav--prev');
   const next = frame.querySelector('.usage__nav--next');
   const image = document.createElement('img');
+  image.referrerPolicy = 'no-referrer';  // 구글 드라이브 이미지(lh3)는 Referer가 붙으면 간헐적으로 403을 준다.
   image.hidden = true;
   const status = document.createElement('span');
   status.className = 'usage__status';

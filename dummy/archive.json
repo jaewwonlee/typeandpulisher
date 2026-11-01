@@ -1,112 +1,112 @@
 [
  {
-  "번호": "1",
+  "날짜": "2026.10",
+  "공개": "TRUE",
   "제목 국문": "움직이는 동안",
   "제목 영문": "While Moving",
   "카테고리": "Event",
+  "사진": "/dummy/photo-3.jpg",
   "설명 국문": "설명이 들어갈 자리입니다.",
-  "설명 영문": "Description goes here.",
-  "썸네일 이미지": "/dummy/photo-3.jpg",
-  "사진": "/dummy/photo-3.jpg"
+  "설명 영문": "Description goes here."
  },
  {
-  "번호": "2",
+  "날짜": "2026.09.27",
+  "공개": "TRUE",
   "제목 국문": "움직이는 동안 설치",
   "제목 영문": "While Moving, Installation",
   "카테고리": "LC, Event",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  },
  {
-  "번호": "3",
-  "제목 국문": "한강 상영회",
-  "제목 영문": "Hangang Screening",
-  "카테고리": "LC, Event",
-  "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
- },
- {
-  "번호": "4",
-  "제목 국문": "과천 국립현대미술관 나들이",
-  "제목 영문": "MMCA Gwacheon Picnic",
-  "카테고리": "Event",
-  "설명 국문": "탭은 지난 8월 9일 친목 도모를 위한 여름맞이 나들이로 국립현대미술관 과천에 다녀왔습니다. 사실 포인트 컬러가 있었는데 무슨 색이었을까요?",
-  "설명 영문": "On August 9, TAP took a summer outing to the National Museum of Modern and Contemporary Art, Gwacheon, for some time together outside our usual meetings. There was actually a point color for the day. Can you guess what it was?",
-  "썸네일 이미지": "/dummy/photo-2.jpg",
-  "사진": "/dummy/photo-1.jpg\n/dummy/photo-2.jpg\n/dummy/photo-3.jpg\n/dummy/photo-4.jpg"
- },
- {
-  "번호": "5",
-  "제목 국문": "영상 기획서 발표",
-  "제목 영문": "Video Proposal Presentation",
-  "카테고리": "LC, Presentation",
-  "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
- },
- {
-  "번호": "6",
+  "날짜": "2026.06.28",
+  "공개": "TRUE",
   "제목 국문": "네모틀 트레이싱",
   "제목 영문": "Square-frame Tracing",
   "카테고리": "LC, Workshop",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  },
  {
-  "번호": "7",
+  "날짜": "2026.08.09",
+  "공개": "TRUE",
+  "제목 국문": "과천 국립현대미술관 나들이",
+  "제목 영문": "MMCA Gwacheon Picnic",
+  "카테고리": "Event",
+  "사진": "/dummy/photo-2.jpg\n/dummy/photo-1.jpg\n/dummy/photo-3.jpg\n/dummy/photo-4.jpg",
+  "설명 국문": "탭은 지난 8월 9일 친목 도모를 위한 여름맞이 나들이로 국립현대미술관 과천에 다녀왔습니다. 사실 포인트 컬러가 있었는데 무슨 색이었을까요?",
+  "설명 영문": "On August 9, TAP took a summer outing to the National Museum of Modern and Contemporary Art, Gwacheon, for some time together outside our usual meetings. There was actually a point color for the day. Can you guess what it was?"
+ },
+ {
+  "날짜": "2026.07",
+  "공개": "TRUE",
+  "제목 국문": "영상 기획서 발표",
+  "제목 영문": "Video Proposal Presentation",
+  "카테고리": "LC, Presentation",
+  "사진": "",
+  "설명 국문": "",
+  "설명 영문": ""
+ },
+ {
+  "날짜": "2026.08.10",
+  "공개": "TRUE",
+  "제목 국문": "한강 상영회",
+  "제목 영문": "Hangang Screening",
+  "카테고리": "LC, Event",
+  "사진": "",
+  "설명 국문": "",
+  "설명 영문": ""
+ },
+ {
+  "날짜": "2026.05.24",
+  "공개": "TRUE",
   "제목 국문": "박지연 디자이너 워크숍",
   "제목 영문": "Workshop with Jiyeon Park",
   "카테고리": "LC, Workshop",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  },
  {
-  "번호": "8",
+  "날짜": "2026.04.26",
+  "공개": "TRUE",
   "제목 국문": "중간보고",
   "제목 영문": "Midterm Review",
   "카테고리": "LC, Presentation",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  },
  {
-  "번호": "9",
+  "날짜": "2026.03",
+  "공개": "TRUE",
   "제목 국문": "권순형 디자이너 워크숍",
   "제목 영문": "Workshop with Soonhyung Kwon",
   "카테고리": "LC, Workshop",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  },
  {
-  "번호": "10",
+  "날짜": "2025.10",
+  "공개": "TRUE",
   "제목 국문": "한글 레터링 워크숍",
   "제목 영문": "Hangul Lettering Workshop",
   "카테고리": "LC, Workshop",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  },
  {
-  "번호": "11",
+  "날짜": "2025.10",
+  "공개": "FALSE",
   "제목 국문": "TAP 이름 정하기",
   "제목 영문": "Naming TAP",
   "카테고리": "Event",
+  "사진": "",
   "설명 국문": "",
-  "설명 영문": "",
-  "썸네일 이미지": "",
-  "사진": ""
+  "설명 영문": ""
  }
 ]

@@ -1,11 +1,12 @@
-import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=2';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=1';
+import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=3';
+import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=2';
 
 const table = document.querySelector('.archive-table');
 const thumb = document.querySelector('.list-thumb img');
 let items = [], open = null, hovered = null;
 
 // 데스크톱 왼쪽 위 칸: 마우스를 올린(또는 키보드로 고른) 항목의 썸네일만 보여주고, 평소에는 비워둔다.
+// 썸네일 img는 archive/index.html에 referrerpolicy="no-referrer"로 들어 있다(구글 드라이브 이미지).
 function showThumb(item) {
   const src = item?.thumb || '';
   thumb.hidden = !src;
@@ -19,7 +20,7 @@ function panel(item, id) {
     const images = el('div', 'archive-row__images');
     for (const src of item.images) {
       const img = el('img');
-      img.src = src; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer'; img.src = src; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
       images.append(img);
     }
     box.append(images);

@@ -1,5 +1,5 @@
 import { SHEET_ID } from './cms-data.mjs?v=6';
-import { rowsFromCSV } from './site-data.mjs?v=2';
+import { rowsFromCSV } from './site-data.mjs?v=3';
 
 // Info / Archive / Publish 공통: 상단 메뉴 닫기와 시트 탭 실시간 반영.
 
@@ -28,7 +28,7 @@ export function watchTab({ name, gid, headers, headerRow = 0, seed, render }) {
       .catch(error => console.warn('더미 데이터를 불러오지 못했습니다.', error));
     return;
   }
-  const cacheKey = `tap-site-cms-v2:${SHEET_ID}:${gid}`;
+  const cacheKey = `tap-site-cms-v3:${SHEET_ID}:${gid}`;
   let current = '', busy = false;
   const show = rows => {
     const next = rows.length ? rows : seed;
