@@ -39,9 +39,23 @@ export function safeAsset(value) {
   return '';
 }
 
+// 구글 드라이브 공유 링크(…/file/d/ID/view, open?id=ID, uc?id=ID)는 이미지 주소로 바꾼다.
+// 파일은 '링크가 있는 모든 사용자: 뷰어'로 공유돼 있어야 한다.
+export function imageSource(value) {
+  const raw = String(value || '').trim();
+  try {
+    const u = new URL(raw);
+    if (u.protocol === 'https:' && u.hostname === 'drive.google.com') {
+      const id = u.pathname.match(/^\/file\/d\/([\w-]+)/)?.[1] || (/^\/(open|uc)$/.test(u.pathname) && u.searchParams.get('id'));
+      if (id && /^[\w-]+$/.test(id)) return `https://lh3.googleusercontent.com/d/${id}=w2400`;
+    }
+  } catch { /* 일반 경로는 아래 safeAsset이 판단한다. */ }
+  return safeAsset(raw);
+}
+
 export function imageURLs(value) {
   const lines = String(value || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-  const urls = lines.map(safeAsset);
+  const urls = lines.map(imageSource);
   if (urls.some(url => !url)) throw new Error('Invalid image URL');
   return urls;
 }

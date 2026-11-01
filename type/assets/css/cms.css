@@ -18,7 +18,8 @@ html, body { background-color:#fff; }
 
 .hero__headline, .info__body, .typing__text, .caption-row { white-space: pre-wrap; }
 /* Match the supplied TAP/Type dropdown, anchored to the right gutter. */
-.topbar { position:relative; gap:16px; color:var(--on-accent,#fff); }
+/* 상단바는 스크롤해도 화면 위에 붙어 있다(모든 페이지). */
+.topbar { position:sticky; top:0; z-index:50; gap:16px; color:var(--on-accent,#fff); }
 .topbar__mark { filter:invert(var(--mark-invert,0)); }
 .topbar__brand { flex-shrink:0; font-size:14px; }
 .topbar__nav { display:flex; align-items:center; gap:0; color:inherit; font-size:14px; line-height:1.3; }
