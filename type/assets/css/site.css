@@ -21,6 +21,10 @@ body.site {
   letter-spacing: var(--ls-text);
 }
 
+/* 첫 화면: 글꼴·내용이 준비되면 한 번에 나타난다(index.html 등의 인라인 스크립트 + site.mjs) */
+body.site { transition: opacity 200ms ease; }
+html.is-loading body.site { opacity: 0; }
+
 /* 상단바: 모바일 높이 50 · 여백 16, 글자 14/132%. 스크롤해도 위에 붙어 있다(cms.css). */
 .site .topbar {
   flex-shrink: 0;
@@ -32,8 +36,6 @@ body.site {
   letter-spacing: -0.015em;
 }
 .site .topbar__nav { line-height: 1.32; }
-/* 메뉴 칸이 흰 페이지 위에 떠도 구분되도록 얇은 테두리를 준다. */
-.site .type-menu__links a { outline: 1px solid var(--line); outline-offset: -1px; }
 
 .site-page {
   flex: 1;
@@ -105,7 +107,12 @@ body.site {
 .about-m .members li { break-inside: avoid; display: grid; grid-template-columns: 54px 1fr; }
 .about-m .works li { display: grid; grid-template-columns: 54px 1fr; }
 .about-m .works li + li { margin-top: 4px; }
-.contacts { display: grid; grid-template-columns: 97px 1fr; }
+.contacts,
+.credits { display: grid; grid-template-columns: 97px 1fr; }
+/* 인스타그램이 걸린 이름: 옅은 밑줄로 표시하고, 올리면 진해진다 */
+.person-link { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: rgba(0, 0, 0, .3); text-underline-offset: 3px; transition: text-decoration-color 160ms ease; }
+.person-link:hover,
+.person-link:focus-visible { text-decoration-color: currentColor; }
 .contacts a { overflow-wrap: anywhere; }
 .contacts a[href^="https://vimeo"] { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -117,35 +124,72 @@ body.site {
 .soon { padding-top: 0; }
 
 /* ---------- Archive 표 (모바일): 번호 48 · 행 5/22/6 · 1px 구분선 ---------- */
-.archive-table { --no: 48px; border-bottom: 1px solid var(--line); }
+/* 한 행 = [제목 버튼(번호·국문·영문) | 카테고리 버튼들]. 제목 버튼은 subgrid로 행의 칸을 그대로 쓴다. */
+.archive-table { --no: 48px; --cols: var(--no) minmax(0, 1fr) minmax(0, max-content); border-bottom: 1px solid var(--line); }
 .archive-head,
+.archive-row { display: grid; grid-template-columns: var(--cols); align-items: baseline; }
+.archive-head { padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.archive-row + .archive-row { border-top: 1px solid var(--line); }
 .archive-row__button {
+  grid-column: 1 / -2;
   display: grid;
-  grid-template-columns: var(--no) minmax(0, 1fr) minmax(0, max-content);
+  grid-template-columns: subgrid;
   align-items: baseline;
-  width: 100%;
-  padding: 5px 0 6px;   /* 1px 선 포함 행 간격 34(데스크톱 44) */
+  padding: 5px 0 6px;   /* 1px 선 포함 행 간격 34(데스크톱 37.6) */
   text-align: left;
   font-size: inherit;
   line-height: inherit;
   letter-spacing: inherit;
 }
-.archive-head { padding-top: 0; border-bottom: 1px solid var(--line); }
-.archive-row + .archive-row { border-top: 1px solid var(--line); }
+.archive-row > .archive-row__category { padding: 5px 0 6px 12px; }
 .archive-head__en,
 .archive-row__en { display: none; }
 .archive-row__category { text-align: right; padding-left: 12px; }
-/* 항목은 항상 한 줄, 넘치면 … */
+/* 항목은 항상 한 줄, 넘치면 … . 펼친 항목은 전체 제목이 보이도록 줄바꿈한다. */
 .archive-head > span,
-.archive-row__button > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.archive-row__button > span,
+.archive-row__category { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.archive-row.is-open .archive-row__button > span,
+.archive-row.is-open > .archive-row__category { overflow: visible; white-space: normal; text-overflow: clip; }
 .archive-row__button:hover :is(.archive-row__ko, .archive-row__en),
-.archive-row__button[aria-expanded="true"] :is(.archive-row__ko, .archive-row__en) { text-decoration: underline; text-underline-offset: 2px; }
-.archive-row__panel { padding: 10px 0 16px; }
+.archive-row.is-open :is(.archive-row__ko, .archive-row__en) { text-decoration: underline; text-underline-offset: 2px; }
+
+/* 카테고리 낱말: 누르면 그 카테고리만 보기 */
+.archive-cat { padding: 0; font: inherit; letter-spacing: inherit; text-underline-offset: 2px; }
+.archive-cat:hover,
+.archive-cat.is-active { text-decoration: underline; }
+
+/* 펼치기: 위로 스크롤된 뒤 높이 0 → 내용 높이로 */
+.archive-row__panel {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 360ms cubic-bezier(.2, .7, .2, 1), opacity 300ms ease;
+}
+.archive-row__panel.is-shown { grid-template-rows: 1fr; opacity: 1; }
+.archive-row__inner { min-height: 0; overflow: hidden; }
+.archive-row__inner::before { content: ''; display: block; height: 10px; }
+.archive-row__inner::after { content: ''; display: block; height: 16px; }
 .archive-row__images { display: grid; gap: 16px; }
 .archive-row__images img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
 .archive-row__text { display: grid; gap: 8px; margin-top: 16px; padding-left: var(--no); letter-spacing: 0; }
 .archive-row__text [lang="en"] { line-height: 1.4; }
 .archive-empty { padding: 6px 0; }
+
+/* 필터·페이지 바뀔 때: 옅어졌다가 한 줄씩 나타남 */
+.archive-table.is-leaving > .archive-row { opacity: 0; transition: opacity 180ms ease; }
+.archive-row.is-entering { animation: archive-in 300ms ease both; }
+@keyframes archive-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* 페이지 번호 ← 1 2 3 →: 지금 페이지는 밑줄, 나머지는 상단바 TAP처럼 옅게 */
+.archive-pager { display: flex; justify-content: flex-end; gap: 14px; padding-top: 14px; }
+.archive-pager[hidden] { display: none; }
+.archive-pager__item { padding: 0; font: inherit; letter-spacing: inherit; opacity: .4; transition: opacity 160ms ease; }
+.archive-pager__item:hover:not(:disabled),
+.archive-pager__item.is-current { opacity: 1; }
+.archive-pager__item.is-current { text-decoration: underline; text-underline-offset: 3px; }
+.archive-pager__item:disabled { opacity: .15; cursor: default; }
 
 /* ---------- Desktop ---------- */
 @media (min-width: 1024px) {
@@ -191,6 +235,7 @@ body.site {
     border-right: var(--frame-line) solid var(--line);
   }
   .about-d__side > .about-d__card:first-child { margin-top: 0; border-top: 0; }
+  .about-d__card .page-title { line-height: 1.4; }   /* Archive·Publish 왼쪽 제목과 같은 행간 */
   .about-d__notice { margin-top: 46px; }
   .about-d .contacts { margin-top: 90px; grid-template-columns: 124px 1fr; }
 
@@ -242,10 +287,11 @@ body.site {
     height: calc(100svh - 66px);
     display: flex;
     flex-direction: column;
-    padding-top: 94px;
+    padding-top: calc(56px + var(--fs-text) * 1.6 + 7px);   /* 표 [1]번 행 윗선 높이 */
   }
-  /* 사진 비율과 상관없이 칸 크기는 고정(호버해도 아래 카드가 밀리지 않게) */
-  .list-thumb { position: relative; flex-shrink: 0; overflow: hidden; aspect-ratio: 224 / 132; }
+  /* 썸네일 칸은 [1]번 행 윗선부터 [4]번 행 아랫선까지(행 높이 = 글자 × 1.6 + 여백 11 + 선 1).
+     사진 비율과 상관없이 칸 크기는 고정(호버해도 아래 카드가 밀리지 않게) */
+  .list-thumb { position: relative; flex-shrink: 0; overflow: hidden; height: calc((var(--fs-text) * 1.6 + 12px) * 4); }
   .list-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .list-side__card {
     flex: 1;
@@ -277,13 +323,14 @@ body.site {
     background: var(--line);
   }
 
-  /* 번호 | 국문 제목 ‖ 영문 제목 | 카테고리, 행 5/32/6 */
-  .archive-table { --no: 156px; }
-  .archive-head,
-  .archive-row__button { grid-template-columns: var(--no) calc((100% - var(--no)) * 0.4151) minmax(0, 1fr) minmax(0, max-content); }
+  /* 번호 | 국문 제목 ‖ 영문 제목 | 카테고리, 행 5/25.6/6 */
+  .archive-table { --no: 156px; --cols: var(--no) calc((100% - var(--no)) * 0.4151) minmax(0, 1fr) minmax(0, max-content); }
   .archive-head__en,
   .archive-row__en { display: block; padding-left: 24px; padding-right: 12px; }
-  .archive-row__panel { padding: 18px 0 68px; border-top: 1px solid var(--line); }
+  .archive-row__inner::before { height: 18px; border-top: 1px solid var(--line); }
+  .archive-row__inner::after { height: 68px; }
+  /* 사진은 반반 두 칸, 홀수면 마지막 장은 왼쪽 칸 */
+  .archive-row__images { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .archive-row__text {
     grid-template-columns: calc(var(--no) + (100% - var(--no)) * 0.4151) minmax(0, 1fr);
     gap: 0;
@@ -294,4 +341,9 @@ body.site {
   .archive-row__text [lang="en"] { grid-column: 2; padding-left: 146px; max-width: calc(146px + 474px); }
 }
 
-@media (prefers-reduced-motion: reduce) { .lang-toggle { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .lang-toggle,
+  .archive-row__panel,
+  .archive-pager__item { transition: none; }
+  .archive-row.is-entering { animation: none; }
+}

@@ -1,5 +1,5 @@
-import { SHEET_ID } from './cms-data.mjs?v=6';
-import { rowsFromCSV } from './site-data.mjs?v=3';
+import { SHEET_ID } from './cms-data.mjs?v=7';
+import { rowsFromCSV } from './site-data.mjs?v=4';
 
 // Info / Archive / Publish 공통: 상단 메뉴 닫기와 시트 탭 실시간 반영.
 
@@ -24,6 +24,7 @@ export function watchTab({ name, gid, headers, headerRow = 0, seed, render }) {
   // 주소 끝에 ?dummy 를 붙이면 시트 대신 /dummy/<name>.json 을 보여준다. 시트와 캐시는 건드리지 않는다.
   if (new URLSearchParams(location.search).has('dummy')) {
     render(seed);
+    reveal();
     fetch(`/dummy/${name}.json`, { cache: 'no-store' }).then(r => r.json()).then(render)
       .catch(error => console.warn('더미 데이터를 불러오지 못했습니다.', error));
     return;
@@ -60,10 +61,16 @@ export function watchTab({ name, gid, headers, headerRow = 0, seed, render }) {
       console.warn('CMS 갱신 실패: 마지막 정상 콘텐츠를 유지합니다.', error);
     } finally { clearTimeout(timer); busy = false; }
   }
+  // 정적 사본·저장된 내용으로 첫 화면을 그렸고 글꼴까지 준비되면 가림막을 걷는다.
+  reveal();
   void refresh();
   setInterval(refresh, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) void refresh(); });
   window.addEventListener('online', refresh);
+}
+
+export function reveal() {
+  (document.fonts?.ready ?? Promise.resolve()).then(() => document.documentElement.classList.remove('is-loading'));
 }
 
 export const seedFrom = id => JSON.parse(document.getElementById(id)?.textContent || '[]');

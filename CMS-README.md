@@ -94,3 +94,14 @@ AH열(사용 예시 이미지) 한 셀에 공개 이미지 URL을 한 줄에 하
 - 모바일(터치)에서 빈 곳을 두 번 탭하면 원형 메뉴(가운데 Home, 주변 Type · Archive · Publish)가 열립니다. 팀원이 만든 `tap-menu.js`를 `type/assets/js/tap-menu.mjs`로 옮기고 메뉴 항목과 색 읽기만 더했습니다. 스타일은 `type/assets/css/tap-menu.css`. 링크·버튼·입력칸·타이핑 박스를 누를 때는 반응하지 않습니다.
 - 상단바는 모든 페이지에서 스크롤해도 화면 위에 고정됩니다(`cms.css`). Archive·Publish 데스크톱의 왼쪽 칸(썸네일 + 제목 카드)도 스크롤을 따라옵니다.
 - 〈 〉 《 》는 Noto Sans KR에서 전각이라 Pretendard 1.3.9의 해당 네 글자만 잘라 `TAP Brackets`(`type/assets/fonts/TAPBrackets-Regular.woff2`, 1.3KB)로 씁니다. Pretendard는 SIL OFL 1.1이고 예약 이름이 있어 이름을 바꿨으며 라이선스는 `TAPBrackets-OFL.txt`입니다. 시트에 쓰인 ⟪ ⟫(U+27EA/27EB)는 다른 글자라 바뀌지 않으니 《 》로 쓰세요.
+
+### Archive 필터·페이지, Info 크레딧 등 (2026-11-03)
+
+- Archive 카테고리 낱말(Event, LC 등)을 누르면 그 카테고리만 보이고, 같은 낱말이나 머리말의 카테고리를 다시 누르면 전체로 돌아갑니다. 바뀔 때 목록이 옅어졌다가 한 줄씩 나타납니다.
+- 15개를 넘으면 표 아래 오른쪽에 `← 1 2 →` 페이지 번호가 나옵니다(`archive.mjs`의 `PAGE_SIZE`).
+- 항목을 누르면 상단바 바로 아래로 올라온 뒤 아래로 펼쳐지고, 펼친 항목은 긴 제목도 전부 보입니다. 데스크톱 사진은 두 칸(홀수면 마지막 장은 왼쪽).
+- 데스크톱 썸네일 칸은 표의 [1]~[4]번 행 높이에 맞춥니다.
+- Info 구성원 링크(L열)와 웹 크레딧 묶음(S–W열): 링크가 있으면 이름에 옅은 밑줄이 생기고 새 탭에서 열립니다. 같은 역할을 연달아 적으면 한 줄로 묶입니다.
+- 시트에 ⟪⟫ ≪≫ ⟨⟩ 〈〉 같은 비슷한 괄호를 써도 《》〈〉로 바꿔 반각 글꼴로 보여줍니다(`cms-data.mjs`의 `normalizeBrackets`).
+- 링크 공유 문구(description, og:description)는 모든 페이지 공통 소개 문장입니다(`build_type.py`의 `SITE_DESCRIPTION`).
+- 첫 화면: Atlas Grotesk·Noto Sans KR을 미리 불러오고, Info·Archive·Publish는 글꼴과 내용이 준비될 때까지(최대 1.2초) 가렸다가 한 번에 보여줍니다.

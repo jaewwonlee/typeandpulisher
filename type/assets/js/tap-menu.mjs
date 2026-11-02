@@ -1,5 +1,5 @@
-import { SHEET_ID, parseCSV, accentInk } from './cms-data.mjs?v=6';
-import { TABS, tapColor } from './site-data.mjs?v=3';
+import { SHEET_ID, parseCSV, accentInk } from './cms-data.mjs?v=7';
+import { TABS, tapColor } from './site-data.mjs?v=4';
 
 /* 모바일 두 번 탭 메뉴. 팀원이 만든 tap-menu.js를 그대로 옮기고 아래 두 가지만 더했다.
    - 메뉴 항목을 사이트 주소에 맞춤(Blog 제외, Info는 가운데 Home)

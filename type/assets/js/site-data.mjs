@@ -1,4 +1,4 @@
-import { parseCSV, safeAsset, imageSource } from './cms-data.mjs?v=6';
+import { parseCSV, safeAsset, imageSource, normalizeBrackets } from './cms-data.mjs?v=7';
 
 // 운영 시트의 Info / Archive / Publish 탭 gid. Type 탭은 cms-data.mjs의 SHEET_GID.
 export const TABS = { info: '119225931', archive: '1287932855', publish: '1811725569' };
@@ -8,9 +8,10 @@ export const TABS = { info: '119225931', archive: '1287932855', publish: '181172
 export const INFO_BASE = ['제목 국문', '제목 영문', '소개 국문', '소개 영문', '이미지', '이미지 설명', '문의 안내 국문', '문의 안내 영문', '탭 메뉴 색'];
 export const INFO_HEADERS = [
   ...INFO_BASE,
-  '구성원 국문', '구성원 영문',
+  '구성원 국문', '구성원 영문', '구성원 링크',
   '활동 날짜', '활동 국문', '활동 영문',
   '연락처 항목 국문', '연락처 항목 영문', '연락처 주소',
+  '크레딧 역할 국문', '크레딧 역할 영문', '크레딧 이름 국문', '크레딧 이름 영문', '크레딧 링크',
 ];
 export const ARCHIVE_HEADERS = ['날짜', '공개', '제목 국문', '제목 영문', '카테고리', '사진', '설명 국문', '설명 영문'];
 export const TAP_COLOR = '#15B9FF';
@@ -22,7 +23,7 @@ export function rowsFromCSV(text, required, headerRow = 0) {
   const rows = parseCSV(text).slice(headerRow);
   const headers = rows.shift()?.map(h => h.trim());
   if (!headers || required.some(h => !headers.includes(h)) || new Set(headers.filter(Boolean)).size !== headers.filter(Boolean).length) throw new Error('CMS headers changed');
-  return rows.filter(r => r.some(v => v.trim())).map(row => Object.fromEntries(headers.map((h, i) => [h, (row[i] || '').trim()]).filter(([h]) => h)));
+  return rows.filter(r => r.some(v => v.trim())).map(row => Object.fromEntries(headers.map((h, i) => [h, normalizeBrackets((row[i] || '').trim())]).filter(([h]) => h)));
 }
 
 // 연락처 링크는 메일과 https만 허용한다. 표시 문구는 링크에서 만든다.
@@ -60,6 +61,21 @@ function newestFirst(list, date) {
     .map(x => x.item);
 }
 
+// 사람 이름에 거는 링크는 https만.
+const personLink = value => /^https:\/\//i.test(String(value || '').trim()) ? safeAsset(value) : '';
+
+// 같은 역할이 연달아 오면 한 줄로 묶는다: [{ ko, en, people: [{ ko, en, href }] }]
+function creditGroups(rows) {
+  const groups = [];
+  for (const r of rows.filter(r => r['크레딧 이름 국문'] || r['크레딧 이름 영문'])) {
+    const role = { ko: r['크레딧 역할 국문'], en: r['크레딧 역할 영문'] };
+    const last = groups[groups.length - 1];
+    const group = last && last.ko === role.ko && last.en === role.en ? last : (groups.push({ ...role, people: [] }), groups[groups.length - 1]);
+    group.people.push({ ko: r['크레딧 이름 국문'], en: r['크레딧 이름 영문'], href: personLink(r['크레딧 링크']) });
+  }
+  return groups;
+}
+
 export const tapColor = value => /^#[\da-f]{6}$/i.test(String(value || '').trim()) ? String(value).trim() : TAP_COLOR;
 
 // 묶음마다 해당 열이 채워진 줄만 모은다. 잘못된 링크는 화면에 넣지 않고 건너뛴다.
@@ -73,10 +89,11 @@ export function infoFromRows(rows) {
     intro: Array.from({ length: Math.max(ko.length, en.length) }, (_, i) => ({ ko: ko[i] || '', en: en[i] || '' })),
     images: images(base['이미지']),
     caption: base['이미지 설명'] || '',
-    members: rows.filter(r => r['구성원 국문'] || r['구성원 영문']).map(r => ({ ko: r['구성원 국문'], en: r['구성원 영문'] })),
+    members: rows.filter(r => r['구성원 국문'] || r['구성원 영문']).map(r => ({ ko: r['구성원 국문'], en: r['구성원 영문'], href: personLink(r['구성원 링크']) })),
     works: newestFirst(works, w => w.date),
     notice: notice ? { ko: base['문의 안내 국문'], en: base['문의 안내 영문'] } : null,
     contacts: rows.filter(r => r['연락처 주소']).map(r => ({ ko: r['연락처 항목 국문'], en: r['연락처 항목 영문'], link: contactLink(r['연락처 주소']) })).filter(c => c.link),
+    credits: creditGroups(rows),
     tapColor: tapColor(base['탭 메뉴 색']),
   };
 }

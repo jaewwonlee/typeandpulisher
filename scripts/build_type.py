@@ -6,6 +6,7 @@ from fontTools.ttLib import TTFont
 from fontTools.pens.boundsPen import BoundsPen
 
 ROOT = Path(__file__).resolve().parents[1]
+SITE_DESCRIPTION = 'Type and Publisher(TAP)은 글자를 그리고, 이를 다양한 형태로 확장하고 엮어내는 방식을 탐구하는 프로젝트 그룹입니다.'
 seed = json.loads((ROOT / 'cms-seed.json').read_text())
 records = [dict(zip(seed['headers'], row)) for row in seed['rows']]
 template = (ROOT / 'templates/type.html').read_text()
@@ -40,16 +41,18 @@ for record in records:
         for attr in ['href', 'src']:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
-                if el[attr].endswith(('.css', '.js')):
-                    el[attr] += '?v=26'
-    soup.select_one('link[rel="preload"]')['href'] = font_path
+                if el[attr].endswith(('.css', '.js', '.mjs')):
+                    el[attr] += '?v=27'
+    # 템플릿의 Witz preload를 이 서체 파일로 바꾼다(Atlas·Noto preload는 그대로 둔다).
+    soup.select_one('link[rel="preload"][href$="Witz.woff2"]')['href'] = font_path
     soup.title.string = f"TAP | {record['서체명 영문']} {record['서체명 국문']}"
-    soup.select_one('meta[name="description"]')['content'] = record['서체 소개 국문']
+    # 링크 공유 문구는 모든 페이지 공통 소개 문장(2026-11-03 요청)
+    soup.select_one('meta[name="description"]')['content'] = SITE_DESCRIPTION
     canonical = soup.new_tag('link', rel='canonical', href=f'https://typeandpublisher.kr/type/{slug}/')
     soup.head.append(canonical)
-    for prop, content in [('og:title', soup.title.string), ('og:description', record['서체 소개 국문']), ('og:url', canonical['href']), ('og:type', 'website')]:
+    for prop, content in [('og:title', soup.title.string), ('og:description', SITE_DESCRIPTION), ('og:url', canonical['href']), ('og:type', 'website')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=26'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=27'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', href='/favicon.png'))
     headline = soup.select_one('.hero__headline')
     headline.wrap(soup.new_tag('div', attrs={'class':'hero__stage'}))
@@ -128,9 +131,9 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=26')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=27')
     soup.body.append(script)
-    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=26', defer=''))
+    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=27', defer=''))
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(str(soup))

@@ -1,5 +1,5 @@
-import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=3';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=2';
+import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=4';
+import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=3';
 
 const body = document.body;
 const mobile = document.querySelector('.about-m');
@@ -10,6 +10,18 @@ const bi = (tag, className, ko, en) => {
   const node = el(tag, ['bi', className].filter(Boolean).join(' '));
   node.append(Object.assign(el('span', '', ko || ''), { lang: 'ko' }), Object.assign(el('span', '', en || ko || ''), { lang: 'en' }));
   return node;
+};
+// 링크가 있는 이름은 밑줄을 긋고 새 탭에서 연다(잘못 눌러도 사이트가 닫히지 않게).
+const person = (name, href) => {
+  if (!href) return el('span', '', name);
+  const a = el('a', 'person-link', name);
+  a.href = href; a.target = '_blank'; a.rel = 'noopener';
+  return a;
+};
+const people = (list, key) => {
+  const span = el('span');
+  list.forEach((p, i) => { if (i) span.append(', '); span.append(person(p[key] || p.ko, p.href)); });
+  return span;
 };
 const paragraphs = (list, key) => list.map(item => el('p', '', item[key] || item.ko));
 const contactLinks = (contacts, label) => {
@@ -71,14 +83,22 @@ function renderMobile(d) {
     return section;
   };
   const members = el('ul', 'members');
-  for (const m of d.members) { const li = el('li'); li.append(el('span', '', m.ko), el('span', '', m.en)); members.append(li); }
+  for (const m of d.members) { const li = el('li'); li.append(person(m.ko, m.href), person(m.en, m.href)); members.append(li); }
   const works = el('ul', 'works');
   for (const w of d.works) { const li = el('li'); li.append(el('span', '', w.date), bi('span', '', w.ko, w.en)); works.append(li); }
+
+  const credits = el('dl', 'credits');
+  for (const g of d.credits) {
+    const dd = el('dd', 'bi');
+    dd.append(Object.assign(people(g.people, 'ko'), { lang: 'ko' }), Object.assign(people(g.people, 'en'), { lang: 'en' }));
+    credits.append(bi('dt', '', g.ko, g.en), dd);
+  }
 
   mobile.replaceChildren(title, figure, intro,
     block('구성원', 'Member', members),
     block('활동', 'Works', works),
-    block('연락처', 'Contact', contactLinks(d.contacts, c => bi('dt', '', c.ko, c.en))));
+    block('연락처', 'Contact', contactLinks(d.contacts, c => bi('dt', '', c.ko, c.en))),
+    ...(d.credits.length ? [block('웹 크레딧', 'Web Credits', credits)] : []));
   mobile.querySelectorAll('.lang-toggle').forEach(b => {
     b.disabled = !d.intro.some(i => i.en) && d.title.en === d.title.ko;
   });
@@ -104,7 +124,7 @@ function renderDesk(d) {
     cell('about-d__intro', ...paragraphs(d.intro, 'ko')),
     cell('about-d__intro about-d__intro--en', ...paragraphs(d.intro, 'en')));
   if (d.members.length) {
-    const list = key => { const ul = el('ul', `members members--${key}`); for (const m of d.members) ul.append(el('li', '', m[key] || m.ko)); return ul; };
+    const list = key => { const ul = el('ul', `members members--${key}`); for (const m of d.members) { const li = el('li'); li.append(person(m[key] || m.ko, m.href)); ul.append(li); } return ul; };
     grid.append(cell('about-d__head', el('h2', '', '구성원')), cell('about-d__head', el('h2', '', 'Member')),
       cell('about-d__list', list('ko')), cell('about-d__list', list('en')));
   }
@@ -116,6 +136,14 @@ function renderDesk(d) {
       ko.append(li);
       const row = i ? 'works-row' : 'works-row works-row--first';
       grid.append(cell(row, ko), cell(row, el('p', '', w.en || w.ko)));
+    });
+  }
+  if (d.credits.length) {
+    grid.append(cell('about-d__head about-d__head--works', el('h2', '', '웹 크레딧')), cell('about-d__head about-d__head--works', el('h2', '', 'Web Credits')));
+    d.credits.forEach((g, i) => {
+      const row = i ? 'works-row' : 'works-row works-row--first';
+      const line = key => { const ul = el('ul', 'works'), li = el('li'); li.append(el('span', '', g[key] || g.ko), people(g.people, key)); ul.append(li); return ul; };
+      grid.append(cell(row, line('ko')), cell(row, line('en')));
     });
   }
   const main = el('div', 'about-d__main');

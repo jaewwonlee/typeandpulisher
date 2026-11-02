@@ -2,7 +2,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain, imageURLs, imageSource } from '../type/assets/js/cms-data.mjs';
+import { parseCSV, recordsFromCSV, safeAsset, vimeoEmbed, ratio, videoContain, imageURLs, imageSource, normalizeBrackets } from '../type/assets/js/cms-data.mjs';
 import { rowsFromCSV, infoFromRows, archiveFromRows, contactLink, dateKey, tapColor, INFO_HEADERS, ARCHIVE_HEADERS } from '../type/assets/js/site-data.mjs';
 const seed = JSON.parse(fs.readFileSync(new URL('../cms-seed.json', import.meta.url), 'utf8'));
 const manifest = JSON.parse(fs.readFileSync(new URL('../type/assets/js/font-manifest.json', import.meta.url), 'utf8'));
@@ -57,6 +57,8 @@ test('All pages preserve the six-row original information layout and original co
     assert.match(html,/Under Construction/);
     assert.match(html,/class="hero__stage"/);
     assert.match(html,/<details class="type-menu">/);
+    assert.match(html,/tap-menu\.mjs\?v=/);
+    assert.match(html,/content="Type and Publisher\(TAP\)은 [^"]*" property="og:description"/);
     assert.equal([...html.matchAll(/>Type\/<span class="type-menu__name">(Cake|Giul|Rooms|Umm|Witz)<\/span><\/a>/g)].length,5);
     assert.ok(!html.includes('kiosk'));
     const core = JSON.parse(fs.readFileSync(new URL(`../type/assets/js/${slug}-core.json`,import.meta.url),'utf8'));
@@ -88,7 +90,7 @@ test('Gallery splits line-separated image URLs and rejects unsafe entries', () =
 });
 
 test('Info tab reads the header row under the group row and splits blocks by column', () => {
-  const group = ['기본 정보', ...Array(8).fill(''), '구성원', '', '활동', '', '', '연락처', '', ''];
+  const group = ['기본 정보', ...Array(8).fill(''), '구성원', '', '', '활동', '', '', '연락처', '', '', '웹 크레딧', '', '', '', ''];
   assert.equal(group.length, INFO_HEADERS.length);
   assert.throws(() => rowsFromCSV(csv([group, ['구분','국문']]), INFO_HEADERS, 1));
   assert.throws(() => rowsFromCSV('<html>Sign in</html>', INFO_HEADERS, 1));
@@ -96,10 +98,13 @@ test('Info tab reads the header row under the group row and splits blocks by col
   const row = values => INFO_HEADERS.map(h => values[h] || '');
   const rows = rowsFromCSV(csv([group, INFO_HEADERS,
     // 맨 위에 끼워 넣은 줄: 기본 정보가 아래로 밀려도 찾아 읽어야 한다.
-    row({ '구성원 국문': '김민서', '구성원 영문': 'Minseo Kim', '활동 날짜': '25. 10', '활동 국문': 'TAP 결성', '활동 영문': 'TAP Founded' }),
+    row({ '구성원 국문': '김민서', '구성원 영문': 'Minseo Kim', '구성원 링크': 'https://www.instagram.com/minseo/', '활동 날짜': '25. 10', '활동 국문': 'TAP 결성', '활동 영문': 'TAP Founded',
+      '크레딧 역할 국문': '웹디자인', '크레딧 역할 영문': 'Web Design', '크레딧 이름 국문': '이재원', '크레딧 이름 영문': 'Lee Jaewon', '크레딧 링크': 'https://www.instagram.com/jaewon/' }),
     row({ '제목 국문': '타입앤퍼블리셔', '소개 국문': '첫 문단\n\n둘째 문단', '소개 영문': 'First', '이미지': 'https://drive.google.com/file/d/AbC_12-x/view?usp=sharing\n/images/b.jpg', '이미지 설명': '캡션', '탭 메뉴 색': '#ff0000',
-      '구성원 국문': '박시은', '활동 날짜': '26. 9', '활동 국문': '첫 전시', '연락처 항목 국문': '이메일', '연락처 항목 영문': 'Email', '연락처 주소': 'typeandpublisher@gmail.com' }),
-    row({ '활동 국문': '날짜 없음', '연락처 항목 국문': '인스타그램', '연락처 주소': 'https://www.instagram.com/typeandpublisher/' }),
+      '구성원 국문': '박시은', '구성원 링크': 'javascript:alert(1)', '활동 날짜': '26. 9', '활동 국문': '첫 전시 ⟪움직이는 동안⟫',
+      '크레딧 역할 국문': '웹디자인', '크레딧 역할 영문': 'Web Design', '크레딧 이름 국문': '최지원', '크레딧 이름 영문': 'Choi Jiwon', '연락처 항목 국문': '이메일', '연락처 항목 영문': 'Email', '연락처 주소': 'typeandpublisher@gmail.com' }),
+    row({ '활동 국문': '날짜 없음', '연락처 항목 국문': '인스타그램', '연락처 주소': 'https://www.instagram.com/typeandpublisher/',
+      '크레딧 역할 국문': '개발', '크레딧 역할 영문': 'Development', '크레딧 이름 국문': '최지원', '크레딧 이름 영문': 'Choi Jiwon' }),
     row({ '연락처 항목 국문': '나쁨', '연락처 주소': 'javascript:alert(1)' }),
   ]), INFO_HEADERS, 1);
   const info = infoFromRows(rows);
@@ -110,9 +115,18 @@ test('Info tab reads the header row under the group row and splits blocks by col
   assert.equal(info.caption, '캡션');
   assert.equal(info.tapColor, '#ff0000');
   assert.deepEqual(info.members.map(m => m.ko), ['김민서', '박시은']);
-  assert.deepEqual(info.works.map(w => w.ko), ['첫 전시', 'TAP 결성', '날짜 없음']);
+  assert.deepEqual(info.works.map(w => w.ko), ['첫 전시 《움직이는 동안》', 'TAP 결성', '날짜 없음']);
+  assert.deepEqual(info.members.map(m => m.href), ['https://www.instagram.com/minseo/', '']);
+  assert.deepEqual(info.credits.map(g => [g.ko, g.people.map(p => p.ko + (p.href ? '*' : ''))]), [['웹디자인', ['이재원*', '최지원']], ['개발', ['최지원']]]);
   assert.deepEqual(info.contacts.map(c => c.link.text), ['typeandpublisher@gmail.com', '@typeandpublisher']);
   assert.equal(contactLink('https://vimeo.com/user263951849').text, 'https://vimeo.com/user263951849');
+});
+
+test('Lookalike angle brackets become 《》〈〉 so the half-width bracket font applies', () => {
+  assert.equal(normalizeBrackets('⟪움직이는 동안⟫ ≪A≫ ⟨B⟩ 〈C〉 《D》 〈E〉'), '《움직이는 동안》 《A》 〈B〉 〈C〉 《D》 〈E〉');
+  const rows = structuredClone(seed.rows);
+  rows[0][seed.headers.indexOf('첫 화면 문구')] = '⟪전시⟫';
+  assert.equal(recordsFromCSV(csv([seed.headers, ...rows]))[0]['첫 화면 문구'], '《전시》');
 });
 
 test('Dates sort newest first in several spellings; tap color falls back to #15B9FF', () => {

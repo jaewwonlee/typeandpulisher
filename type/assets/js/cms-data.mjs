@@ -7,6 +7,10 @@ export function accentInk(hex) {
   return rgb[0]*.2126 + rgb[1]*.7152 + rgb[2]*.0722 > .179 ? '#111111' : '#ffffff';
 }
 
+// 겹화살·홑화살괄호와 모양이 비슷한 기호(⟪⟫ ≪≫ ⟨⟩ 〈〉)를 《》〈〉로 바꿔 반각 TAP Brackets 글꼴이 적용되게 한다.
+const BRACKETS = { '⟪': '《', '≪': '《', '⟫': '》', '≫': '》', '⟨': '〈', '〈': '〈', '⟩': '〉', '〉': '〉' };
+export const normalizeBrackets = text => String(text).replace(/[⟪≪⟫≫⟨〈⟩〉]/g, ch => BRACKETS[ch]);
+
 // CSV cells may contain commas, escaped quotes, CRLF, and paragraphs.
 export function parseCSV(source) {
   const rows = []; let row = [], cell = '', quoted = false;
@@ -88,7 +92,7 @@ export function recordsFromCSV(text) {
   const headers = rows.shift()?.map(h => h.trim());
   const required = ['주소', '서체명 국문', '서체명 영문', '대표색', '첫 화면 문구', '서체 소개 국문', '서체 소개 영문', '웹폰트 파일', 'Vimeo URL', '포맷', '글리프', '문의 이메일', '제작 연도'];
   if (!headers || required.some(h => !headers.includes(h)) || new Set(headers).size !== headers.length) throw new Error('CMS headers changed');
-  const result = rows.filter(r => r.some(v => v.trim())).map(row => Object.fromEntries(headers.map((h, i) => [h, row[i] || ''])));
+  const result = rows.filter(r => r.some(v => v.trim())).map(row => Object.fromEntries(headers.map((h, i) => [h, normalizeBrackets(row[i] || '')])));
   for (const record of result) {
     record['주소'] = record['주소'].trim();
     record['대표색'] = record['대표색'].trim();
