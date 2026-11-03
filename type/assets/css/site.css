@@ -124,10 +124,12 @@ html.is-loading body.site { opacity: 0; }
 .soon { padding-top: 0; }
 
 /* ---------- Archive 표 (모바일): 번호 48 · 행 5/22/6 · 1px 구분선 ---------- */
-/* 한 행 = [제목 버튼(번호·국문·영문) | 카테고리 버튼들]. 제목 버튼은 subgrid로 행의 칸을 그대로 쓴다. */
+/* 한 행 = 줄(.archive-row__line: [제목 버튼(번호·국문·영문) | 카테고리 버튼들]) + 그 아래 펼침 칸.
+   제목 버튼은 subgrid로 줄의 칸을 그대로 쓴다. 펼침 칸은 그리드 밖에 둔다(iOS Safari가 접힌 칸의
+   내용 높이로 그리드 행을 키워 빈 공간이 생기던 문제). */
 .archive-table { --no: 48px; --cols: var(--no) minmax(0, 1fr) minmax(0, max-content); border-bottom: 1px solid var(--line); }
 .archive-head,
-.archive-row { display: grid; grid-template-columns: var(--cols); align-items: baseline; }
+.archive-row__line { display: grid; grid-template-columns: var(--cols); align-items: baseline; }
 .archive-head { padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .archive-row + .archive-row { border-top: 1px solid var(--line); }
 .archive-row__button {
@@ -141,7 +143,7 @@ html.is-loading body.site { opacity: 0; }
   line-height: inherit;
   letter-spacing: inherit;
 }
-.archive-row > .archive-row__category { padding: 5px 0 6px 12px; }
+.archive-row__line > .archive-row__category { padding: 5px 0 6px 12px; }
 .archive-head__en,
 .archive-row__en { display: none; }
 .archive-row__category { text-align: right; padding-left: 12px; }
@@ -150,7 +152,7 @@ html.is-loading body.site { opacity: 0; }
 .archive-row__button > span,
 .archive-row__category { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .archive-row.is-open .archive-row__button > span,
-.archive-row.is-open > .archive-row__category { overflow: visible; white-space: normal; text-overflow: clip; }
+.archive-row.is-open .archive-row__line > .archive-row__category { overflow: visible; white-space: normal; text-overflow: clip; }
 .archive-row__button:hover :is(.archive-row__ko, .archive-row__en),
 .archive-row.is-open :is(.archive-row__ko, .archive-row__en) { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -159,16 +161,14 @@ html.is-loading body.site { opacity: 0; }
 .archive-cat:hover,
 .archive-cat.is-active { text-decoration: underline; }
 
-/* 펼치기: 위로 스크롤된 뒤 높이 0 → 내용 높이로 */
+/* 펼치기: 위로 스크롤된 뒤 높이 0 → 내용 높이(px)로. 높이 값은 archive.mjs가 넣고 다 열리면 auto로 푼다. */
 .archive-row__panel {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-rows: 0fr;
+  height: 0;
+  overflow: hidden;
   opacity: 0;
-  transition: grid-template-rows 360ms cubic-bezier(.2, .7, .2, 1), opacity 300ms ease;
+  transition: height 360ms cubic-bezier(.2, .7, .2, 1), opacity 300ms ease;
 }
-.archive-row__panel.is-shown { grid-template-rows: 1fr; opacity: 1; }
-.archive-row__inner { min-height: 0; overflow: hidden; }
+.archive-row__panel.is-shown { opacity: 1; }
 .archive-row__inner::before { content: ''; display: block; height: 10px; }
 .archive-row__inner::after { content: ''; display: block; height: 16px; }
 .archive-row__images { display: grid; gap: 16px; }

@@ -22,7 +22,7 @@ const visibleItems = () => filter ? items.filter(item => categoriesOf(item).incl
 const pageCount = () => Math.max(1, Math.ceil(visibleItems().length / PAGE_SIZE));
 
 function panel(item, id) {
-  // 바깥 칸은 높이 0 ↔ 내용 높이로 움직이고(grid-template-rows), 안쪽 칸이 내용을 감싼다.
+  // 바깥 칸의 높이를 0 ↔ 안쪽 칸 높이(px)로 움직인다.
   const box = el('div', 'archive-row__panel'), inner = el('div', 'archive-row__inner');
   box.id = id;
   if (item.images.length) {
@@ -78,9 +78,12 @@ async function toggle(row, item) {
   if (short > 0) main.style.paddingBottom = `${short}px`;
   scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' });
   await wait(280);
-  box.getBoundingClientRect();   // 높이 0 상태를 한 번 그린 뒤에 펼쳐야 움직임이 보인다.
+  if (!box.isConnected) { main.style.paddingBottom = ''; return; }
+  box.style.height = `${box.firstElementChild.offsetHeight}px`;
   box.classList.add('is-shown');
   await wait(400);
+  // 다 열리면 auto로 풀어 사진이 늦게 불러와져도 높이가 따라가게 한다.
+  if (box.isConnected && box.classList.contains('is-shown')) box.style.height = 'auto';
   main.style.paddingBottom = '';
 }
 
@@ -89,7 +92,11 @@ function close(row) {
   row.classList.remove('is-open');
   row.querySelector('.archive-row__button').setAttribute('aria-expanded', 'false');
   if (!box) return;
+  // auto → 지금 높이(px) → 0 순서로 바꿔야 닫히는 움직임이 보인다.
+  box.style.height = `${box.offsetHeight}px`;
+  box.getBoundingClientRect();
   box.classList.remove('is-shown');
+  box.style.height = '0px';
   setTimeout(() => box.remove(), reduced() ? 0 : 360);
 }
 
@@ -98,7 +105,9 @@ function rowFor(item) {
   const button = el('button', 'archive-row__button');
   button.type = 'button';
   button.append(el('span', '', `[${item.no}]`), el('span', 'archive-row__ko', item.ko || item.en), el('span', 'archive-row__en', item.en));
-  row.append(button, categoryCell(item));
+  const line = el('div', 'archive-row__line');
+  line.append(button, categoryCell(item));
+  row.append(line);
   if (item.images.length || item.descKo || item.descEn) {
     button.setAttribute('aria-controls', `archive-${item.no}`);
     button.setAttribute('aria-expanded', 'false');
@@ -107,6 +116,7 @@ function rowFor(item) {
     if (open === item.no) {
       const box = panel(item, `archive-${item.no}`);
       box.classList.add('is-shown');
+      box.style.height = 'auto';
       row.append(box);
       row.classList.add('is-open');
       button.setAttribute('aria-expanded', 'true');
