@@ -1,5 +1,5 @@
 import { SHEET_ID, parseCSV, accentInk } from './cms-data.mjs?v=7';
-import { TABS, tapColor } from './site-data.mjs?v=4';
+import { TABS, tapColor } from './site-data.mjs?v=5';
 
 /* 모바일 두 번 탭 메뉴. 팀원이 만든 tap-menu.js를 그대로 옮기고 아래 두 가지만 더했다.
    - 메뉴 항목을 사이트 주소에 맞춤(Blog 제외, Info는 가운데 Home)
@@ -160,6 +160,8 @@ async function loadColor() {
 
     function openMenu(x, y) {
         window.clearTimeout(singleTapTimer);
+        // 첫 탭에 반응한 버튼(Info 제목·소개·사진)이 그 동작을 되돌릴 수 있게 알린다.
+        document.dispatchEvent(new CustomEvent("tapmenu:open"));
         const originalFirstTap = firstTap;
         removeCircle(firstCircle);
         firstCircle = null;
@@ -219,7 +221,9 @@ async function loadColor() {
         if (!finishGesture(event)) return;
 
         // Preserve normal taps on the site's existing links and controls.
-        if (event.target.closest("a, button, input, select, textarea, label, [contenteditable], [data-tap-menu-ignore]")) return;
+        // data-tap-menu-allow 버튼(Info 제목·소개·사진)은 자기 동작과 탭 메뉴를 함께 쓴다.
+        const control = event.target.closest("a, button, input, select, textarea, label, [contenteditable], [data-tap-menu-ignore]");
+        if (control && !control.hasAttribute("data-tap-menu-allow")) return;
 
         if (menuIsOpen) {
             closeAll();

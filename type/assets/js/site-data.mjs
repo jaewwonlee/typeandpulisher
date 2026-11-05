@@ -88,7 +88,8 @@ export function infoFromRows(rows) {
     title: { ko: base['제목 국문'] || '타입앤퍼블리셔', en: base['제목 영문'] || 'Typeandpublisher' },
     intro: Array.from({ length: Math.max(ko.length, en.length) }, (_, i) => ({ ko: ko[i] || '', en: en[i] || '' })),
     images: images(base['이미지']),
-    caption: base['이미지 설명'] || '',
+    // 이미지 설명도 셀 안 줄바꿈으로 사진마다 하나씩. 한 줄뿐이면 모든 사진에 같은 설명.
+    captions: String(base['이미지 설명'] || '').split(/\r?\n/).map(c => c.trim()),
     members: rows.filter(r => r['구성원 국문'] || r['구성원 영문']).map(r => ({ ko: r['구성원 국문'], en: r['구성원 영문'], href: personLink(r['구성원 링크']) })),
     works: newestFirst(works, w => w.date),
     notice: notice ? { ko: base['문의 안내 국문'], en: base['문의 안내 영문'] } : null,

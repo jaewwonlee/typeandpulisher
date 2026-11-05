@@ -112,7 +112,7 @@ test('Info tab reads the header row under the group row and splits blocks by col
   assert.equal(info.title.en, 'Typeandpublisher');
   assert.deepEqual(info.intro, [{ ko: '첫 문단', en: 'First' }, { ko: '둘째 문단', en: '' }]);
   assert.deepEqual(info.images, ['https://lh3.googleusercontent.com/d/AbC_12-x=w2400', '/images/b.jpg']);
-  assert.equal(info.caption, '캡션');
+  assert.deepEqual(info.captions, ['캡션']);
   assert.equal(info.tapColor, '#ff0000');
   assert.deepEqual(info.members.map(m => m.ko), ['김민서', '박시은']);
   assert.deepEqual(info.works.map(w => w.ko), ['첫 전시 《움직이는 동안》', 'TAP 결성', '날짜 없음']);

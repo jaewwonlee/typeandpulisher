@@ -1,5 +1,5 @@
-import { TABS, PUBLISH_HEADERS } from './site-data.mjs?v=4';
-import { initMenu, watchTab } from './site.mjs?v=3';
+import { TABS, PUBLISH_HEADERS } from './site-data.mjs?v=5';
+import { initMenu, watchTab } from './site.mjs?v=4';
 
 // 출간물 디자인이 정해지기 전까지는 시트의 제목만 반영하고 본문은 '출간 예정'으로 둔다.
 const side = document.querySelector('.list-side .page-title');

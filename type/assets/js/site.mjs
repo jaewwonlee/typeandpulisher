@@ -1,5 +1,5 @@
 import { SHEET_ID } from './cms-data.mjs?v=7';
-import { rowsFromCSV } from './site-data.mjs?v=4';
+import { rowsFromCSV } from './site-data.mjs?v=5';
 
 // Info / Archive / Publish 공통: 상단 메뉴 닫기와 시트 탭 실시간 반영.
 
