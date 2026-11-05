@@ -275,7 +275,7 @@ html.is-loading body.site { opacity: 0; }
     padding-top: 24px;
   }
   .about-d__grid > :nth-child(odd) { padding-right: calc(24px + var(--frame-line)); }
-  .about-d__intro--en { font-size: 16px; line-height: 1.4; }
+  .about-d__intro--en { font-size: 16px; line-height: 1.5; }
   .about-d__head { margin-top: 59px; }
   .about-d__head--works { margin-top: 30px; }
   .about-d__list { margin-top: 14px; }
@@ -344,7 +344,7 @@ html.is-loading body.site { opacity: 0; }
   /* 국문 제목 칸도 세로선 앞에서 24px 띄운다 */
   .archive-head > :nth-child(2),
   .archive-row__ko { padding-right: 24px; }
-  .archive-row__inner::before { height: 18px; border-top: 1px solid var(--line); }
+  .archive-row__inner::before { height: 18px; }   /* 펼친 상태에서는 제목 아래 선 없음 */
   .archive-row__inner::after { height: 68px; }
   /* 사진은 반반 두 칸, 홀수면 마지막 장은 왼쪽 칸 */
   .archive-row__images { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
