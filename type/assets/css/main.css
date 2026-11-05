@@ -22,6 +22,17 @@
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* 〈 〉 《 》만 반각으로: Noto Sans KR은 전각이라 Pretendard의 해당 글자만 잘라 쓴다.
+   Pretendard(SIL OFL 1.1, 예약 이름 때문에 이름을 바꿈) → TAPBrackets-OFL.txt */
+@font-face {
+  font-family: 'TAP Brackets';
+  src: url('../fonts/TAPBrackets-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3008-300B;
+}
+
 /* The typeface being showcased on this site */
 @font-face {
   font-family: 'Witz';
@@ -57,7 +68,7 @@
   --line-soft: rgba(17, 17, 17, 0.18);
 
   /* type — 섞어짜기: 라틴/숫자/기호 Atlas Grotesk + 한글 Noto Sans KR */
-  --font-ui: 'Atlas Grotesk', 'Noto Sans KR', sans-serif;
+  --font-ui: 'TAP Brackets', 'Atlas Grotesk', 'Noto Sans KR', sans-serif;
   --font-display: 'Witz', var(--font-ui);
 
   /* type scale (1512px 원본 기준) */

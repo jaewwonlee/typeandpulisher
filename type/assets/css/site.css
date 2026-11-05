@@ -1,0 +1,368 @@
+/* ==========================================================
+   Info(/) · Archive · Publish 공통
+   타입 페이지의 상단바·메뉴(preview.css, cms.css)를 그대로 쓰고 흰 배경으로만 바꾼다.
+   수치는 피그마 tap-dev 기준: 모바일 402px 프레임, 데스크톱 1512px 프레임. 1024px부터 데스크톱 배치.
+   ========================================================== */
+body.site {
+  --main: #000000;
+  --on-accent: #000000;
+  --mark-invert: 1;
+  --line: #000000;
+  --frame-line: 1px;   /* 데스크톱 구조선(상단·세로선)은 1.5px, 표 행 구분선은 항상 1px */
+  --fs-text: 14px;
+  --lh-text: 1.6;
+  --ls-text: -0.015em;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  color: #000;
+  font-size: var(--fs-text);
+  line-height: var(--lh-text);
+  letter-spacing: var(--ls-text);
+}
+
+/* 첫 화면: 글꼴·내용이 준비되면 한 번에 나타난다(index.html 등의 인라인 스크립트 + site.mjs) */
+body.site { transition: opacity 200ms ease; }
+html.is-loading body.site { opacity: 0; }
+
+/* 상단바: 모바일 높이 50 · 여백 16, 글자 14/132%. 스크롤해도 위에 붙어 있다(cms.css). */
+.site .topbar {
+  flex-shrink: 0;
+  height: 50px;
+  align-items: flex-start;
+  padding: 16px var(--gutter) 0;
+  background: #fff;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+}
+.site .topbar__nav { line-height: 1.32; }
+
+.site-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--gutter);
+  word-break: keep-all;   /* 피그마처럼 한글도 띄어쓰기 단위로 줄바꿈 */
+  overflow-wrap: break-word;
+}
+/* 시트 셀 안 줄바꿈을 살린다. :where로 낮춰서 푸터 마크의 white-space: pre를 덮지 않게 한다. */
+.site-page :where(p, span, li, dt, dd, h1, h2) { white-space: pre-wrap; }
+:where(.site-page) h2 { font-size: inherit; font-weight: 400; }
+
+.page-title {
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.4;   /* 두 줄이 될 때(영문 제목, 데스크톱 국/영 제목) 모든 페이지 같은 행간 */
+  letter-spacing: 0;
+}
+
+/* 밑줄 규칙: 링크가 걸린 글자는 회색 밑줄(올리면 진해짐), 링크 없는 강조는 검정 밑줄. 간격은 모두 4px. */
+.site-page a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(0, 0, 0, .3);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 160ms ease;
+}
+.site-page a:hover,
+.site-page a:focus-visible { text-decoration-color: currentColor; }
+/* 모바일에서 누를 때 버튼 영역에 회색 박스가 깜빡이지 않게(글자만 바뀌도록) */
+.site-page :is(a, button) { -webkit-tap-highlight-color: transparent; }
+
+.site [lang]:empty { display: none; }
+
+/* 모바일: 국문/영문 중 하나만 보이고 제목·소개를 탭하면 바뀐다(타입 페이지 소개와 같은 방식). */
+.site[data-lang="ko"] .bi > [lang="en"],
+.site[data-lang="en"] .bi > [lang="ko"] { display: none; }
+
+.lang-toggle {
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  transition: opacity 160ms ease;
+}
+.lang-toggle.is-changing { opacity: 0; }
+.lang-toggle:focus:not(:focus-visible) { outline: none; }
+.lang-toggle:disabled { cursor: default; }
+
+.desk-only { display: none !important; }
+
+/* 하단: 마크 + 저작권, 14/160%, 사이 12 */
+.site-end {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding: 96px 0 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+.site-end .footer__mark { margin-top: 0; }
+.site-end .footer__mark span { line-height: 1.6; }
+
+/* ---------- Info (모바일) ---------- */
+.about-m__image { margin-top: 30px; }
+.about-m__image img,
+.about-d__image img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+/* 사진 여러 장: 누르면 다음 장이 위에 겹쳐 나타난다(크로스페이드). */
+.photo-slider { position: relative; display: block; width: 100%; padding: 0; }
+.photo-slider img + img { position: absolute; inset: 0; height: 100%; opacity: 0; transition: opacity 320ms ease; }
+.photo-slider img.is-in { opacity: 1; }
+.about-m__intro { margin-top: 20px; }
+.about-m__intro p + p,
+.about-d__intro p + p { margin-top: 1.6em; }
+.about-m__intro [lang="en"] { line-height: 1.4; }
+.about-m__block { margin-top: 30px; }
+.about-m__head { display: grid; grid-template-columns: 55px 1fr; margin-bottom: 14px; }
+.about-m .members { columns: 2; column-gap: 16px; }
+.about-m .members li { break-inside: avoid; display: grid; grid-template-columns: 54px 1fr; }
+.about-m .works li { display: grid; grid-template-columns: 54px 1fr; }
+.about-m .works li + li { margin-top: 4px; }
+.contacts,
+.credits { display: grid; grid-template-columns: 97px 1fr; }
+.contacts a { overflow-wrap: anywhere; }
+
+.about-d { display: none; }
+
+/* ---------- 목록 페이지(Archive · Publish) 공통 (모바일) ---------- */
+.list-side { display: none; }
+.list-main > .page-title { margin: 24px 0 38px; }
+.soon { padding-top: 0; }
+
+/* ---------- Archive 표 (모바일): 번호 48 · 행 5/22/6 · 1px 구분선 ---------- */
+/* 한 행 = 줄(.archive-row__line: [제목 버튼(번호·국문·영문) | 카테고리 버튼들]) + 그 아래 펼침 칸.
+   제목 버튼은 subgrid로 줄의 칸을 그대로 쓴다. 펼침 칸은 그리드 밖에 둔다(iOS Safari가 접힌 칸의
+   내용 높이로 그리드 행을 키워 빈 공간이 생기던 문제). */
+.archive-table { --no: 48px; --cols: var(--no) minmax(0, 1fr) minmax(0, max-content); border-bottom: 1px solid var(--line); }
+.archive-head,
+.archive-row__line { display: grid; grid-template-columns: var(--cols); align-items: baseline; }
+.archive-head { padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.archive-row + .archive-row { border-top: 1px solid var(--line); }
+.archive-row__button {
+  grid-column: 1 / -2;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  padding: 5px 0 6px;   /* 1px 선 포함 행 간격 34(데스크톱 37.6) */
+  text-align: left;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+.archive-row__line > .archive-row__category { padding: 5px 0 6px 12px; }
+.archive-head__en,
+.archive-row__en { display: none; }
+.archive-row__category { text-align: right; padding-left: 12px; }
+/* 항목은 항상 한 줄, 넘치면 … . 펼친 항목은 전체 제목이 보이도록 줄바꿈한다. */
+.archive-head > span,
+.archive-row__button > span,
+.archive-row__category { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.archive-row.is-open .archive-row__button > span,
+.archive-row.is-open .archive-row__line > .archive-row__category { overflow: visible; white-space: normal; text-overflow: clip; }
+.archive-row__button:hover :is(.archive-row__ko, .archive-row__en),
+.archive-row.is-open :is(.archive-row__ko, .archive-row__en) { text-decoration: underline; text-underline-offset: 4px; }
+
+/* 카테고리 낱말: 누르면 그 카테고리만 보기 */
+.archive-cat { padding: 0; font: inherit; letter-spacing: inherit; text-underline-offset: 4px; }
+.archive-cat:hover,
+.archive-cat.is-active { text-decoration: underline; }
+
+/* 펼치기: 위로 스크롤된 뒤 높이 0 → 내용 높이(px)로. 높이 값은 archive.mjs가 넣고 다 열리면 auto로 푼다. */
+.archive-row__panel {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: height 360ms cubic-bezier(.2, .7, .2, 1), opacity 300ms ease;
+}
+.archive-row__panel.is-shown { opacity: 1; }
+.archive-row__inner::before { content: ''; display: block; height: 10px; }
+.archive-row__inner::after { content: ''; display: block; height: 16px; }
+.archive-row__images { display: grid; gap: 16px; }
+.archive-row__images img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.archive-row__text { display: grid; gap: 8px; margin-top: 16px; padding-left: var(--no); letter-spacing: 0; }
+.archive-row__text [lang="en"] { line-height: 1.4; }
+.archive-empty { padding: 6px 0; }
+
+/* 필터·페이지 바뀔 때: 옅어졌다가 한 줄씩 나타남 */
+.archive-table.is-leaving > .archive-row { opacity: 0; transition: opacity 180ms ease; }
+.archive-row.is-entering { animation: archive-in 300ms ease both; }
+@keyframes archive-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* 페이지 번호 ← 1 2 3 →: 지금 페이지는 밑줄, 나머지는 상단바 TAP처럼 옅게 */
+.archive-pager { display: flex; justify-content: flex-end; gap: 14px; padding-top: 14px; }
+.archive-pager[hidden] { display: none; }
+.archive-pager__item { padding: 0; font: inherit; letter-spacing: inherit; opacity: .4; transition: opacity 160ms ease; }
+.archive-pager__item:hover:not(:disabled),
+.archive-pager__item.is-current { opacity: 1; }
+.archive-pager__item.is-current { text-decoration: underline; text-underline-offset: 4px; }
+.archive-pager__item:disabled { opacity: .15; cursor: default; }
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1024px) {
+  body.site {
+    --frame-line: 1.5px;
+    --fs-text: 16px;
+    --ls-text: 0;
+  }
+  .desk-only { display: revert !important; }
+  .mobile-only { display: none !important; }
+  /* 데스크톱은 국문·영문을 나란히 보여주므로 언어 전환이 없다. */
+  .site[data-lang] .bi > [lang] { display: revert; }
+
+  /* 상단바 높이 66(위 여백 24), 아래 가로선도 상단바와 함께 고정 */
+  .site .topbar { height: 66px; padding-top: 24px; font-size: 14px; }
+  .site .topbar::after {
+    content: '';
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 0;
+    height: var(--frame-line);
+    background: var(--line);
+  }
+  .site-page { margin-inline: var(--gutter); padding: 0 0 24px; }
+  .site-end { width: 348px; align-self: flex-end; padding: 64px 0 0; }
+
+  /* Info: 사진·제목·연락처 | 국문 | 영문, 세 칸 472 · 칸 사이 24 + 세로선 */
+  .about-m { display: none; }
+  .about-d {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+  .about-d__side { display: flex; flex-direction: column; padding-top: 24px; }
+  .about-d__image figcaption { margin-top: 8px; font-size: 12px; line-height: 1.6; }
+  /* 세로선 양쪽 모두 24px 띄운다(선은 왼쪽 칸 오른쪽 끝, 글은 선에서 24px 안쪽). 선은 페이지 맨 아래까지. */
+  .about-d__card {
+    flex: 1;
+    margin-top: 25px;
+    margin-bottom: -24px;
+    padding: 27px 24px 24px 0;
+    border-top: var(--frame-line) solid var(--line);
+    border-right: var(--frame-line) solid var(--line);
+  }
+  .about-d__side > .about-d__card:first-child { margin-top: 0; border-top: 0; }
+  .about-d__notice { margin-top: 46px; }
+  .about-d .contacts { margin-top: 32px; grid-template-columns: 124px 1fr; }
+
+  .about-d__main {
+    grid-column: 2 / 4;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .about-d__main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: -24px;
+    left: calc(50% - 12px - var(--frame-line) / 2);
+    width: var(--frame-line);
+    background: var(--line);
+  }
+  .about-d__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    padding-top: 24px;
+  }
+  .about-d__grid > :nth-child(odd) { padding-right: calc(24px + var(--frame-line)); }
+  .about-d__intro--en { font-size: 16px; line-height: 1.5; }
+  .about-d__head { margin-top: 59px; }
+  .about-d__head--works { margin-top: 30px; }
+  .about-d__list { margin-top: 14px; }
+  .about-d .works-row--first { margin-top: 4px; }
+  .about-d .works-row + .works-row:not(.works-row--first) { margin-top: 0; }
+  .about-d .members { columns: 2; column-gap: 24px; }
+  .about-d .members--ko { width: 224px; }
+  .about-d .works-row { padding-bottom: 4px; }
+  .about-d .works li { display: grid; grid-template-columns: 124px 1fr; }
+
+  /* Archive · Publish: 왼쪽 224(썸네일·제목) | 24 | 표. 표 안 세로선은 번호 156 + 국문 제목 440 : 영문 620 비율 */
+  .list-page {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 224px minmax(0, 1fr);
+    column-gap: 24px;
+  }
+  /* 왼쪽 칸(썸네일 + 제목 카드)은 스크롤을 따라온다. 화면이 낮으면 둘 사이 간격을 줄인다. */
+  .list-side {
+    position: sticky;
+    top: 66px;
+    align-self: start;
+    height: calc(100svh - 66px);
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(56px + var(--fs-text) * 1.6 + 7px);   /* 표 [1]번 행 윗선 높이 */
+  }
+  /* 썸네일 칸은 [1]번 행 윗선부터 [4]번 행 아랫선까지(행 높이 = 글자 × 1.6 + 여백 11 + 선 1).
+     사진 비율과 상관없이 칸 크기는 고정(호버해도 아래 카드가 밀리지 않게) */
+  .list-thumb { position: relative; flex-shrink: 0; overflow: hidden; height: calc((var(--fs-text) * 1.6 + 12px) * 4); }
+  .list-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .list-side__card {
+    flex: 1;
+    margin-top: min(205px, max(24px, 100svh - 762px));
+    margin-bottom: -24px;   /* 왼쪽 세로선도 페이지 맨 아래까지 */
+    padding: 27px 24px 24px 0;
+    border-top: var(--frame-line) solid var(--line);
+    border-right: var(--frame-line) solid var(--line);
+  }
+  .list-side__notice { margin-top: 66px; }
+  .list-side__notice + p { margin-top: 38px; line-height: 1.4; }
+  .list-side__card a { overflow-wrap: anywhere; }
+
+  .list-main {
+    --no: 156px;
+    --split: calc(var(--no) + (100% - var(--no)) * 0.4151);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-top: 56px;
+  }
+  .list-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: -24px;
+    left: var(--split);
+    width: var(--frame-line);
+    background: var(--line);
+  }
+
+  /* 번호 | 국문 제목 ‖ 영문 제목 | 카테고리, 행 5/25.6/6 */
+  .archive-table { --no: 156px; --cols: var(--no) calc((100% - var(--no)) * 0.4151) minmax(0, 1fr) minmax(0, max-content); }
+  .archive-head__en,
+  .archive-row__en { display: block; padding-left: 24px; padding-right: 12px; }
+  /* 국문 제목 칸도 세로선 앞에서 24px 띄운다 */
+  .archive-head > :nth-child(2),
+  .archive-row__ko { padding-right: 24px; }
+  .archive-row__inner::before { height: 18px; }   /* 펼친 상태에서는 제목 아래 선 없음 */
+  .archive-row__inner::after { height: 68px; }
+  /* 사진은 반반 두 칸, 홀수면 마지막 장은 왼쪽 칸 */
+  .archive-row__images { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .archive-row__text {
+    grid-template-columns: calc(var(--no) + (100% - var(--no)) * 0.4151) minmax(0, 1fr);
+    gap: 0;
+    margin-top: 37px;
+    padding-left: 0;
+  }
+  /* 펼친 설명은 국문은 국문 제목, 영문은 영문 제목 시작선에 맞춘다 */
+  .archive-row__text [lang="ko"] { grid-column: 1; padding: 0 24px 0 var(--no); }
+  .archive-row__text [lang="en"] { grid-column: 2; padding-left: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-toggle,
+  .photo-slider img,
+  .archive-row__panel,
+  .archive-pager__item { transition: none; }
+  .archive-row.is-entering { animation: none; }
+}
