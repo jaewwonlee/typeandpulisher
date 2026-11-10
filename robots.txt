@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /dummy/
+
+Sitemap: https://typeandpublisher.kr/sitemap.xml

@@ -3,7 +3,10 @@
    ========================================================== */
 @font-face {
   font-family: 'Noto Sans KR';
-  src: url('../fonts/NotoSansKR-Regular.woff2') format('woff2');
+  /* 기기에 이미 있으면 그 글꼴을 먼저 쓴다(Noto Sans CJK KR은 안드로이드 기본 한글 글꼴, 같은 디자인·수치) */
+  src: local('Noto Sans KR Regular'), local('NotoSansKR-Regular'),
+    local('Noto Sans CJK KR Regular'), local('NotoSansCJKkr-Regular'),
+    url('../fonts/NotoSansKR-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -13,7 +16,8 @@
    한글은 이 범위에 없으므로 자동으로 Noto Sans KR로 떨어진다(섞어짜기). */
 @font-face {
   font-family: 'Atlas Grotesk';
-  src: url('../fonts/AtlasGrotesk-Regular.woff2') format('woff2');
+  src: local('Atlas Grotesk Regular'), local('AtlasGrotesk-Regular'),
+    url('../fonts/AtlasGrotesk-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -33,6 +37,8 @@
   unicode-range: U+3008-300B;
 }
 
+/* TAP 서체(Witz 등, cms.css의 Type-·Glyph- 글꼴)에는 local()을 쓰지 않는다: 아직 다듬는 중인 서체라
+   기기에 깔린 예전 버전이 사이트의 최신 파일 대신 쓰일 수 있다. */
 /* The typeface being showcased on this site */
 @font-face {
   font-family: 'Witz';
