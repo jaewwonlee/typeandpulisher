@@ -50,8 +50,10 @@ for record in records:
     soup.select_one('meta[name="description"]')['content'] = SITE_DESCRIPTION
     canonical = soup.new_tag('link', rel='canonical', href=f'https://typeandpublisher.kr/type/{slug}/')
     soup.head.append(canonical)
-    for prop, content in [('og:title', soup.title.string), ('og:description', SITE_DESCRIPTION), ('og:url', canonical['href']), ('og:type', 'website')]:
+    for prop, content in [('og:title', soup.title.string), ('og:description', SITE_DESCRIPTION), ('og:url', canonical['href']), ('og:type', 'website'),
+                          ('og:image', 'https://typeandpublisher.kr/og-image.png'), ('og:image:width', '1200'), ('og:image:height', '630')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
+    soup.head.append(soup.new_tag('meta', attrs={'name': 'twitter:card', 'content': 'summary_large_image'}))
     soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=30'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', href='/favicon.png'))
     headline = soup.select_one('.hero__headline')
