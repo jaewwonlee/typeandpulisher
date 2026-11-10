@@ -1,10 +1,12 @@
 import { SHEET_ID } from './cms-data.mjs?v=7';
-import { rowsFromCSV } from './site-data.mjs?v=5';
+import { rowsFromCSV } from './site-data.mjs?v=6';
+import { animateMenu } from './menu-drop.mjs?v=1';
 
 // Info / Archive / Publish 공통: 상단 메뉴 닫기와 시트 탭 실시간 반영.
 
 export function initMenu() {
   const menu = document.querySelector('.type-menu');
+  animateMenu(menu);
   document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) menu.open = false; });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }

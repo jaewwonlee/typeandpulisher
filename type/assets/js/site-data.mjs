@@ -102,10 +102,11 @@ export function infoFromRows(rows) {
 // '공개'에 체크된 항목만, 날짜 최신순. 번호는 정렬된 순서대로 1부터, 썸네일은 첫 번째 사진.
 export function archiveFromRows(rows) {
   const visible = rows.filter(r => /^true$/i.test(r['공개']) && (r['제목 국문'] || r['제목 영문']));
-  return newestFirst(visible, r => r['날짜']).map((r, i) => {
+  // 번호는 가장 오래된(맨 아래) 항목이 1번. 공개한 항목만 센다.
+  return newestFirst(visible, r => r['날짜']).map((r, i, list) => {
     const photos = images(r['사진']);
     return {
-      no: String(i + 1),
+      no: String(list.length - i),
       ko: r['제목 국문'],
       en: r['제목 영문'],
       category: r['카테고리'],

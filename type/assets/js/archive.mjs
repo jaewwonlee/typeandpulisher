@@ -1,5 +1,5 @@
-import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=5';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=4';
+import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=6';
+import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=5';
 
 const PAGE_SIZE = 15;
 const table = document.querySelector('.archive-table');
@@ -106,11 +106,12 @@ function close(row) {
   setTimeout(() => box.remove(), reduced() ? 0 : 360);
 }
 
-function rowFor(item) {
+// number: 지금 보이는 목록(카테고리로 걸렀으면 그 안)에서 가장 오래된 항목이 1번.
+function rowFor(item, number) {
   const row = el('div', 'archive-row');
   const button = el('button', 'archive-row__button');
   button.type = 'button';
-  button.append(el('span', '', `[${item.no}]`), el('span', 'archive-row__ko', item.ko || item.en), el('span', 'archive-row__en', item.en));
+  button.append(el('span', '', `[${number}]`), el('span', 'archive-row__ko', item.ko || item.en), el('span', 'archive-row__en', item.en));
   const line = el('div', 'archive-row__line');
   line.append(button, categoryCell(item));
   row.append(line);
@@ -157,7 +158,8 @@ function head() {
 function draw({ entering = false } = {}) {
   const list = visibleItems();
   page = Math.min(page, pageCount());
-  const rows = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(rowFor);
+  const start = (page - 1) * PAGE_SIZE;
+  const rows = list.slice(start, start + PAGE_SIZE).map((item, i) => rowFor(item, list.length - start - i));
   if (!rows.length) rows.push(el('p', 'archive-empty', '준비 중이에요.'));
   if (entering) rows.forEach((row, i) => { row.classList.add('is-entering'); row.style.animationDelay = `${Math.min(i, 10) * 20}ms`; });
   table.replaceChildren(head(), ...rows);

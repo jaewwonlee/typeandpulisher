@@ -1,4 +1,5 @@
 import { createUsageGallery } from './usage-gallery.mjs?v=7';
+import { animateMenu } from './menu-drop.mjs?v=1';
 import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=7';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
@@ -106,6 +107,7 @@ function apply(next) {
 }
 
 const menu = $('.type-menu');
+animateMenu(menu);
 document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) menu.open = false; });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }

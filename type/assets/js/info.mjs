@@ -1,11 +1,12 @@
-import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=5';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=4';
+import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=6';
+import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=5';
 
 const body = document.body;
 const mobile = document.querySelector('.about-m');
 const desk = document.querySelector('.about-d');
-// 터치 화면에서 두 번 탭은 메뉴(tap-menu.mjs)다. 제목·소개·사진은 첫 탭에 바로 반응하고,
+// 터치 화면에서 두 번 탭은 메뉴(tap-menu.mjs)다. 제목·소개는 첫 탭에 바로 반응하고,
 // 0.32초 안에 두 번째 탭이 오면 첫 탭 동작을 되돌려 메뉴만 열리게 한다.
+// 사진은 연달아 넘기는 일이 많아 탭 메뉴에서 빼고 누를 때마다 넘기기만 한다.
 const DOUBLE_TAP = 320;
 const touch = matchMedia('(pointer: coarse)').matches;
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -44,7 +45,7 @@ const contactLinks = (contacts, label) => {
   return dl;
 };
 // 사진이 여러 장이면 누를 때마다 다음 장이 겹쳐 나타난다(모바일·데스크톱 같은 순번).
-let slide = 0, photos = { images: [], captions: [] }, slidePending = null, slidePrev = 0;
+let slide = 0, photos = { images: [], captions: [] };
 const captionFor = i => (photos.captions.length > 1 ? photos.captions[i] : photos.captions[0]) || '';
 const photo = src => {
   const img = el('img');
@@ -77,15 +78,8 @@ const image = (data, className) => {
   if (data.images.length > 1) {
     const button = el('button', 'photo-slider');
     button.type = 'button';
-    button.dataset.tapMenuAllow = '';
     button.setAttribute('aria-label', `사진 ${slide + 1}/${data.images.length}, 눌러서 다음 사진`);
-    button.addEventListener('click', () => {
-      if (justOpenedMenu()) return;
-      if (touch && slidePending) { clearTimeout(slidePending); slidePending = null; showSlide(slidePrev); return; }
-      slidePrev = slide;
-      showSlide((slide + 1) % data.images.length);
-      if (touch) slidePending = setTimeout(() => { slidePending = null; }, DOUBLE_TAP);
-    });
+    button.addEventListener('click', () => showSlide((slide + 1) % data.images.length));
     button.append(img);
     figure.append(button);
   } else figure.append(img);
@@ -219,6 +213,5 @@ mobile.addEventListener('click', event => {
 document.addEventListener('tapmenu:open', () => {
   menuOpenedAt = performance.now();
   if (langPending) { clearTimeout(langPending); langPending = null; mobile.querySelectorAll('.lang-toggle').forEach(t => t.classList.remove('is-changing')); }
-  if (slidePending) { clearTimeout(slidePending); slidePending = null; showSlide(slidePrev); }
 });
 watchTab({ name: 'info', gid: TABS.info, headers: INFO_HEADERS, headerRow: 1, seed: seedFrom('info-seed'), render });

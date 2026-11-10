@@ -26,7 +26,7 @@ body.site > * { transition: opacity 200ms ease; }
 html.is-loading body.site > :not(.site-loading) { opacity: 0; }
 /* 로딩 화면(Type 페이지 .loading-screen 모양 그대로)은 0.35초 넘게 기다릴 때만 나타나
    빠르게 뜨는 대부분의 경우에는 깜빡이지 않는다. */
-.site-loading { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 200ms ease, visibility 0s 200ms; }
+.site-loading { color: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 200ms ease, visibility 0s 200ms; }
 html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both; }
 @keyframes site-loading-in { from { opacity: 0; visibility: visible; } to { opacity: 1; visibility: visible; } }
 .site-loading__face { display: grid; justify-items: center; font-family: 'Noto Sans KR', sans-serif; }

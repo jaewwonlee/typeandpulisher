@@ -149,7 +149,7 @@ test('Google Drive share links become image addresses; other hosts are unchanged
   assert.deepEqual(imageURLs('https://drive.google.com/file/d/A1/view\n/images/b.jpg'), ['https://lh3.googleusercontent.com/d/A1=w2400', '/images/b.jpg']);
 });
 
-test('Archive shows only checked rows, newest date first, numbered in order, first photo as thumbnail', () => {
+test('Archive shows only checked rows, newest date first, oldest numbered 1, first photo as thumbnail', () => {
   const items = archiveFromRows(rowsFromCSV(csv([ARCHIVE_HEADERS,
     ['2026.08.10', 'TRUE', '한강 상영회', '', 'LC, Event', '', '', ''],
     ['', 'TRUE', '날짜 없음', '', '', '', '', ''],
@@ -158,7 +158,7 @@ test('Archive shows only checked rows, newest date first, numbered in order, fir
     ['2026.10', '', '체크 안 함', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
   ]), ARCHIVE_HEADERS));
-  assert.deepEqual(items.map(i => [i.no, i.ko]), [['1', '설치'], ['2', '한강 상영회'], ['3', '날짜 없음']]);
+  assert.deepEqual(items.map(i => [i.no, i.ko]), [['3', '설치'], ['2', '한강 상영회'], ['1', '날짜 없음']]);
   assert.deepEqual(items[0].images, ['https://example.com/a.jpg', '/archive/b.jpg']);
   assert.equal(items[0].thumb, 'https://example.com/a.jpg');
   assert.equal(items[1].thumb, '');
