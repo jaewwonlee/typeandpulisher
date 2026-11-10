@@ -195,17 +195,11 @@ async function loadColor() {
     function showFirstCircle(x, y, time) {
         firstTap = { x, y, time };
         firstCircle = makeCircle("tap-circle--first", "", x, y);
-        firstCircle.setAttribute("aria-label", "첫 번째 터치");
-        firstCircle.addEventListener("pointerup", (event) => {
-            event.stopPropagation();
-            if (!finishGesture(event)) return;
-            const now = performance.now();
-            if (firstTap && now - firstTap.time <= SETTINGS.doubleTapDelay) {
-                openMenu(event.clientX, event.clientY);
-            } else {
-                closeAll();
-            }
-        });
+        firstCircle.setAttribute("aria-hidden", "true");
+        // 첫 원은 보여주기만 한다. 원이 터치를 가로채면 브라우저가 이어서 보내는 click이
+        // 아래 버튼(메뉴, Info 제목·소개·사진)이 아니라 원에 떨어져 버튼이 안 눌린다.
+        // 두 번째 탭은 원 아래 요소로 가서 아래 document 핸들러가 메뉴를 연다.
+        firstCircle.style.pointerEvents = "none";
 
         singleTapTimer = window.setTimeout(closeAll, SETTINGS.singleTapLifetime);
     }
@@ -220,9 +214,9 @@ async function loadColor() {
         if (event.pointerType === "mouse" || !event.isPrimary) return;
         if (!finishGesture(event)) return;
 
-        // Preserve normal taps on the site's existing links and controls.
+        // Preserve normal taps on the site's existing links and controls (상단 메뉴 summary 포함).
         // data-tap-menu-allow 버튼(Info 제목·소개·사진)은 자기 동작과 탭 메뉴를 함께 쓴다.
-        const control = event.target.closest("a, button, input, select, textarea, label, [contenteditable], [data-tap-menu-ignore]");
+        const control = event.target.closest("a, button, summary, input, select, textarea, label, [contenteditable], [data-tap-menu-ignore]");
         if (control && !control.hasAttribute("data-tap-menu-allow")) return;
 
         if (menuIsOpen) {

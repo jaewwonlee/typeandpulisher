@@ -22,8 +22,16 @@ body.site {
 }
 
 /* 첫 화면: 글꼴·내용이 준비되면 한 번에 나타난다(index.html 등의 인라인 스크립트 + site.mjs) */
-body.site { transition: opacity 200ms ease; }
-html.is-loading body.site { opacity: 0; }
+body.site > * { transition: opacity 200ms ease; }
+html.is-loading body.site > :not(.site-loading) { opacity: 0; }
+/* 로딩 화면(Type 페이지 .loading-screen 모양 그대로)은 0.35초 넘게 기다릴 때만 나타나
+   빠르게 뜨는 대부분의 경우에는 깜빡이지 않는다. */
+.site-loading { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 200ms ease, visibility 0s 200ms; }
+html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both; }
+@keyframes site-loading-in { from { opacity: 0; visibility: visible; } to { opacity: 1; visibility: visible; } }
+.site-loading__face { display: grid; justify-items: center; font-family: 'Noto Sans KR', sans-serif; }
+.site-loading__face span { grid-area: 1 / 1; white-space: pre; animation: footer-mark-b 1.1s steps(1, end) infinite; }
+.site-loading__face span:nth-child(1) { animation-name: footer-mark-a; }
 
 /* 상단바: 모바일 높이 50 · 여백 16, 글자 14/132%. 스크롤해도 위에 붙어 있다(cms.css). */
 .site .topbar {
@@ -173,6 +181,7 @@ html.is-loading body.site { opacity: 0; }
 .archive-cat { padding: 0; font: inherit; letter-spacing: inherit; text-underline-offset: 4px; }
 .archive-cat:hover,
 .archive-cat.is-active { text-decoration: underline; }
+.archive-table.is-filtered .archive-cat:not(.is-active) { opacity: .4; }
 
 /* 펼치기: 위로 스크롤된 뒤 높이 0 → 내용 높이(px)로. 높이 값은 archive.mjs가 넣고 다 열리면 auto로 푼다. */
 .archive-row__panel {
@@ -321,7 +330,7 @@ html.is-loading body.site { opacity: 0; }
 
   .list-main {
     --no: 156px;
-    --split: calc(var(--no) + (100% - var(--no)) * 0.4151);
+    --split: 50%;   /* 가운데 세로선은 펼친 사진 두 장 사이 정가운데 */
     position: relative;
     display: flex;
     flex-direction: column;
@@ -332,13 +341,15 @@ html.is-loading body.site { opacity: 0; }
     position: absolute;
     top: 0;
     bottom: -24px;
-    left: var(--split);
+    left: calc(var(--split) - var(--frame-line) / 2);
+    z-index: 1;   /* 펼친 사진보다 위에 */
     width: var(--frame-line);
     background: var(--line);
+    pointer-events: none;
   }
 
   /* 번호 | 국문 제목 ‖ 영문 제목 | 카테고리, 행 5/25.6/6 */
-  .archive-table { --no: 156px; --cols: var(--no) calc((100% - var(--no)) * 0.4151) minmax(0, 1fr) minmax(0, max-content); }
+  .archive-table { --no: 156px; --cols: var(--no) calc(50% - var(--no)) minmax(0, 1fr) minmax(0, max-content); }
   .archive-head__en,
   .archive-row__en { display: block; padding-left: 24px; padding-right: 12px; }
   /* 국문 제목 칸도 세로선 앞에서 24px 띄운다 */
@@ -349,7 +360,7 @@ html.is-loading body.site { opacity: 0; }
   /* 사진은 반반 두 칸, 홀수면 마지막 장은 왼쪽 칸 */
   .archive-row__images { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .archive-row__text {
-    grid-template-columns: calc(var(--no) + (100% - var(--no)) * 0.4151) minmax(0, 1fr);
+    grid-template-columns: 50% minmax(0, 1fr);
     gap: 0;
     margin-top: 37px;
     padding-left: 0;
@@ -365,4 +376,6 @@ html.is-loading body.site { opacity: 0; }
   .archive-row__panel,
   .archive-pager__item { transition: none; }
   .archive-row.is-entering { animation: none; }
+  .site-loading__face span { animation: none; }
+  .site-loading__face span:nth-child(2) { display: none; }
 }

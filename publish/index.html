@@ -13,7 +13,7 @@
 <link href="/type/assets/css/main.css?v=28" rel="stylesheet"/>
 <link href="/type/assets/css/preview.css?v=28" rel="stylesheet"/>
 <link href="/type/assets/css/cms.css?v=28" rel="stylesheet"/>
-<link href="/type/assets/css/site.css?v=6" rel="stylesheet"/>
+<link href="/type/assets/css/site.css?v=8" rel="stylesheet"/>
 <link href="/type/assets/css/tap-menu.css?v=1" rel="stylesheet"/>
 <link href="https://typeandpublisher.kr/publish/" rel="canonical"/>
 <meta content="TAP | Publish" property="og:title"/>
@@ -23,6 +23,14 @@
 <link href="/favicon.png" rel="icon" type="image/png"/>
 </head>
 <body class="site" data-page="publish">
+<!-- 시트·글꼴 준비가 0.35초 넘게 걸릴 때만 보이는 로딩 화면(site.css). 손을 흔드는 두 장면이 번갈아 나온다. -->
+<div aria-hidden="true" class="loading-screen site-loading">
+  <p class="loading-screen__face site-loading__face"><span>\( ˙o˙ )/</span><span>_( ˙o˙ )_</span></p>
+  <div class="loading-screen__text">
+    <span>Loading<span class="placeholder__dots"><span>.</span><span>.</span><span>.</span></span></span>
+    <span>로딩 중이에요<span class="placeholder__dots"><span>.</span><span>.</span><span>.</span></span></span>
+  </div>
+</div>
 <div class="topbar">
 <a class="topbar__brand" href="/"><img alt="" class="topbar__mark" height="16" src="/type/assets/images/tap-symbol.svg" width="15"/>타입앤퍼블리셔</a>
 <div class="topbar__nav"><a class="topbar__home" href="/">TAP</a><details class="type-menu"><summary aria-label="페이지 메뉴">/Publish</summary><nav aria-label="페이지" class="type-menu__links"><a href="/">TAP/<span class="type-menu__name">Info</span></a><a href="/archive/">TAP/<span class="type-menu__name">Archive</span></a><a aria-current="page" href="/publish/">TAP/<span class="type-menu__name">Publish</span></a><a href="/type/">TAP/<span class="type-menu__name">Type</span></a></nav></details></div>
@@ -54,6 +62,6 @@
   </div>
 </main>
 <script src="/type/assets/js/publish.mjs?v=4" type="module"></script>
-<script src="/type/assets/js/tap-menu.mjs?v=3" type="module"></script>
+<script src="/type/assets/js/tap-menu.mjs?v=4" type="module"></script>
 </body>
 </html>

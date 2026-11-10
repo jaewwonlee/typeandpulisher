@@ -59,7 +59,7 @@ test('All pages preserve the six-row original information layout and original co
     assert.match(html,/<details class="type-menu">/);
     assert.match(html,/tap-menu\.mjs\?v=/);
     assert.match(html,/content="Type and Publisher\(TAP\)은 [^"]*" property="og:description"/);
-    assert.equal([...html.matchAll(/>Type\/<span class="type-menu__name">(Cake|Giul|Rooms|Umm|Witz)<\/span><\/a>/g)].length,5);
+    assert.equal([...html.matchAll(/>TAP\/Type\/<span class="type-menu__name">(Cake|Giul|Rooms|Umm|Witz)<\/span><\/a>/g)].length,5);
     assert.ok(!html.includes('kiosk'));
     const core = JSON.parse(fs.readFileSync(new URL(`../type/assets/js/${slug}-core.json`,import.meta.url),'utf8'));
     assert.deepEqual(core,original.filter(cp=>core.includes(cp)));

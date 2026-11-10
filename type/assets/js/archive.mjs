@@ -44,12 +44,9 @@ function panel(item, id) {
   return box;
 }
 
-// 줄임말 카테고리는 데스크톱에서 풀어 쓴다(모바일은 줄임말 그대로).
+// 줄임말 카테고리는 평소엔 줄임말, 눌러서 그 카테고리만 볼 때만 풀어 쓴다(좁은 화면에서 잘리지 않게).
 const FULL_NAMES = { LC: 'Last Call' };
-function categoryLabel(name) {
-  if (!FULL_NAMES[name]) return [name];
-  return [el('span', 'desk-only', FULL_NAMES[name]), el('span', 'mobile-only', name)];
-}
+const categoryLabel = name => name === filter && FULL_NAMES[name] || name;
 
 // 카테고리 낱말마다 버튼: 누르면 그 카테고리만, 같은 것을 다시 누르면 전체.
 function categoryCell(item) {
@@ -57,8 +54,9 @@ function categoryCell(item) {
   categoriesOf(item).forEach((name, i) => {
     if (i) cell.append(', ');
     const button = el('button', 'archive-cat' + (name === filter ? ' is-active' : ''));
-    button.append(...categoryLabel(name));
+    button.append(categoryLabel(name));
     button.type = 'button';
+    if (FULL_NAMES[name]) button.title = FULL_NAMES[name];
     button.setAttribute('aria-pressed', String(name === filter));
     button.addEventListener('click', () => setFilter(name === filter ? null : name));
     cell.append(button);
@@ -146,7 +144,7 @@ function head() {
   if (filter) {
     // 걸러 보는 중에는 머리말에 카테고리가 나오고, 누르면 전체로 돌아간다.
     const button = el('button', 'archive-cat is-active');
-    button.append(...categoryLabel(filter));
+    button.append(categoryLabel(filter));
     button.type = 'button';
     button.setAttribute('aria-label', `${FULL_NAMES[filter] || filter}만 보는 중, 눌러서 전체 보기`);
     button.addEventListener('click', () => setFilter(null));
@@ -163,6 +161,8 @@ function draw({ entering = false } = {}) {
   if (!rows.length) rows.push(el('p', 'archive-empty', '준비 중이에요.'));
   if (entering) rows.forEach((row, i) => { row.classList.add('is-entering'); row.style.animationDelay = `${Math.min(i, 10) * 20}ms`; });
   table.replaceChildren(head(), ...rows);
+  // 걸러 보는 중에는 고르지 않은 카테고리를 회색으로.
+  table.classList.toggle('is-filtered', Boolean(filter));
   drawPager();
   showThumb(items.find(item => item.no === hovered));
 }

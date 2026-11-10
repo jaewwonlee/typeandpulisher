@@ -98,7 +98,7 @@ function apply(next) {
   document.querySelectorAll('.topbar__nav a').forEach(a => {
     const record = records.find(r => a.getAttribute('href') === `/type/${r['주소']}/`);
     if (record) {
-      a.replaceChildren('Type/', Object.assign(document.createElement('span'), { className: 'type-menu__name', textContent: record['서체명 영문'] }));
+      a.replaceChildren('TAP/Type/', Object.assign(document.createElement('span'), { className: 'type-menu__name', textContent: record['서체명 영문'] }));
       a.style.setProperty('--item-main', record['대표색']);
     }
   });
