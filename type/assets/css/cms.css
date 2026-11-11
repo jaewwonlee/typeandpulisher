@@ -92,13 +92,13 @@ body[data-slug="cake"] .hero__headline { line-height:1.75; }
    글리프 묶음(.glyphs__layout)을 벗어나면 같이 올라간다(데스크톱과 같은 방식). */
 @media(max-width:768px) {
   .glyphs__layout { gap:12px; }
-  .glyphs__preview { position:sticky; top:50px; z-index:2; background:var(--white,#fff); }
+  /* 위 선(1px)은 붙어 있는 동안 상단바 뒤로 들어가 보이지 않게 1px 더 올린다. */
+  .glyphs__preview { position:sticky; top:49px; z-index:2; background:var(--white,#fff); }
   .glyphs__preview-body { min-height:132px; padding:12px 0; }
   .glyphs__code { top:12px; }
 
   /* 모바일 영상·사용 예시: 1줄 [제목칸 이름 … 오른쪽 끝 링크/정보], 2줄 제목·설명 */
   .head-row,.caption-row { grid-template-columns:minmax(0,1fr) auto; column-gap:16px; }
-  .head-row { padding-bottom:12px; }
   .col-label { grid-column:1; grid-row:1; }
   .col-a { grid-column:1 / -1; grid-row:2; }
   .head-row .col-b:empty { display:none; }
@@ -106,14 +106,14 @@ body[data-slug="cake"] .hero__headline { line-height:1.75; }
 }
 
 /* 푸터 이스터에그: 춤추는 이모티콘을 누르면 위에 말풍선으로 웹 크레딧(credits.mjs). 피그마 tap-dev '말풍선' 페이지 기준:
-   흰 바탕 · 1px 검정 테두리 · 폭 302 · 아래 가운데 꼬리(밑변 40, 높이 20) · 꼬리 끝과 이모티콘 사이 20 */
+   흰 바탕 · 1px 검정 테두리 · 폭 302 · 아래 가운데 꼬리(밑변 40, 높이 20) · 꼬리 끝과 이모티콘 머리 사이 28 */
 .credit-anchor { position:relative; display:flex; flex-direction:column; align-items:center; }
 .footer__end .credit-anchor { margin-top:1.3em; }
 .credit-anchor .footer__mark { margin-top:0; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 .credit-anchor .footer__mark:focus:not(:focus-visible) { outline:none; }
 .credit-bubble {
   --shift:0px;
-  position:absolute; left:50%; bottom:calc(100% + 20px); z-index:30;
+  position:absolute; left:50%; bottom:calc(100% + 28px); z-index:30;
   width:302px; max-width:calc(100vw - 32px);
   padding:14px 16px 16px;
   background:#fff; color:#111; border:1px solid #111;

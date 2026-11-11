@@ -1,5 +1,5 @@
 import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=6';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=6';
+import { initMenu, watchTab, seedFrom, el, sized } from './site.mjs?v=7';
 
 const body = document.body;
 const mobile = document.querySelector('.about-m');
@@ -44,7 +44,7 @@ const captionFor = i => (photos.captions.length > 1 ? photos.captions[i] : photo
 const photo = src => {
   const img = el('img');
   // 구글 드라이브 이미지(lh3)는 Referer가 붙으면 간헐적으로 403을 준다.
-  img.referrerPolicy = 'no-referrer'; img.src = src; img.decoding = 'async'; img.draggable = false;
+  img.referrerPolicy = 'no-referrer'; img.src = sized(src, 1600); img.decoding = 'async'; img.draggable = false;
   return img;
 };
 function showSlide(index) {

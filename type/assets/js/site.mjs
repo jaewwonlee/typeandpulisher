@@ -32,6 +32,10 @@ export function linkify(text) {
   return nodes;
 }
 
+// 구글 드라이브 사진(lh3)은 주소 끝 =w숫자로 크기를 고를 수 있고 -rw를 붙이면 WebP로 온다.
+// 원본(=w2400 JPEG)보다 3~4배 가벼워서 보이는 크기에 맞춰 받는다. 다른 주소는 그대로 둔다.
+export const sized = (src, width) => String(src || '').replace(/^(https:\/\/lh3\.googleusercontent\.com\/d\/[\w-]+)=w\d+$/, `$1=w${width}-rw`);
+
 export const el = (tag, className, text) => {
   const node = document.createElement(tag);
   if (className) node.className = className;

@@ -197,7 +197,22 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 .archive-row__inner::before { content: ''; display: block; height: 10px; }
 .archive-row__inner::after { content: ''; display: block; height: 16px; }
 .archive-row__images { display: grid; gap: 16px; }
-.archive-row__images img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+/* 사진이 뜨기 전에는 옅은 회색 칸(이미지 자리), 다 받으면 사진이 살며시 나타난다. */
+.archive-row__images img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: #f2f2f2; }
+.archive-row__images img:not(.is-loaded) { color: transparent; }
+.archive-row__images img.is-loaded { animation: archive-img-in 320ms ease both; }
+@keyframes archive-img-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* 사진을 받는 동안 커서(터치는 누른 자리) 오른쪽 아래에서 도는 | / — \ (archive.mjs) */
+.img-loader {
+  position: fixed; left: 0; top: 0; z-index: 100;
+  margin: 14px 0 0 14px;
+  font: 14px/1 'Noto Sans KR', sans-serif;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.img-loader.is-on { opacity: 1; transition-delay: 120ms; }
 .archive-row__text { display: grid; gap: 8px; margin-top: 16px; padding-left: var(--no); letter-spacing: 0; }
 .archive-row__text [lang="en"] { line-height: 1.4; }
 .archive-empty { padding: 6px 0; }
@@ -378,7 +393,8 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
   .archive-row__panel,
   .archive-row__inner,
   .archive-pager__item { transition: none; }
-  .archive-row.is-entering { animation: none; }
+  .archive-row.is-entering,
+  .archive-row__images img.is-loaded { animation: none; }
   .site-loading__face span { animation: none; }
   .site-loading__face span:nth-child(2) { display: none; }
 }
