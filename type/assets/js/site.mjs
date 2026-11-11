@@ -1,16 +1,35 @@
 import { SHEET_ID } from './cms-data.mjs?v=7';
 import { rowsFromCSV } from './site-data.mjs?v=6';
-import { animateMenu } from './menu-drop.mjs?v=1';
+import { animateMenu, closeMenu } from './menu-drop.mjs?v=2';
+import { initCredits } from './credits.mjs?v=1';
 
 // Info / Archive / Publish 공통: 상단 메뉴 닫기와 시트 탭 실시간 반영.
 
 export function initMenu() {
   const menu = document.querySelector('.type-menu');
   animateMenu(menu);
-  document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) menu.open = false; });
+  initCredits();
+  document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) closeMenu(menu); });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    if (event.key === 'Escape' && menu?.open) { closeMenu(menu); menu.querySelector('summary').focus(); }
   });
+}
+
+// 시트 칸의 글은 CSV로 받아서 셀에 건 하이퍼링크는 사라진다. 그래서 글 안에
+// [보일 글자](https://주소) 형식이나 https://로 시작하는 주소를 그대로 쓰면 링크로 만든다(새 탭).
+const LINK = /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<>()]*[^\s<>().,!?'"’”])/g;
+export function linkify(text) {
+  const nodes = [];
+  let last = 0;
+  for (const m of String(text ?? '').matchAll(LINK)) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+    const a = el('a', '', m[1] || m[3]);
+    a.href = m[2] || m[3]; a.target = '_blank'; a.rel = 'noopener';
+    nodes.push(a);
+    last = m.index + m[0].length;
+  }
+  if (last < String(text ?? '').length) nodes.push(text.slice(last));
+  return nodes;
 }
 
 export const el = (tag, className, text) => {

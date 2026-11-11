@@ -1,5 +1,5 @@
 import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=6';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=5';
+import { initMenu, watchTab, seedFrom, el, linkify } from './site.mjs?v=6';
 
 const PAGE_SIZE = 15;
 const table = document.querySelector('.archive-table');
@@ -36,8 +36,9 @@ function panel(item, id) {
   }
   if (item.descKo || item.descEn) {
     const text = el('div', 'archive-row__text');
-    if (item.descKo) text.append(Object.assign(el('p', '', item.descKo), { lang: 'ko' }));
-    if (item.descEn) text.append(Object.assign(el('p', '', item.descEn), { lang: 'en' }));
+    const para = (value, lang) => { const p = el('p'); p.lang = lang; p.append(...linkify(value)); return p; };
+    if (item.descKo) text.append(para(item.descKo, 'ko'));
+    if (item.descEn) text.append(para(item.descEn, 'en'));
     inner.append(text);
   }
   box.append(inner);
@@ -64,40 +65,40 @@ function categoryCell(item) {
   return cell;
 }
 
+// 누른 자리에서 그대로 아래로 펼쳐진다(화면을 위로 끌어올리지 않는다).
 async function toggle(row, item) {
   const button = row.querySelector('.archive-row__button');
   const key = item.no;
-  // 다른 항목이 열려 있으면 먼저 닫는다.
   const current = table.querySelector('.archive-row.is-open');
-  if (current && current !== row) close(current);
   if (open === key) { open = null; close(row); return; }
+  // 다른 항목이 열려 있으면 닫는다. 누른 항목보다 위에 있으면 움직임 없이 바로 접고
+  // 그만큼 스크롤을 당겨서, 누른 항목이 손가락 아래 그 자리에 머물게 한다.
+  if (current && current !== row) {
+    if (current.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING) {
+      const before = row.getBoundingClientRect().top;
+      close(current, { instant: true });
+      scrollBy(0, row.getBoundingClientRect().top - before);
+    } else close(current);
+  }
   open = key;
   const box = panel(item, `archive-${key}`);
   row.append(box);
   button.setAttribute('aria-expanded', 'true');
   row.classList.add('is-open');
-  // 누른 항목이 상단바 바로 아래로 올라온 뒤 아래로 펼쳐진다.
-  // 페이지 끝 쪽이라 올릴 자리가 모자라면 펼쳐지는 동안만 아래 여백을 잠깐 늘린다.
-  const main = document.querySelector('.list-main');
-  const top = row.getBoundingClientRect().top + scrollY - document.querySelector('.topbar').offsetHeight;
-  const short = top - (document.documentElement.scrollHeight - innerHeight);
-  if (short > 0) main.style.paddingBottom = `${short}px`;
-  scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' });
-  await wait(280);
-  if (!box.isConnected) { main.style.paddingBottom = ''; return; }
+  box.getBoundingClientRect();
   box.style.height = `${box.firstElementChild.offsetHeight}px`;
   box.classList.add('is-shown');
   await wait(400);
   // 다 열리면 auto로 풀어 사진이 늦게 불러와져도 높이가 따라가게 한다.
   if (box.isConnected && box.classList.contains('is-shown')) box.style.height = 'auto';
-  main.style.paddingBottom = '';
 }
 
-function close(row) {
+function close(row, { instant = false } = {}) {
   const box = row.querySelector('.archive-row__panel');
   row.classList.remove('is-open');
   row.querySelector('.archive-row__button').setAttribute('aria-expanded', 'false');
   if (!box) return;
+  if (instant) { box.remove(); return; }
   // auto → 지금 높이(px) → 0 순서로 바꿔야 닫히는 움직임이 보인다.
   box.style.height = `${box.offsetHeight}px`;
   box.getBoundingClientRect();

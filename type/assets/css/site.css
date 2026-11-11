@@ -91,9 +91,7 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
   font-size: inherit;
   line-height: inherit;
   letter-spacing: inherit;
-  transition: opacity 160ms ease;
 }
-.lang-toggle.is-changing { opacity: 0; }
 .lang-toggle:focus:not(:focus-visible) { outline: none; }
 .lang-toggle:disabled { cursor: default; }
 
@@ -119,10 +117,12 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 .about-m__image { margin-top: 30px; }
 .about-m__image img,
 .about-d__image img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
-/* 사진 여러 장: 누르면 다음 장이 위에 겹쳐 나타난다(크로스페이드). */
-.photo-slider { position: relative; display: block; width: 100%; padding: 0; }
-.photo-slider img + img { position: absolute; inset: 0; height: 100%; opacity: 0; transition: opacity 320ms ease; }
-.photo-slider img.is-in { opacity: 1; }
+/* 사진 여러 장: 옆으로 밀어서 넘긴다(info.mjs). 세로 스크롤은 브라우저에 맡긴다. */
+.photo-slider { overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.photo-slider.is-dragging { cursor: grabbing; }
+.photo-slider:focus:not(:focus-visible) { outline: none; }
+.photo-slider__track { display: flex; transition: transform 380ms cubic-bezier(.2, .8, .3, 1); }
+.photo-slider__track img { flex: 0 0 100%; min-width: 0; -webkit-user-drag: none; }
 .about-m__intro { margin-top: 20px; }
 .about-m__intro p + p,
 .about-d__intro p + p { margin-top: 1.6em; }
@@ -183,7 +183,8 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 .archive-cat.is-active { text-decoration: underline; }
 .archive-table.is-filtered .archive-cat:not(.is-active) { opacity: .4; }
 
-/* 펼치기: 위로 스크롤된 뒤 높이 0 → 내용 높이(px)로. 높이 값은 archive.mjs가 넣고 다 열리면 auto로 푼다. */
+/* 펼치기: 누른 자리에서 높이 0 → 내용 높이(px)로, 내용은 살짝 위에서 내려온다.
+   높이 값은 archive.mjs가 넣고 다 열리면 auto로 푼다. */
 .archive-row__panel {
   height: 0;
   overflow: hidden;
@@ -191,6 +192,8 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
   transition: height 360ms cubic-bezier(.2, .7, .2, 1), opacity 300ms ease;
 }
 .archive-row__panel.is-shown { opacity: 1; }
+.archive-row__inner { transform: translateY(-12px); transition: transform 420ms cubic-bezier(.2, .7, .2, 1); }
+.archive-row__panel.is-shown .archive-row__inner { transform: none; }
 .archive-row__inner::before { content: ''; display: block; height: 10px; }
 .archive-row__inner::after { content: ''; display: block; height: 16px; }
 .archive-row__images { display: grid; gap: 16px; }
@@ -371,9 +374,9 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lang-toggle,
-  .photo-slider img,
+  .photo-slider__track,
   .archive-row__panel,
+  .archive-row__inner,
   .archive-pager__item { transition: none; }
   .archive-row.is-entering { animation: none; }
   .site-loading__face span { animation: none; }

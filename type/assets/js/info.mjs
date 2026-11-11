@@ -1,15 +1,13 @@
 import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=6';
-import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=5';
+import { initMenu, watchTab, seedFrom, el } from './site.mjs?v=6';
 
 const body = document.body;
 const mobile = document.querySelector('.about-m');
 const desk = document.querySelector('.about-d');
-// 터치 화면에서 두 번 탭은 메뉴(tap-menu.mjs)다. 제목·소개는 첫 탭에 바로 반응하고,
-// 0.32초 안에 두 번째 탭이 오면 첫 탭 동작을 되돌려 메뉴만 열리게 한다.
-// 사진은 연달아 넘기는 일이 많아 탭 메뉴에서 빼고 누를 때마다 넘기기만 한다.
+// 터치 화면에서 두 번 탭은 메뉴(tap-menu.mjs)다. 제목·소개를 한 번 탭하면 0.32초 기다렸다가
+// (두 번 탭이 아니면) 다른 언어로 바뀐다. 바뀔 때 움직임은 없다.
 const DOUBLE_TAP = 320;
 const touch = matchMedia('(pointer: coarse)').matches;
-const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 // 메뉴가 열린 직후 브라우저가 이어서 보내는 click은 새 탭으로 치지 않는다.
 let menuOpenedAt = -Infinity;
 const justOpenedMenu = () => performance.now() - menuOpenedAt < 400;
@@ -27,11 +25,6 @@ const person = (name, href) => {
   a.href = href; a.target = '_blank'; a.rel = 'noopener';
   return a;
 };
-const people = (list, key) => {
-  const span = el('span');
-  list.forEach((p, i) => { if (i) span.append(', '); span.append(person(p[key] || p.ko, p.href)); });
-  return span;
-};
 const paragraphs = (list, key) => list.map(item => el('p', '', item[key] || item.ko));
 const contactLinks = (contacts, label) => {
   const dl = el('dl', 'contacts');
@@ -44,45 +37,84 @@ const contactLinks = (contacts, label) => {
   }
   return dl;
 };
-// 사진이 여러 장이면 누를 때마다 다음 장이 겹쳐 나타난다(모바일·데스크톱 같은 순번).
+// 사진이 여러 장이면 옆으로 밀어서 넘긴다(손가락·마우스 끌기, 키보드 ←/→). 모바일·데스크톱이 같은 순번을 쓴다.
+// 사진을 누르는 것은 다른 곳과 똑같이 탭 메뉴(tap-menu.mjs) 몫이다.
 let slide = 0, photos = { images: [], captions: [] };
 const captionFor = i => (photos.captions.length > 1 ? photos.captions[i] : photos.captions[0]) || '';
 const photo = src => {
   const img = el('img');
   // 구글 드라이브 이미지(lh3)는 Referer가 붙으면 간헐적으로 403을 준다.
-  img.referrerPolicy = 'no-referrer'; img.src = src; img.decoding = 'async';
+  img.referrerPolicy = 'no-referrer'; img.src = src; img.decoding = 'async'; img.draggable = false;
   return img;
 };
 function showSlide(index) {
-  slide = index;
-  document.querySelectorAll('.photo-slider').forEach(button => {
-    const next = photo(photos.images[slide]);
-    next.alt = captionFor(slide);
-    button.append(next);
-    const fadeIn = () => {
-      next.classList.add('is-in');
-      setTimeout(() => { while (button.firstElementChild !== next) button.firstElementChild.remove(); }, reduced() ? 0 : 340);
-    };
-    if (next.complete) fadeIn(); else next.addEventListener('load', fadeIn, { once: true });
-    button.setAttribute('aria-label', `사진 ${slide + 1}/${photos.images.length}, 눌러서 다음 사진`);
+  slide = Math.max(0, Math.min(photos.images.length - 1, index));
+  document.querySelectorAll('.photo-slider').forEach(box => {
+    const track = box.firstElementChild;
+    track.style.transition = '';
+    track.style.transform = `translateX(${-slide * 100}%)`;
+    [...track.children].forEach((img, i) => { img.alt = i === slide ? captionFor(i) : ''; });
+    box.setAttribute('aria-label', `사진 ${slide + 1}/${photos.images.length}`);
   });
   document.querySelectorAll('.about-d__image figcaption').forEach(c => { c.textContent = captionFor(slide); });
-  Object.assign(new Image(), { referrerPolicy: 'no-referrer', src: photos.images[(slide + 1) % photos.images.length] });
+}
+// 가로로 6px 넘게 움직이면 끌기로 보고 사진이 손을 따라온다. 폭의 15%를 넘기거나 빠르게 튕기면 넘어간다.
+function swipeable(box) {
+  let start = null;
+  const track = box.firstElementChild;
+  box.addEventListener('pointerdown', event => {
+    if (event.button) return;
+    start = { x: event.clientX, y: event.clientY, t: performance.now(), id: event.pointerId, dragging: false };
+  });
+  box.addEventListener('pointermove', event => {
+    if (!start || event.pointerId !== start.id) return;
+    const dx = event.clientX - start.x, dy = event.clientY - start.y;
+    if (!start.dragging) {
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 6) { start = null; return; }   // 세로 스크롤
+      if (Math.abs(dx) < 6) return;
+      start.dragging = true;
+      try { box.setPointerCapture(event.pointerId); } catch { /* 이미 끝난 포인터 */ }
+      box.classList.add('is-dragging');
+      track.style.transition = 'none';
+    }
+    // 처음·마지막 장에서 더 밀면 1/3만 따라온다.
+    const edge = (slide === 0 && dx > 0) || (slide === photos.images.length - 1 && dx < 0);
+    track.style.transform = `translateX(calc(${-slide * 100}% + ${edge ? dx / 3 : dx}px))`;
+  });
+  const end = event => {
+    if (!start || event.pointerId !== start.id) return;
+    const { dragging, x, t } = start;
+    start = null;
+    box.classList.remove('is-dragging');
+    if (!dragging) return;
+    const dx = event.clientX - x, fast = Math.abs(dx) / (performance.now() - t) > 0.4;
+    const step = Math.abs(dx) > box.offsetWidth * 0.15 || (fast && Math.abs(dx) > 20) ? (dx < 0 ? 1 : -1) : 0;
+    showSlide(slide + step);
+  };
+  box.addEventListener('pointerup', end);
+  box.addEventListener('pointercancel', end);
+  box.addEventListener('keydown', event => {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+    if (step) { event.preventDefault(); showSlide(slide + step); }
+  });
 }
 const image = (data, className) => {
   photos = data;
   if (!data.images.length) return '';
-  slide %= data.images.length;
-  const figure = el('figure', className), img = photo(data.images[slide]);
-  img.alt = captionFor(slide);
+  slide = Math.min(slide, data.images.length - 1);
+  const figure = el('figure', className);
   if (data.images.length > 1) {
-    const button = el('button', 'photo-slider');
-    button.type = 'button';
-    button.setAttribute('aria-label', `사진 ${slide + 1}/${data.images.length}, 눌러서 다음 사진`);
-    button.addEventListener('click', () => showSlide((slide + 1) % data.images.length));
-    button.append(img);
-    figure.append(button);
-  } else figure.append(img);
+    const box = el('div', 'photo-slider'), track = el('div', 'photo-slider__track');
+    box.tabIndex = 0;
+    box.setAttribute('role', 'group');
+    box.setAttribute('aria-roledescription', '슬라이드');
+    track.append(...data.images.map(photo));
+    track.style.transform = `translateX(${-slide * 100}%)`;
+    box.setAttribute('aria-label', `사진 ${slide + 1}/${data.images.length}`);
+    box.append(track);
+    swipeable(box);
+    figure.append(box);
+  } else figure.append(Object.assign(photo(data.images[0]), { alt: captionFor(0) }));
   if (data.captions.some(Boolean)) figure.append(el('figcaption', '', captionFor(slide)));
   return figure;
 };
@@ -114,18 +146,10 @@ function renderMobile(d) {
   const works = el('ul', 'works');
   for (const w of d.works) { const li = el('li'); li.append(el('span', '', w.date), bi('span', '', w.ko, w.en)); works.append(li); }
 
-  const credits = el('dl', 'credits');
-  for (const g of d.credits) {
-    const dd = el('dd', 'bi');
-    dd.append(Object.assign(people(g.people, 'ko'), { lang: 'ko' }), Object.assign(people(g.people, 'en'), { lang: 'en' }));
-    credits.append(bi('dt', '', g.ko, g.en), dd);
-  }
-
   mobile.replaceChildren(title, figure, intro,
     block('구성원', 'Member', members),
     block('활동', 'Works', works),
-    block('연락처', 'Contact', contactLinks(d.contacts, c => bi('dt', '', c.ko, c.en))),
-    ...(d.credits.length ? [block('웹 크레딧', 'Web Credits', credits)] : []));
+    block('연락처', 'Contact', contactLinks(d.contacts, c => bi('dt', '', c.ko, c.en))));
   mobile.querySelectorAll('.lang-toggle').forEach(b => {
     b.disabled = !d.intro.some(i => i.en) && d.title.en === d.title.ko;
   });
@@ -165,14 +189,6 @@ function renderDesk(d) {
       grid.append(cell(row, ko), cell(row, el('p', '', w.en || w.ko)));
     });
   }
-  if (d.credits.length) {
-    grid.append(cell('about-d__head about-d__head--works', el('h2', '', '웹 크레딧')), cell('about-d__head about-d__head--works', el('h2', '', 'Web Credits')));
-    d.credits.forEach((g, i) => {
-      const row = i ? 'works-row' : 'works-row works-row--first';
-      const line = key => { const ul = el('ul', 'works'), li = el('li'); li.append(el('span', '', g[key] || g.ko), people(g.people, key)); ul.append(li); return ul; };
-      grid.append(cell(row, line('ko')), cell(row, line('en')));
-    });
-  }
   const main = el('div', 'about-d__main');
   main.append(grid, document.querySelector('#site-end').content.cloneNode(true));
   desk.replaceChildren(side, main);
@@ -198,20 +214,14 @@ let langPending = null;
 mobile.addEventListener('click', event => {
   const button = event.target.closest('.lang-toggle');
   if (!button || button.disabled || justOpenedMenu()) return;
-  const toggles = mobile.querySelectorAll('.lang-toggle');
-  // 두 번째 탭: 바꾸려던 것을 취소하고 원래 글로 돌아온다(메뉴는 tap-menu.mjs가 연다).
-  if (langPending) { clearTimeout(langPending); langPending = null; toggles.forEach(t => t.classList.remove('is-changing')); return; }
-  // 첫 탭: 바로 옅어지기 시작하고, 두 번 탭이 아니면 0.32초 뒤(마우스는 0.16초) 다른 언어로 나타난다.
-  toggles.forEach(t => t.classList.add('is-changing'));
-  langPending = setTimeout(() => {
-    langPending = null;
-    switchLang();
-    toggles.forEach(t => t.classList.remove('is-changing'));
-  }, touch ? DOUBLE_TAP : reduced() ? 0 : 160);
+  // 두 번째 탭: 바꾸려던 것을 취소한다(메뉴는 tap-menu.mjs가 연다).
+  if (langPending) { clearTimeout(langPending); langPending = null; return; }
+  if (!touch) { switchLang(); return; }
+  langPending = setTimeout(() => { langPending = null; switchLang(); }, DOUBLE_TAP);
 });
-// 두 번째 탭은 탭 메뉴의 작은 원 위에 떨어지므로, 메뉴가 열렸다는 신호로도 첫 탭 동작을 되돌린다.
+// 두 번째 탭은 탭 메뉴의 작은 원 위에 떨어지므로, 메뉴가 열렸다는 신호로도 첫 탭 동작을 취소한다.
 document.addEventListener('tapmenu:open', () => {
   menuOpenedAt = performance.now();
-  if (langPending) { clearTimeout(langPending); langPending = null; mobile.querySelectorAll('.lang-toggle').forEach(t => t.classList.remove('is-changing')); }
+  if (langPending) { clearTimeout(langPending); langPending = null; }
 });
 watchTab({ name: 'info', gid: TABS.info, headers: INFO_HEADERS, headerRow: 1, seed: seedFrom('info-seed'), render });

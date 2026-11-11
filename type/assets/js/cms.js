@@ -1,5 +1,6 @@
 import { createUsageGallery } from './usage-gallery.mjs?v=7';
-import { animateMenu } from './menu-drop.mjs?v=1';
+import { animateMenu, closeMenu } from './menu-drop.mjs?v=2';
+import { initCredits } from './credits.mjs?v=1';
 import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=7';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
@@ -108,9 +109,10 @@ function apply(next) {
 
 const menu = $('.type-menu');
 animateMenu(menu);
-document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) menu.open = false; });
+initCredits();
+document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) closeMenu(menu); });
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }
+  if (event.key === 'Escape' && menu?.open) { closeMenu(menu); menu.querySelector('summary').focus(); }
 });
 document.addEventListener('keydown', event => { if (event.key === 'Tab') { document.body.classList.add('keyboard-mode'); } });
 document.addEventListener('pointerdown', () => { document.body.classList.remove('keyboard-mode'); });
