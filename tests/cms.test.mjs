@@ -173,5 +173,5 @@ test('New pages share the topbar menu and mark their own route', () => {
     assert.ok(!html.includes('kiosk'));
     assert.match(html, /tap-menu\.mjs/);
   }
-  assert.match(fs.readFileSync(new URL('../publish/index.html', import.meta.url), 'utf8'), /<p class="soon">출간 예정<\/p>/);
+  assert.match(fs.readFileSync(new URL('../publish/index.html', import.meta.url), 'utf8'), /<figcaption class="soon__text">퍼블리시를 준비하고 있습니다\.<\/figcaption>/);
 });
