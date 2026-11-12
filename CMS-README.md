@@ -114,3 +114,11 @@ AH열(사용 예시 이미지) 한 셀에 공개 이미지 URL을 한 줄에 하
 - Info 이미지 설명도 셀 안 줄바꿈으로 사진마다 하나씩(한 줄이면 모든 사진 공통). 사진은 겹쳐 바뀜(0.32초 크로스페이드).
 - 모바일 Info 제목·소개·사진: 한 번 탭하면 바로 바뀌기 시작하고, 두 번 탭하면 바뀌지 않고 탭 메뉴만 열린다(`tapmenu:open` 신호). 영문일 때 상단 '타입앤퍼블리셔'도 'Typeandpublisher'(Info만).
 - Archive: 카테고리 LC는 데스크톱에서 'Last Call', 모바일에서 'LC'(`archive.mjs`의 `FULL_NAMES`). 펼친 설명은 국문·영문 제목 시작선에 맞춤.
+
+### 오픈 전 정리 (2026-11-12)
+
+- 웹 크레딧은 Info 페이지 대신 모든 페이지 푸터의 춤추는 이모티콘을 누르면 말풍선으로 나옵니다(`type/assets/js/credits.mjs`). 이름·링크는 계속 Info 탭 S–W열에서 읽고, 안내 문구·문의 메일은 `credits.mjs`에 있습니다.
+- 시트 글 안의 링크: 셀 하이퍼링크는 CSV로 넘어오지 않습니다. 대신 `[보일 글자](https://주소)` 또는 `https://…` 주소를 그대로 쓰면 링크가 됩니다(Archive 설명, Archive·Publish 페이지 소개).
+- Archive I–J열, Publish B–C열 `페이지 소개 국문/영문`: 데스크톱 왼쪽 카드의 제목 아래 글. 비우면 문의 안내가 나옵니다.
+- Publish 본문 아스키 아트(`publish/index.html`의 pre + `publish.mjs`): 접속할 때마다 책 1~3권, 물건(연필꽂이·커피잔·조명·화분)이 바뀌고 20번에 한 번쯤 새나 곰이 나옵니다. `?books=2&item=bear`처럼 붙이면 고정해서 볼 수 있습니다. 원작자 표기(ascii art by pjb)는 Publish 페이지 말풍선에만 나옵니다.
+- 구글 드라이브 사진은 보이는 크기에 맞춘 WebP(`=w1400-rw` 등)로 받습니다(`site.mjs`의 `sized`).
