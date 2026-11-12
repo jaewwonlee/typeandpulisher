@@ -1,5 +1,5 @@
 import { TABS, PUBLISH_HEADERS } from './site-data.mjs?v=6';
-import { initMenu, watchTab } from './site.mjs?v=7';
+import { initMenu, watchTab, sideIntro } from './site.mjs?v=8';
 
 // 출간물 디자인이 정해지기 전까지는 시트의 제목만 반영하고 본문은 '출간 예정'으로 둔다.
 const side = document.querySelector('.list-side .page-title');
@@ -7,6 +7,7 @@ const mobile = document.querySelector('.list-main > .page-title');
 const fallback = mobile.textContent;
 
 function render(rows) {
+  sideIntro(rows);
   const title = rows.find(r => r['제목'])?.['제목'] || fallback;
   mobile.textContent = title;
   side.firstChild.textContent = title;

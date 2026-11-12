@@ -15,7 +15,7 @@
 <link href="/type/assets/css/main.css?v=31" rel="stylesheet"/>
 <link href="/type/assets/css/preview.css?v=30" rel="stylesheet"/>
 <link href="/type/assets/css/cms.css?v=32" rel="stylesheet"/>
-<link href="/type/assets/css/site.css?v=11" rel="stylesheet"/>
+<link href="/type/assets/css/site.css?v=12" rel="stylesheet"/>
 <link href="/type/assets/css/tap-menu.css?v=1" rel="stylesheet"/>
 <link href="https://typeandpublisher.kr/publish/" rel="canonical"/>
 <meta content="TAP | Publish" property="og:title"/>
@@ -50,11 +50,14 @@
     <div class="list-thumb"></div>
     <div class="list-side__card">
       <h1 class="page-title">퍼블리시<br/>PUBLISH</h1>
-      <p class="list-side__notice">문의 및 각종 연락은
+      <!-- 시트 탭의 '페이지 소개 국문/영문' 칸이 비어 있으면 이 연락처 안내가 그대로 나온다(site.mjs sideIntro) -->
+      <div class="list-side__about">
+        <p class="list-side__notice">문의 및 각종 연락은
 다음 연락처로
 보내주세요.</p>
-      <p>For questions, support and commissions, please write to:</p>
-      <p><a href="mailto:typeandpublisher@gmail.com">typeandpublisher@<wbr/>gmail.com</a></p>
+        <p>For questions, support and commissions, please write to:</p>
+        <p><a href="mailto:typeandpublisher@gmail.com">typeandpublisher@<wbr/>gmail.com</a></p>
+      </div>
     </div>
   </aside>
   <div class="list-main">
@@ -70,7 +73,7 @@
   </footer>
   </div>
 </main>
-<script src="/type/assets/js/publish.mjs?v=7" type="module"></script>
+<script src="/type/assets/js/publish.mjs?v=8" type="module"></script>
 <script src="/type/assets/js/tap-menu.mjs?v=5" type="module"></script>
 </body>
 </html>

@@ -98,4 +98,19 @@ export function reveal() {
   (document.fonts?.ready ?? Promise.resolve()).then(() => document.documentElement.classList.remove('is-loading'));
 }
 
+// Archive·Publish 데스크톱 왼쪽 카드: 시트 탭의 '페이지 소개 국문/영문' 칸(어느 행이든 처음 채워진 값)을
+// 제목 아래에 보여준다. 둘 다 비어 있으면 원래 들어 있던 연락처 안내를 그대로 둔다.
+export const INTRO_KO = '페이지 소개 국문', INTRO_EN = '페이지 소개 영문';
+let defaultAbout;
+export function sideIntro(rows) {
+  const about = document.querySelector('.list-side__about');
+  if (!about) return;
+  defaultAbout ??= [...about.childNodes].map(node => node.cloneNode(true));
+  const pick = key => rows.find(r => r[key])?.[key] || '';
+  const ko = pick(INTRO_KO), en = pick(INTRO_EN);
+  if (!ko && !en) { about.replaceChildren(...defaultAbout.map(node => node.cloneNode(true))); return; }
+  const para = (text, className, lang) => { const p = el('p', className); p.lang = lang; p.append(...linkify(text)); return p; };
+  about.replaceChildren(...[ko && para(ko, 'list-side__notice', 'ko'), en && para(en, ko ? '' : 'list-side__notice', 'en')].filter(Boolean));
+}
+
 export const seedFrom = id => JSON.parse(document.getElementById(id)?.textContent || '[]');
