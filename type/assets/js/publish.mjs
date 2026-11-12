@@ -35,6 +35,13 @@ const RARE = {
   hamster: ['  n n', '(=o.o=)', ' (")(")'],
 };
 const RARE_CHANCE = 1 / 20;
+// 후보(아직 무작위로는 안 나옴): 주소 끝 ?item=rabbit 처럼 붙였을 때만 보인다. 마음에 들면 RARE나 ITEMS로 옮기면 된다.
+const PREVIEW = {
+  rabbit: ['(\\_/)', '(o.o)', '(")(")'],
+  bird: ['  __', ' (o>', ' //\\'],
+  bear: ['()_()', '(o.o)', '(   )'],
+  snail: ['', '   @', ' __@)_'],
+};
 const ITEM_COL = 42, ITEM_WIDTH = 7;
 const pick = list => list[Math.floor(Math.random() * list.length)];
 
@@ -42,7 +49,8 @@ function vary(lines) {
   const query = new URLSearchParams(location.search);
   const books = BOOKS[query.get('books')] || BOOKS[pick(Object.keys(BOOKS))];
   const pool = Math.random() < RARE_CHANCE ? RARE : ITEMS;
-  const item = ITEMS[query.get('item')] || RARE[query.get('item')] || pool[pick(Object.keys(pool))];
+  const named = query.get('item');
+  const item = ITEMS[named] || RARE[named] || PREVIEW[named] || pool[pick(Object.keys(pool))];
   const put = (row, col, width, text) => {
     const chars = [...(lines[row] || '').padEnd(MID_END + RIGHT)];
     chars.splice(col, width, ...text.padEnd(width).slice(0, width));
