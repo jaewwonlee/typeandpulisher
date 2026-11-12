@@ -19,11 +19,12 @@ function render(rows) {
 const LEFT = 12, MID_END = 41, RIGHT = 15, TEXT_ROWS = [3, 6];
 
 // 접속할 때마다 왼쪽 책 더미(1~3권)와 오른쪽 책상 위 물건이 무작위로 바뀐다.
-// 책 더미는 0~5번째 줄의 왼쪽 12칸을 통째로 바꾼다(10~11번째 칸의 _ · /|는 책상 뒤 모서리).
+// 책 더미는 0~5번째 줄의 왼쪽 12칸을 통째로 바꾼다. 책상 윗면은 뒤쪽 선(1번째 줄 _)과 왼쪽 모서리(/)로 그려지는데,
+// 책이 적으면 가려졌던 부분이 드러나므로 버전마다 그 선도 함께 그려 두었다.
 // 주소 끝에 ?books=2&item=lamp 처럼 붙이면 그 조합으로 고정된다(확인용).
 const BOOKS = {
-  1: ['', '          _', '    _____ /|', '   /    /|', '  /    //', ' (====|/ //'],
-  2: ['', '    _____ _', '   /    /|/|', '  /    //', ' (====|/ //', '  (=====|/'],
+  1: ['', '     _______', '    / _____', '   / /    /|', '  / /    //', ' / (====|/'],
+  2: ['     _____', '    /    /|_', '   /    //', '  (====|/', '  (=====|/', ' /'],
   3: ['    _____', '   /    /|_', '  /    // /|', ' (====|/ //', '  (=====|/', ' (====|/'],
 };
 // 물건은 3~5번째 줄, 42~48번째 칸(7칸) 가운데에 놓는다.
@@ -33,13 +34,21 @@ const ITEMS = {
   lamp: [' .--.', '/____\\', '  _|_'],
   plant: [' \\|/', '_|_|_', '\\___/'],
 };
+// 이스터에그: 20번에 한 번쯤 물건 대신 동물이 앉아 있다.
+const RARE = {
+  cat: [' /\\_/\\', '( o.o )', ' > ^ <'],
+  mouse: [' ()()', ' (..)', '(")(")~'],
+  hamster: ['  n n', '(=o.o=)', ' (")(")'],
+};
+const RARE_CHANCE = 1 / 20;
 const ITEM_COL = 42, ITEM_WIDTH = 7;
 const pick = list => list[Math.floor(Math.random() * list.length)];
 
 function vary(lines) {
   const query = new URLSearchParams(location.search);
   const books = BOOKS[query.get('books')] || BOOKS[pick(Object.keys(BOOKS))];
-  const item = ITEMS[query.get('item')] || ITEMS[pick(Object.keys(ITEMS))];
+  const pool = Math.random() < RARE_CHANCE ? RARE : ITEMS;
+  const item = ITEMS[query.get('item')] || RARE[query.get('item')] || pool[pick(Object.keys(pool))];
   const put = (row, col, width, text) => {
     const chars = [...(lines[row] || '').padEnd(MID_END + RIGHT)];
     chars.splice(col, width, ...text.padEnd(width).slice(0, width));
