@@ -142,7 +142,18 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 /* ---------- 목록 페이지(Archive · Publish) 공통 (모바일) ---------- */
 .list-side { display: none; }
 .list-main > .page-title { margin: 24px 0 38px; }
-.soon { padding-top: 0; }
+/* Publish: 출간 전 아스키 아트. 고정폭 글꼴로 56칸을 그대로 그리고, 좁은 화면에서는 칸 폭에 맞춰 글자를 줄인다
+   (고정폭 한 글자 ≈ 0.6em → 56칸 ≈ 34em). '출간 예정' 글은 화면 읽기용으로만 남긴다. */
+.soon { container-type: inline-size; }
+.soon__art {
+  margin: 0;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: min(16px, 100cqi / 34);
+  line-height: 1.35;
+  letter-spacing: 0;
+  white-space: pre;
+}
+.soon__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- Archive 표 (모바일): 번호 48 · 행 5/22/6 · 1px 구분선 ---------- */
 /* 한 행 = 줄(.archive-row__line: [제목 버튼(번호·국문·영문) | 카테고리 버튼들]) + 그 아래 펼침 칸.
