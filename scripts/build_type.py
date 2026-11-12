@@ -42,7 +42,7 @@ for record in records:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
                 if el[attr].endswith(('.css', '.js', '.mjs')):
-                    el[attr] += '?v=37'
+                    el[attr] += '?v=38'
     # 템플릿의 Witz preload를 이 서체 파일로 바꾼다(Atlas·Noto preload는 그대로 둔다).
     soup.select_one('link[rel="preload"][href$="Witz.woff2"]')['href'] = font_path
     soup.title.string = f"TYPE AND PUBLISHER | {record['서체명 영문']} {record['서체명 국문']}"
@@ -50,12 +50,13 @@ for record in records:
     soup.select_one('meta[name="description"]')['content'] = SITE_DESCRIPTION
     canonical = soup.new_tag('link', rel='canonical', href=f'https://typeandpublisher.kr/type/{slug}/')
     soup.head.append(canonical)
-    for prop, content in [('og:title', soup.title.string), ('og:description', SITE_DESCRIPTION), ('og:url', canonical['href']), ('og:type', 'website'),
+    for prop, content in [('og:title', 'TYPE AND PUBLISHER'),   # 공유 제목은 모든 페이지 같게
+                          ('og:description', SITE_DESCRIPTION), ('og:url', canonical['href']), ('og:type', 'website'),
                           ('og:image', 'https://typeandpublisher.kr/og-image-v2.png'), ('og:image:width', '1200'), ('og:image:height', '630'),
                           ('og:site_name', 'TYPE AND PUBLISHER'), ('og:locale', 'ko_KR')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
     soup.head.append(soup.new_tag('meta', attrs={'name': 'twitter:card', 'content': 'summary_large_image'}))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=37'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=38'))
     # 파비콘: 구글 검색은 48의 배수 크기를 권장(48 ico · 96 png), iOS 홈 화면은 180
     soup.head.append(soup.new_tag('link', rel='icon', sizes='48x48', href='/favicon.ico'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', sizes='96x96', href='/favicon-96.png'))
@@ -139,9 +140,9 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=37')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=38')
     soup.body.append(script)
-    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=37', defer=''))
+    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=38', defer=''))
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(str(soup))
