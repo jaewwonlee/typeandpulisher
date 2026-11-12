@@ -11,7 +11,7 @@ const CONTACT = 'ji-won-choi@naver.com';
 // 시트의 역할 이름을 말풍선에서는 '웹 ○○'로 맞춰 보여준다.
 const ROLE = { 웹디자인: '웹 디자인', 디자인: '웹 디자인', 개발: '웹 개발', 웹개발: '웹 개발' };
 // 페이지마다 말풍선 맨 아래에 붙는 출처(작게). Publish 그림은 pjb의 아스키 아트.
-const PAGE_NOTE = { publish: 'original ascii art by. pjb' }[document.body.dataset.page];
+const PAGE_NOTE = { publish: 'original ascii art by pjb' }[document.body.dataset.page];
 const CACHE_KEY = `tap-site-cms-v3:${SHEET_ID}:${TABS.info}`;   // site.mjs와 같은 저장소 키(Info 탭 마지막 정상본)
 
 const make = (tag, className, text) => {
