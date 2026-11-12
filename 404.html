@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TAP | 404</title>
+<meta content="noindex" name="robots"/>
+<link as="font" crossorigin="" href="/type/assets/fonts/AtlasGrotesk-Regular.woff2" rel="preload" type="font/woff2"/>
+<link as="font" crossorigin="" href="/type/assets/fonts/NotoSansKR-Regular.woff2" rel="preload" type="font/woff2"/>
+<!-- 글꼴과 시트 내용이 준비될 때까지 잠깐(최대 1.2초) 가렸다가 한 번에 보여준다(site.mjs). -->
+<script>document.documentElement.classList.add('is-loading');setTimeout(function(){document.documentElement.classList.remove('is-loading')},1200)</script>
+<link href="/type/assets/css/reset.css?v=30" rel="stylesheet"/>
+<link href="/type/assets/css/main.css?v=31" rel="stylesheet"/>
+<link href="/type/assets/css/preview.css?v=30" rel="stylesheet"/>
+<link href="/type/assets/css/cms.css?v=33" rel="stylesheet"/>
+<link href="/type/assets/css/site.css?v=15" rel="stylesheet"/>
+<link href="/type/assets/css/tap-menu.css?v=1" rel="stylesheet"/>
+<!-- 파비콘: 구글 검색은 48의 배수 크기를 권장(48 ico · 96 png), iOS 홈 화면은 180 -->
+<link href="/favicon.ico" rel="icon" sizes="48x48"/>
+<link href="/favicon-96.png" rel="icon" sizes="96x96" type="image/png"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon"/>
+</head>
+<body class="site" data-page="404">
+<!-- 시트·글꼴 준비가 0.35초 넘게 걸릴 때만 보이는 로딩 화면(site.css). -->
+<div aria-hidden="true" class="loading-screen site-loading">
+  <p class="loading-screen__face site-loading__face"><span>\( ˙o˙ )/</span><span>_( ˙o˙ )_</span></p>
+  <div class="loading-screen__text">
+    <span>Loading<span class="placeholder__dots"><span>.</span><span>.</span><span>.</span></span></span>
+    <span>로딩 중이에요<span class="placeholder__dots"><span>.</span><span>.</span><span>.</span></span></span>
+  </div>
+</div>
+<div class="topbar">
+<a class="topbar__brand" href="/"><img alt="" class="topbar__mark" height="16" src="/type/assets/images/tap-symbol.svg" width="15"/>타입앤퍼블리셔</a>
+<div class="topbar__nav"><a class="topbar__home" href="/">TAP</a><details class="type-menu"><summary aria-label="페이지 메뉴">/404</summary><nav aria-label="페이지" class="type-menu__links"><a href="/">TAP/<span class="type-menu__name">Info</span></a><a href="/archive/">TAP/<span class="type-menu__name">Archive</span></a><a href="/publish/">TAP/<span class="type-menu__name">Publish</span></a><a href="/type/">TAP/<span class="type-menu__name">Type</span></a></nav></details></div>
+</div>
+
+<!-- 없는 주소로 들어왔을 때 GitHub Pages가 보여주는 페이지. 모든 경로는 / 로 시작해야 어느 깊이의 주소에서도 깨지지 않는다. -->
+<main class="site-page not-found">
+  <div class="not-found__body">
+    <h1 class="page-title">404</h1>
+    <p aria-hidden="true" class="not-found__face">┐( ˙o˙ )┌</p>
+    <p>페이지를 찾을 수 없어요.<br/><span lang="en">This page doesn’t exist.</span></p>
+    <p class="not-found__home"><a href="/">처음으로 돌아가기 · Back to Home</a></p>
+  </div>
+  <footer class="site-end">
+    <span aria-hidden="true" class="footer__mark"><span>\(^__^)
+ (    (&gt;
+ /     \</span><span> (^__^)/
+&lt;)     )
+ /     \</span></span>
+    <span class="footer__copy">© 2026 Typeandpublisher. All Right Reserved</span>
+  </footer>
+</main>
+<script type="module">
+  import { initMenu, reveal } from '/type/assets/js/site.mjs?v=9';
+  initMenu();
+  reveal();
+</script>
+<script src="/type/assets/js/tap-menu.mjs?v=5" type="module"></script>
+</body>
+</html>

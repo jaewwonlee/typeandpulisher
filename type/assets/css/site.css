@@ -249,6 +249,12 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 .archive-pager__item.is-current { text-decoration: underline; text-underline-offset: 4px; }
 .archive-pager__item:disabled { opacity: .15; cursor: default; }
 
+/* ---------- 404 (404.html): 제목·표정·안내를 화면 가운데쯤에, 푸터는 다른 페이지와 같다 ---------- */
+.not-found__body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 48px 0; }
+.not-found__face { font-size: 36px; line-height: 1.4; letter-spacing: 0; white-space: pre; }
+.not-found__body [lang="en"] { line-height: 1.4; }
+.not-found__home { margin-top: 8px; }
+
 /* ---------- Desktop ---------- */
 @media (min-width: 1024px) {
   body.site {
