@@ -42,20 +42,20 @@ for record in records:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
                 if el[attr].endswith(('.css', '.js', '.mjs')):
-                    el[attr] += '?v=36'
+                    el[attr] += '?v=37'
     # 템플릿의 Witz preload를 이 서체 파일로 바꾼다(Atlas·Noto preload는 그대로 둔다).
     soup.select_one('link[rel="preload"][href$="Witz.woff2"]')['href'] = font_path
-    soup.title.string = f"TAP | {record['서체명 영문']} {record['서체명 국문']}"
+    soup.title.string = f"TYPE AND PUBLISHER | {record['서체명 영문']} {record['서체명 국문']}"
     # 링크 공유 문구는 모든 페이지 공통 소개 문장(2026-11-03 요청)
     soup.select_one('meta[name="description"]')['content'] = SITE_DESCRIPTION
     canonical = soup.new_tag('link', rel='canonical', href=f'https://typeandpublisher.kr/type/{slug}/')
     soup.head.append(canonical)
     for prop, content in [('og:title', soup.title.string), ('og:description', SITE_DESCRIPTION), ('og:url', canonical['href']), ('og:type', 'website'),
-                          ('og:image', 'https://typeandpublisher.kr/og-image.png'), ('og:image:width', '1200'), ('og:image:height', '630'),
+                          ('og:image', 'https://typeandpublisher.kr/og-image-v2.png'), ('og:image:width', '1200'), ('og:image:height', '630'),
                           ('og:site_name', 'TYPE AND PUBLISHER'), ('og:locale', 'ko_KR')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
     soup.head.append(soup.new_tag('meta', attrs={'name': 'twitter:card', 'content': 'summary_large_image'}))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=36'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=37'))
     # 파비콘: 구글 검색은 48의 배수 크기를 권장(48 ico · 96 png), iOS 홈 화면은 180
     soup.head.append(soup.new_tag('link', rel='icon', sizes='48x48', href='/favicon.ico'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', sizes='96x96', href='/favicon-96.png'))
@@ -139,9 +139,9 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=36')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=37')
     soup.body.append(script)
-    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=36', defer=''))
+    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=37', defer=''))
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(str(soup))
@@ -157,7 +157,7 @@ for record in records:
 
 (ROOT / 'type/index.html').write_text('''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TAP | Type</title><link rel="icon" sizes="48x48" href="/favicon.ico"><meta name="robots" content="noindex">
+<title>TYPE AND PUBLISHER | Type</title><link rel="icon" sizes="48x48" href="/favicon.ico"><meta name="robots" content="noindex">
 <script>
 const pages = ['cake','giul','rooms','umm','witz'];
 location.replace('/type/' + pages[Math.floor(Math.random() * pages.length)] + '/');

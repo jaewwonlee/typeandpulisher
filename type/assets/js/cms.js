@@ -60,7 +60,7 @@ function applyDetail() {
   document.body.style.setProperty('--on-accent', accentInk(r['대표색']));
   document.body.style.setProperty('--mark-invert', accentInk(r['대표색']) === '#111111' ? '1' : '0');
   const title = r['서체명 영문'] + ' ' + r['서체명 국문'];
-  document.title = 'TAP | ' + title;
+  document.title = 'TYPE AND PUBLISHER | ' + title;
   $('meta[property="og:title"]').content = document.title;
   setTextFade('.hero__title', title);
   setTextFade('.hero__headline', r['첫 화면 문구']);
