@@ -42,7 +42,7 @@ for record in records:
             if el.get(attr, '').startswith('assets/'):
                 el[attr] = '/type/' + el[attr]
                 if el[attr].endswith(('.css', '.js', '.mjs')):
-                    el[attr] += '?v=34'
+                    el[attr] += '?v=35'
     # 템플릿의 Witz preload를 이 서체 파일로 바꾼다(Atlas·Noto preload는 그대로 둔다).
     soup.select_one('link[rel="preload"][href$="Witz.woff2"]')['href'] = font_path
     soup.title.string = f"TAP | {record['서체명 영문']} {record['서체명 국문']}"
@@ -55,7 +55,7 @@ for record in records:
                           ('og:site_name', 'TYPE AND PUBLISHER'), ('og:locale', 'ko_KR')]:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
     soup.head.append(soup.new_tag('meta', attrs={'name': 'twitter:card', 'content': 'summary_large_image'}))
-    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=34'))
+    soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=35'))
     soup.head.append(soup.new_tag('link', rel='icon', type='image/png', href='/favicon.png'))
     soup.head.append(soup.new_tag('link', rel='apple-touch-icon', href='/favicon.png'))
     # 시트 CSV 서버에 미리 연결(서체 정보 갱신이 빨라진다)
@@ -137,9 +137,9 @@ for record in records:
     data = soup.new_tag('script', id='type-seed', type='application/json')
     data.string = json.dumps({'records': records, 'glyphs': manifest}, ensure_ascii=False).replace('<', '\\u003c')
     soup.body.append(data)
-    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=34')
+    script = soup.new_tag('script', type='module', src='/type/assets/js/cms.js?v=35')
     soup.body.append(script)
-    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=34', defer=''))
+    soup.body.append(soup.new_tag('script', src='/type/assets/js/hero-fit.js?v=35', defer=''))
     output = ROOT / 'type' / slug / 'index.html'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(str(soup))

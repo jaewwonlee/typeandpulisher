@@ -136,12 +136,12 @@ body[data-slug="cake"] .hero__headline { line-height:1.75; }
 .credit-bubble a:hover,.credit-bubble a:focus-visible { text-decoration-color:currentColor; }
 @media(prefers-reduced-motion:reduce) { .credit-bubble { transition:none; } }
 
-/* 타입 페이지 푸터: TAP → 국문 소개 → 영문 소개 → 링크(가운데 정렬, 14px), 그 아래 마크 + 저작권은
+/* 타입 페이지 푸터: TAP → 국문 소개 → 영문 소개 → 링크(왼끝 정렬, 14px), 그 아래 마크 + 저작권은
    Info·Archive·Publish의 .site-end(site.css)와 같은 크기·간격. 타입 페이지는 site.css를 읽지 않아 여기 둔다. */
 .site-footer { margin-top:40px; padding-top:24px; padding-bottom:20px; font-size:14px; line-height:1.6; letter-spacing:-0.015em; text-align:center; }
-.footer__about { display:flex; flex-direction:column; align-items:center; gap:16px; word-break:keep-all; overflow-wrap:break-word; }
+.footer__about { display:flex; flex-direction:column; align-items:flex-start; gap:16px; text-align:left; word-break:keep-all; overflow-wrap:break-word; }
 .footer__about .footer__en { line-height:1.5; }
-.footer__about .footer__links { flex-direction:row; justify-content:center; flex-wrap:wrap; gap:4px 16px; }
+.footer__about .footer__links { flex-direction:row; justify-content:flex-start; flex-wrap:wrap; gap:4px 16px; }
 .site-footer .site-end { display:flex; flex-direction:column; align-items:center; gap:12px; padding-top:96px; }
 .site-footer .footer__mark { margin-top:0; }
 .site-footer .footer__mark span { line-height:1.6; }
