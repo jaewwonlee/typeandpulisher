@@ -17,6 +17,43 @@ function render(rows) {
 // 한 글자씩 같은 폭의 칸(그리드)에 넣어 줄을 맞춘다. '_'는 칸을 꽉 채우는 1px 선으로 그린다(글꼴의 _는 칸보다 짧아 끊겨 보임).
 // 왼쪽 LEFT칸·오른쪽 RIGHT칸은 고정, 그 사이는 화면 폭에 따라 늘고 줄며 3~5번째 줄 가운데에 문구가 들어간다.
 const LEFT = 12, MID_END = 41, RIGHT = 15, TEXT_ROWS = [3, 6];
+
+// 접속할 때마다 왼쪽 책 더미(1~3권)와 오른쪽 책상 위 물건이 무작위로 바뀐다.
+// 책 더미는 0~5번째 줄의 왼쪽 12칸을 통째로 바꾼다(10~11번째 칸의 _ · /|는 책상 뒤 모서리).
+// 주소 끝에 ?books=2&item=lamp 처럼 붙이면 그 조합으로 고정된다(확인용).
+const BOOKS = {
+  1: ['', '          _', '    _____ /|', '   /    /|', '  /    //', ' (====|/ //'],
+  2: ['', '    _____ _', '   /    /|/|', '  /    //', ' (====|/ //', '  (=====|/'],
+  3: ['    _____', '   /    /|_', '  /    // /|', ' (====|/ //', '  (=====|/', ' (====|/'],
+};
+// 물건은 3~5번째 줄, 42~48번째 칸(7칸) 가운데에 놓는다.
+const ITEMS = {
+  pencil: ['\\|/', '|_|', '|_|'],
+  coffee: [' ) )', '(   )', 'c[_]'],
+  lamp: [' .--.', '/____\\', '  _|_'],
+  plant: [' \\|/', '_|_|_', '\\___/'],
+};
+const ITEM_COL = 42, ITEM_WIDTH = 7;
+const pick = list => list[Math.floor(Math.random() * list.length)];
+
+function vary(lines) {
+  const query = new URLSearchParams(location.search);
+  const books = BOOKS[query.get('books')] || BOOKS[pick(Object.keys(BOOKS))];
+  const item = ITEMS[query.get('item')] || ITEMS[pick(Object.keys(ITEMS))];
+  const put = (row, col, width, text) => {
+    const chars = [...(lines[row] || '').padEnd(MID_END + RIGHT)];
+    chars.splice(col, width, ...text.padEnd(width).slice(0, width));
+    lines[row] = chars.join('');
+  };
+  books.forEach((text, row) => put(row, 0, LEFT, text));
+  const width = Math.max(...item.map(line => line.length));
+  const start = ITEM_COL + Math.floor((ITEM_WIDTH - width) / 2);
+  item.forEach((text, i) => {
+    put(TEXT_ROWS[0] + i, ITEM_COL, ITEM_WIDTH, '');
+    put(TEXT_ROWS[0] + i, start, text.length, text);
+  });
+  return lines;
+}
 function drawArt() {
   const pre = document.querySelector('.soon__art'), text = document.querySelector('.soon__text');
   if (!pre) return;
@@ -25,7 +62,7 @@ function drawArt() {
   grid.style.setProperty('--left', LEFT);
   grid.style.setProperty('--right', RIGHT);
   const place = (node, row, column) => { node.style.gridRow = row + 1; node.style.gridColumn = column; return node; };
-  pre.textContent.replace(/^\n/, '').split('\n').forEach((line, row) => {
+  vary(pre.textContent.replace(/^\n/, '').split('\n')).forEach((line, row) => {
     const chars = [...line.padEnd(MID_END + RIGHT)];
     const cell = (ch, column) => {
       if (ch === ' ') return;
