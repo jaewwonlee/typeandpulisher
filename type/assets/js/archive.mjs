@@ -11,13 +11,13 @@ let items = [], open = null, hovered = null, filter = null, page = 1, busy = fal
 // 펼친 사진은 표시 폭(데스크톱 반 칸 ≈ 620px, 모바일 전체 ≈ 370px)의 2~3배, 썸네일은 224px 칸에 맞춰 받는다.
 const PHOTO_WIDTH = 1400, THUMB_WIDTH = 600;
 
-// 사진을 불러오는 동안 마우스 커서(터치는 누른 자리) 옆에서 작은 얼굴이 눈을 깜빡인다.
+// 사진을 불러오는 동안 마우스 커서(터치는 누른 자리) 옆에서 점이 늘어난다(... → . → ..).
 // 펼친 항목의 사진이 다 뜨거나 닫히면 사라진다.
 const loader = el('div', 'img-loader');
 loader.setAttribute('aria-hidden', 'true');
 document.body.append(loader);
-// 눈 깜빡이기: 0.9초 뜨고 0.15초 감는다(한 칸 0.15초, 7칸 중 마지막만 감은 눈).
-const FRAMES = [...Array(6).fill('( ˙o˙ )'), '( -o- )'];
+// 점 늘어나기. 사진이 금방 떠서 첫 칸만 보일 때가 많아, 첫 칸부터 '...'(불러오는 중)으로 보이게 한다.
+const FRAMES = ['...', '.', '..'];
 let loaderTimer = 0, frame = 0, pointerX = 0, pointerY = 0;
 // 커서 오른쪽 아래 14px. 화면 오른쪽 끝에 가까우면 커서 왼쪽으로 넘겨 잘리지 않게 한다.
 function placeLoader() {
@@ -34,13 +34,13 @@ function watchLoading(box) {
   const update = () => {
     const waiting = box.isConnected && box.parentElement?.classList.contains('is-open') && pending.some(img => !img.complete);
     loader.classList.toggle('is-on', waiting);
-    if (waiting && !loaderTimer) loaderTimer = setInterval(() => { loader.textContent = FRAMES[frame++ % FRAMES.length]; }, 150);
+    if (waiting && !loaderTimer) loaderTimer = setInterval(() => { loader.textContent = FRAMES[frame++ % FRAMES.length]; }, 280);
     if (!waiting) { clearInterval(loaderTimer); loaderTimer = 0; }
   };
   pending.forEach(img => { img.addEventListener('load', update, { once: true }); img.addEventListener('error', update, { once: true }); });
   // 닫혀서 패널이 사라져도 표시가 남지 않게
   new MutationObserver((_, observer) => { if (!box.isConnected) { observer.disconnect(); update(); } }).observe(table, { childList: true, subtree: true });
-  frame = 0;
+  frame = 1;   // 다음 칸부터(첫 칸은 바로 아래에서 보여준다)
   loader.textContent = FRAMES[0];
   placeLoader();
   update();
