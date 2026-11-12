@@ -369,8 +369,8 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
   /* 소개 글이 길어 화면보다 길어지면 카드 안에서만 스크롤된다(스크롤 막대는 숨김). */
   .list-side__card { min-height: 0; overflow-y: auto; scrollbar-width: none; }
   .list-side__card::-webkit-scrollbar { display: none; }
-  .list-side__notice { margin-top: 66px; }
-  .list-side__notice + p { margin-top: 38px; line-height: 1.4; }
+  .list-side__notice { margin-top: 46px; }   /* 제목↔국문 46, 국문↔영문 26 (예전 66:38과 같은 비율) */
+  .list-side__notice + p { margin-top: 26px; line-height: 1.4; }
   .list-side__notice[lang="en"] { line-height: 1.4; }
   .list-side__card a { overflow-wrap: anywhere; }
 
