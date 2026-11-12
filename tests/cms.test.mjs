@@ -52,7 +52,7 @@ test('All pages preserve the six-row original information layout and original co
     const labels = [...html.matchAll(/<th scope="row">([^<]+)<\/th>/g)].map(m=>m[1]);
     assert.deepEqual(labels,['디자인','제작 연도','버전','포맷','글리프','문의']);
     assert.match(html,/2025–2026/);
-    assert.match(html,/<title>TAP \| /);
+    assert.match(html,/<title>TYPE AND PUBLISHER \| /);
     assert.match(html,/href="\/favicon-96.png"/);
     assert.match(html,/Under Construction/);
     assert.match(html,/class="hero__stage"/);
