@@ -56,8 +56,10 @@ for record in records:
         soup.head.append(soup.new_tag('meta', property=prop, content=content))
     soup.head.append(soup.new_tag('meta', attrs={'name': 'twitter:card', 'content': 'summary_large_image'}))
     soup.head.append(soup.new_tag('link', rel='stylesheet', href='/type/assets/css/cms.css?v=36'))
-    soup.head.append(soup.new_tag('link', rel='icon', type='image/png', href='/favicon.png'))
-    soup.head.append(soup.new_tag('link', rel='apple-touch-icon', href='/favicon.png'))
+    # 파비콘: 구글 검색은 48의 배수 크기를 권장(48 ico · 96 png), iOS 홈 화면은 180
+    soup.head.append(soup.new_tag('link', rel='icon', sizes='48x48', href='/favicon.ico'))
+    soup.head.append(soup.new_tag('link', rel='icon', type='image/png', sizes='96x96', href='/favicon-96.png'))
+    soup.head.append(soup.new_tag('link', rel='apple-touch-icon', href='/apple-touch-icon.png'))
     # 시트 CSV 서버에 미리 연결(서체 정보 갱신이 빨라진다)
     soup.select_one('meta[name="viewport"]').insert_after(soup.new_tag('link', rel='preconnect', href='https://docs.google.com', crossorigin=''))
     headline = soup.select_one('.hero__headline')
@@ -155,7 +157,7 @@ for record in records:
 
 (ROOT / 'type/index.html').write_text('''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TAP | Type</title><link rel="icon" type="image/png" href="/favicon.png"><meta name="robots" content="noindex">
+<title>TAP | Type</title><link rel="icon" sizes="48x48" href="/favicon.ico"><meta name="robots" content="noindex">
 <script>
 const pages = ['cake','giul','rooms','umm','witz'];
 location.replace('/type/' + pages[Math.floor(Math.random() * pages.length)] + '/');
