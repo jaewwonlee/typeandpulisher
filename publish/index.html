@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!-- 운영 시트(CSV)·사진 서버에 미리 연결해 첫 내용이 빨리 뜨게 한다. -->
+<link crossorigin="" href="https://docs.google.com" rel="preconnect"/>
+<title>TAP | Publish</title>
+<meta content="Type and Publisher(TAP)은 글자를 그리고, 이를 다양한 형태로 확장하고 엮어내는 방식을 탐구하는 프로젝트 그룹입니다." name="description"/>
+<link as="font" crossorigin="" href="/type/assets/fonts/AtlasGrotesk-Regular.woff2" rel="preload" type="font/woff2"/>
+<link as="font" crossorigin="" href="/type/assets/fonts/NotoSansKR-Regular.woff2" rel="preload" type="font/woff2"/>
+<!-- 글꼴과 시트 내용이 준비될 때까지 잠깐(최대 1.2초) 가렸다가 한 번에 보여준다(site.mjs). -->
+<script>document.documentElement.classList.add('is-loading');setTimeout(function(){document.documentElement.classList.remove('is-loading')},1200)</script>
+<link href="/type/assets/css/reset.css?v=30" rel="stylesheet"/>
+<link href="/type/assets/css/main.css?v=31" rel="stylesheet"/>
+<link href="/type/assets/css/preview.css?v=30" rel="stylesheet"/>
+<link href="/type/assets/css/cms.css?v=33" rel="stylesheet"/>
+<link href="/type/assets/css/site.css?v=14" rel="stylesheet"/>
+<link href="/type/assets/css/tap-menu.css?v=1" rel="stylesheet"/>
+<link href="https://typeandpublisher.kr/publish/" rel="canonical"/>
+<meta content="TAP | Publish" property="og:title"/>
+<meta content="Type and Publisher(TAP)은 글자를 그리고, 이를 다양한 형태로 확장하고 엮어내는 방식을 탐구하는 프로젝트 그룹입니다." property="og:description"/>
+<meta content="https://typeandpublisher.kr/publish/" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="TYPE AND PUBLISHER" property="og:site_name"/>
+<meta content="ko_KR" property="og:locale"/>
+<meta content="https://typeandpublisher.kr/og-image.png" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<link href="/favicon.png" rel="icon" type="image/png"/>
+<link href="/favicon.png" rel="apple-touch-icon"/>
+</head>
+<body class="site" data-page="publish">
+<!-- 시트·글꼴 준비가 0.35초 넘게 걸릴 때만 보이는 로딩 화면(site.css). -->
+<div aria-hidden="true" class="loading-screen site-loading">
+  <p class="loading-screen__face site-loading__face"><span>\( ˙o˙ )/</span><span>_( ˙o˙ )_</span></p>
+  <div class="loading-screen__text">
+    <span>Loading<span class="placeholder__dots"><span>.</span><span>.</span><span>.</span></span></span>
+    <span>로딩 중이에요<span class="placeholder__dots"><span>.</span><span>.</span><span>.</span></span></span>
+  </div>
+</div>
+<div class="topbar">
+<a class="topbar__brand" href="/"><img alt="" class="topbar__mark" height="16" src="/type/assets/images/tap-symbol.svg" width="15"/>타입앤퍼블리셔</a>
+<div class="topbar__nav"><a class="topbar__home" href="/">TAP</a><details class="type-menu"><summary aria-label="페이지 메뉴">/Publish</summary><nav aria-label="페이지" class="type-menu__links"><a href="/">TAP/<span class="type-menu__name">Info</span></a><a href="/archive/">TAP/<span class="type-menu__name">Archive</span></a><a aria-current="page" href="/publish/">TAP/<span class="type-menu__name">Publish</span></a><a href="/type/">TAP/<span class="type-menu__name">Type</span></a></nav></details></div>
+</div>
+
+<main class="site-page list-page">
+  <aside class="list-side">
+    <div class="list-thumb"></div>
+    <div class="list-side__card">
+      <h1 class="page-title">퍼블리시<br/>PUBLISH</h1>
+      <!-- 시트 탭의 '페이지 소개 국문/영문' 칸이 비어 있으면 연락처 안내가 그대로 나옴. -->
+      <div class="list-side__about">
+        <p class="list-side__notice">문의 및 각종 연락은
+다음 연락처로
+보내주세요.</p>
+        <p>For questions, support and commissions, please write to:</p>
+        <p><a href="mailto:typeandpublisher@gmail.com">typeandpublisher@<wbr/>gmail.com</a></p>
+      </div>
+    </div>
+  </aside>
+  <div class="list-main">
+    <h2 class="page-title mobile-only">퍼블리시</h2>
+    <!-- 출간물이 정해지기 전까지 보여주는 그림(아스키 아트 by pjb, 출처는 이 페이지 웹 크레딧 말풍선에).
+         그림은 아래 pre 안의 칸 수 그대로 그려진다: 왼쪽 12칸(책)과 오른쪽 15칸(사과·책상 다리)은 고정,
+         그 사이 가운데 칸은 화면 폭에 맞춰 늘고 줄며 문구(.soon__text)가 들어간다.
+         책 더미(1~3권)와 오른쪽 물건(연필꽂이·커피잔·조명·화분)은 접속할 때마다 publish.mjs가 무작위로 바꿔 그린다. -->
+    <figure class="soon">
+      <pre class="soon__art" aria-hidden="true">    _____
+   /    /|_ ___________________________________________
+  /    // /|                                          /|
+ (====|/ //                                 \|/      / |
+  (=====|/                                  |_|     / .|
+ (====|/                                    |_|    / /||
+/_________________________________________________/ / ||
+|  _____________________________________________  ||  ||
+| ||                                            | ||
+| ||                                            | ||
+| |                                             | |</pre>
+      <figcaption class="soon__text">퍼블리시를 준비하고 있습니다.</figcaption>
+    </figure>
+  <footer class="site-end">
+    <span aria-hidden="true" class="footer__mark"><span>\(^__^)
+ (    (&gt;
+ /     \</span><span> (^__^)/
+&lt;)     )
+ /     \</span></span>
+    <span class="footer__copy">© 2026 Typeandpublisher. All Right Reserved</span>
+  </footer>
+  </div>
+</main>
+<script src="/type/assets/js/publish.mjs?v=14" type="module"></script>
+<script src="/type/assets/js/tap-menu.mjs?v=5" type="module"></script>
+</body>
+</html>

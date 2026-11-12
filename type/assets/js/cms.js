@@ -1,5 +1,7 @@
-import { createUsageGallery } from './usage-gallery.mjs?v=5';
-import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=5';
+import { createUsageGallery } from './usage-gallery.mjs?v=7';
+import { animateMenu, closeMenu } from './menu-drop.mjs?v=2';
+import { initCredits } from './credits.mjs?v=2';
+import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=7';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);
 const slug = document.body.dataset.slug;
@@ -59,9 +61,7 @@ function applyDetail() {
   document.body.style.setProperty('--mark-invert', accentInk(r['대표색']) === '#111111' ? '1' : '0');
   const title = r['서체명 영문'] + ' ' + r['서체명 국문'];
   document.title = 'TAP | ' + title;
-  $('meta[name="description"]').content = r['서체 소개 국문'];
   $('meta[property="og:title"]').content = document.title;
-  $('meta[property="og:description"]').content = r['서체 소개 국문'];
   setTextFade('.hero__title', title);
   setTextFade('.hero__headline', r['첫 화면 문구']);
   renderIntro();
@@ -100,7 +100,7 @@ function apply(next) {
   document.querySelectorAll('.topbar__nav a').forEach(a => {
     const record = records.find(r => a.getAttribute('href') === `/type/${r['주소']}/`);
     if (record) {
-      a.replaceChildren('Type/', Object.assign(document.createElement('span'), { className: 'type-menu__name', textContent: record['서체명 영문'] }));
+      a.replaceChildren('TAP/Type/', Object.assign(document.createElement('span'), { className: 'type-menu__name', textContent: record['서체명 영문'] }));
       a.style.setProperty('--item-main', record['대표색']);
     }
   });
@@ -108,9 +108,11 @@ function apply(next) {
 }
 
 const menu = $('.type-menu');
-document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) menu.open = false; });
+animateMenu(menu);
+initCredits();
+document.addEventListener('click', event => { if (menu?.open && !menu.contains(event.target)) closeMenu(menu); });
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }
+  if (event.key === 'Escape' && menu?.open) { closeMenu(menu); menu.querySelector('summary').focus(); }
 });
 document.addEventListener('keydown', event => { if (event.key === 'Tab') { document.body.classList.add('keyboard-mode'); } });
 document.addEventListener('pointerdown', () => { document.body.classList.remove('keyboard-mode'); });

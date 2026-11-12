@@ -1,0 +1,111 @@
+/* 모바일 두 번 탭 메뉴 (팀원 style.css의 tap menu 부분) */
+/* Mobile tap menu --------------------------------------------------------- */
+/*
+ * Change the colors here later. The JavaScript only controls placement and
+ * state, so the visual theme stays editable in CSS.
+ */
+:root {
+    /* 기본값. 실제 색은 운영 시트 Info 탭 '탭 메뉴 색'에서 tap-menu.mjs가 덮어쓴다. */
+    --tap-circle-color: #15b9ff;
+    --tap-circle-text-color: #111;
+}
+
+@media (pointer: coarse) {
+    html {
+        /* Keep pinch/scroll gestures, but stop Safari's double-tap zoom. */
+        touch-action: manipulation;
+    }
+}
+
+.tap-menu-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tap-circle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: var(--tap-size, 64px);
+    height: var(--tap-size, 64px);
+    border: 0;
+    border-radius: 50%;
+    background: var(--tap-circle-color);
+    color: var(--tap-circle-text-color);
+    font: inherit;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: 50% 50%;
+    opacity: 0;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    will-change: transform, opacity;
+}
+
+.tap-circle.is-visible {
+    animation: tap-circle-in 220ms cubic-bezier(.2, .9, .3, 1.25) forwards;
+}
+
+.tap-circle.is-leaving {
+    animation: tap-circle-out 340ms cubic-bezier(.4, 0, .8, .2) forwards;
+    pointer-events: none;
+}
+
+.tap-circle--first {
+    --tap-size: 64px;
+}
+
+.tap-circle--main {
+    --tap-size: 128px;
+    font-size: 20px;
+}
+
+.tap-circle--item {
+    --tap-size: 68px;
+    font-size: 14px;
+}
+
+.tap-circle--close {
+    --tap-size: 48px;
+    font-size: 22px;
+}
+
+@keyframes tap-circle-in {
+    from {
+        transform: translate(-50%, -50%) scale(.05);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes tap-circle-out {
+    from {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(.05);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tap-circle.is-visible,
+    .tap-circle.is-leaving {
+        animation-duration: 1ms;
+    }
+}

@@ -126,7 +126,13 @@
     requestAnimationFrame(centerBigPreview);
   }
   document.fonts?.ready?.then(centerBigPreview);
-  document.fonts?.addEventListener?.('loadingdone', centerBigPreview);
+  // iOS Safari는 글꼴이 바뀐 뒤 칸 안 글자를 옛 위치에 일부만 다시 그려 위가 잘려 보이는 일이 있어, 표를 한 번 새로 그린다.
+  function repaintGrid() {
+    grid.style.visibility = 'hidden';
+    void grid.offsetHeight;
+    grid.style.visibility = '';
+  }
+  document.fonts?.addEventListener?.('loadingdone', () => { centerBigPreview(); repaintGrid(); });
   window.addEventListener('resize', centerBigPreview);
   grid.addEventListener('click', event => {
     const cell = event.target.closest('.glyphs__cell');
