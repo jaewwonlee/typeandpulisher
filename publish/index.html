@@ -14,8 +14,8 @@
 <link href="/type/assets/css/reset.css?v=30" rel="stylesheet"/>
 <link href="/type/assets/css/main.css?v=31" rel="stylesheet"/>
 <link href="/type/assets/css/preview.css?v=30" rel="stylesheet"/>
-<link href="/type/assets/css/cms.css?v=32" rel="stylesheet"/>
-<link href="/type/assets/css/site.css?v=13" rel="stylesheet"/>
+<link href="/type/assets/css/cms.css?v=33" rel="stylesheet"/>
+<link href="/type/assets/css/site.css?v=14" rel="stylesheet"/>
 <link href="/type/assets/css/tap-menu.css?v=1" rel="stylesheet"/>
 <link href="https://typeandpublisher.kr/publish/" rel="canonical"/>
 <meta content="TAP | Publish" property="og:title"/>
@@ -32,7 +32,7 @@
 <link href="/favicon.png" rel="apple-touch-icon"/>
 </head>
 <body class="site" data-page="publish">
-<!-- 시트·글꼴 준비가 0.35초 넘게 걸릴 때만 보이는 로딩 화면(site.css). 손을 흔드는 두 장면이 번갈아 나온다. -->
+<!-- 시트·글꼴 준비가 0.35초 넘게 걸릴 때만 보이는 로딩 화면(site.css). -->
 <div aria-hidden="true" class="loading-screen site-loading">
   <p class="loading-screen__face site-loading__face"><span>\( ˙o˙ )/</span><span>_( ˙o˙ )_</span></p>
   <div class="loading-screen__text">
@@ -50,7 +50,7 @@
     <div class="list-thumb"></div>
     <div class="list-side__card">
       <h1 class="page-title">퍼블리시<br/>PUBLISH</h1>
-      <!-- 시트 탭의 '페이지 소개 국문/영문' 칸이 비어 있으면 이 연락처 안내가 그대로 나온다(site.mjs sideIntro) -->
+      <!-- 시트 탭의 '페이지 소개 국문/영문' 칸이 비어 있으면 연락처 안내가 그대로 나옴. -->
       <div class="list-side__about">
         <p class="list-side__notice">문의 및 각종 연락은
 다음 연락처로
@@ -62,20 +62,22 @@
   </aside>
   <div class="list-main">
     <h2 class="page-title mobile-only">퍼블리시</h2>
-    <!-- 출간물이 정해지기 전까지 보여주는 그림. 아스키 아트 by pjb(서명 유지). 칸 수가 그림이라 공백을 바꾸지 말 것 -->
+    <!-- 출간물이 정해지기 전까지 보여주는 그림(아스키 아트 by pjb, 출처는 이 페이지 웹 크레딧 말풍선에).
+         그림은 아래 pre 안의 칸 수 그대로 그려진다: 왼쪽 12칸(책)과 오른쪽 15칸(사과·책상 다리)은 고정,
+         그 사이 가운데 칸은 화면 폭에 맞춰 늘고 줄며 문구(.soon__text)가 들어간다(publish.mjs). -->
     <figure class="soon">
       <pre class="soon__art" aria-hidden="true">    _____
    /    /|_ ___________________________________________
   /    // /|                                          /|
- (====|/ //   An apple a day...            _QP_      / |
-  (=====|/     keeps the teacher at bay   (  ' )    / .|
+ (====|/ //                                _QP_      / |
+  (=====|/                                (  ' )    / .|
  (====|/                                   \__/    / /||
 /_________________________________________________/ / ||
 |  _____________________________________________  ||  ||
 | ||                                            | ||
 | ||                                            | ||
-| |                                             | |  pjb</pre>
-      <figcaption class="soon__label">출간 예정</figcaption>
+| |                                             | |</pre>
+      <figcaption class="soon__text">퍼블리시를 준비하고 있습니다.</figcaption>
     </figure>
   <footer class="site-end">
     <span aria-hidden="true" class="footer__mark"><span>\(^__^)
@@ -87,7 +89,7 @@
   </footer>
   </div>
 </main>
-<script src="/type/assets/js/publish.mjs?v=8" type="module"></script>
+<script src="/type/assets/js/publish.mjs?v=9" type="module"></script>
 <script src="/type/assets/js/tap-menu.mjs?v=5" type="module"></script>
 </body>
 </html>

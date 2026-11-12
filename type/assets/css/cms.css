@@ -132,6 +132,7 @@ body[data-slug="cake"] .hero__headline { line-height:1.75; }
 .credit-bubble__list { display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:16px; }
 .credit-bubble__note { margin-top:12px; }
 .credit-bubble__mail { display:inline-block; margin-top:4px; }
+.credit-bubble__source { margin-top:12px; font-size:11px; line-height:1.4; letter-spacing:0; }
 .credit-bubble a { text-decoration:underline; text-decoration-thickness:1px; text-decoration-color:rgba(0,0,0,.3); text-underline-offset:4px; transition:text-decoration-color 160ms ease; -webkit-tap-highlight-color:transparent; }
 .credit-bubble a:hover,.credit-bubble a:focus-visible { text-decoration-color:currentColor; }
 @media(prefers-reduced-motion:reduce) { .credit-bubble { transition:none; } }

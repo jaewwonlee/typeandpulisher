@@ -1,6 +1,6 @@
 import { createUsageGallery } from './usage-gallery.mjs?v=7';
 import { animateMenu, closeMenu } from './menu-drop.mjs?v=2';
-import { initCredits } from './credits.mjs?v=1';
+import { initCredits } from './credits.mjs?v=2';
 import { SHEET_ID, SHEET_GID, recordsFromCSV, safeAsset, vimeoEmbed, videoContain, accentInk } from './cms-data.mjs?v=7';
 
 const seed = JSON.parse(document.getElementById('type-seed').textContent);

@@ -142,18 +142,25 @@ html.is-loading .site-loading { animation: site-loading-in 200ms ease 350ms both
 /* ---------- 목록 페이지(Archive · Publish) 공통 (모바일) ---------- */
 .list-side { display: none; }
 .list-main > .page-title { margin: 24px 0 38px; }
-/* Publish: 출간 전 아스키 아트. 고정폭 글꼴로 56칸을 그대로 그리고, 좁은 화면에서는 칸 폭에 맞춰 글자를 줄인다
-   (고정폭 한 글자 ≈ 0.6em → 56칸 ≈ 34em). '출간 예정' 글은 화면 읽기용으로만 남긴다. */
+/* Publish: 출간 전 아스키 아트(publish.mjs가 pre를 칸 그리드로 바꾼다). 글꼴·크기는 본문과 같다(14 / 데스크톱 16).
+   한 칸 = 0.6em, 좁은 화면에서는 가운데 칸이 먼저 줄고 그다음 칸 폭이 줄어든다. */
 .soon { container-type: inline-size; }
-.soon__art {
-  margin: 0;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: min(16px, 100cqi / 34);
-  line-height: 1.35;
+.soon__art { margin: 0; font-family: ui-monospace, Menlo, monospace; font-size: 12px; white-space: pre; overflow: hidden; }   /* 스크립트가 못 돌 때만 보임 */
+.soon__grid {
+  --cell: min(0.6em, (100cqi - 7.5em) / (var(--left) + var(--right)));
+  display: grid;
+  grid-template-columns: repeat(var(--left), var(--cell)) minmax(7.5em, 17.4em) repeat(var(--right), var(--cell));
+  grid-auto-rows: 1.4em;
+  width: fit-content;
+  max-width: 100%;
+  line-height: 1.4;
   letter-spacing: 0;
-  white-space: pre;
 }
-.soon__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.soon__grid > span { text-align: center; white-space: pre; }
+/* 밑줄 칸: 칸 폭을 꽉 채우는 1px 선. 위치는 글꼴의 _ 자리(글자 아래쪽)에 맞춘다. */
+.soon__bar { position: relative; }
+.soon__bar::after { content: ''; position: absolute; left: 0; right: 0; bottom: .22em; height: 1px; background: currentColor; }
+.soon__text { align-self: center; justify-self: center; padding: 0 .5em; text-align: center; word-break: keep-all; }
 
 /* ---------- Archive 표 (모바일): 번호 48 · 행 5/22/6 · 1px 구분선 ---------- */
 /* 한 행 = 줄(.archive-row__line: [제목 버튼(번호·국문·영문) | 카테고리 버튼들]) + 그 아래 펼침 칸.
