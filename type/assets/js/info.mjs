@@ -1,5 +1,5 @@
 import { TABS, INFO_HEADERS, infoFromRows } from './site-data.mjs?v=6';
-import { initMenu, watchTab, seedFrom, el, sized } from './site.mjs?v=9';
+import { initMenu, watchTab, seedFrom, el, sized } from './site.mjs?v=10';
 
 const body = document.body;
 const mobile = document.querySelector('.about-m');

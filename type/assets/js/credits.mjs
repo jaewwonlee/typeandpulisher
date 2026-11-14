@@ -89,7 +89,9 @@ function setup(mark) {
   mark.setAttribute('aria-controls', bubble.id);
   anchor.append(bubble);
 
-  const toggle = () => (bubble.hidden ? show : hide)();
+  // pinned: 눌러서 연 말풍선(마우스를 떼도 남는다). 호버로만 열린 말풍선은 마우스가 떠나면 닫힌다.
+  let pinned = false, leaveTimer = 0;
+  const toggle = () => { if (bubble.hidden) { show(); pinned = true; } else if (!pinned) pinned = true; else hide(); };
   function show() {
     document.querySelectorAll('.credit-bubble:not([hidden])').forEach(b => b !== bubble && b.closeBubble());
     fill(bubble);
@@ -101,6 +103,8 @@ function setup(mark) {
     void refresh();
   }
   function hide() {
+    pinned = false;
+    clearTimeout(leaveTimer);
     if (bubble.hidden) return;
     bubble.classList.remove('is-shown');
     mark.setAttribute('aria-expanded', 'false');
@@ -116,8 +120,17 @@ function setup(mark) {
   }
   bubble.closeBubble = hide;
   mark.addEventListener('click', toggle);
+  // 데스크톱(마우스): 이모티콘에 올리면 바로 열리고, 말풍선 쪽으로 옮기는 동안(0.3초)은 닫히지 않아 메일 링크를 누를 수 있다.
+  const canHover = matchMedia('(hover: hover) and (pointer: fine)');
+  mark.addEventListener('pointerenter', () => { if (canHover.matches && bubble.hidden) show(); });
+  anchor.addEventListener('pointerenter', () => clearTimeout(leaveTimer));
+  anchor.addEventListener('pointerleave', () => {
+    if (!canHover.matches || pinned) return;
+    clearTimeout(leaveTimer);
+    leaveTimer = setTimeout(hide, 300);
+  });
   mark.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); bubble.hidden ? toggle() : hide(); }
   });
   document.addEventListener('click', event => { if (!anchor.contains(event.target)) hide(); });
   document.addEventListener('keydown', event => {
