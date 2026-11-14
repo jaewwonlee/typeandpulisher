@@ -92,14 +92,14 @@ function setup(mark) {
   // pinned: 눌러서 연 말풍선(마우스를 떼도 남는다). 호버로만 열린 말풍선은 마우스가 떠나면 닫힌다.
   let pinned = false, leaveTimer = 0;
   const toggle = () => { if (bubble.hidden) { show(); pinned = true; react(); } else if (!pinned) { pinned = true; react(); } else hide(); };
-  // 눌러서 열거나 고정하면 춤추던 친구의 표정이 잠깐 (^o^)로 바뀐다(말풍선은 그대로).
-  // 얼굴 폭이 한 칸 줄어드는 만큼 공백을 채워 팔·몸과 줄이 어긋나지 않게 한다.
+  // 눌러서 열거나 고정하면 춤추던 친구의 표정이 잠깐 (^ω^)로 바뀐다(말풍선은 그대로).
+  // 푸터 글꼴에서 (^ω^)는 (^__^)와 폭이 거의 같아(31.7 / 31.8px) 공백 없이 바꿔도 팔·몸 줄이 맞는다.
   let reactTimer = 0;
   const faces = [...mark.children].map(span => span.textContent);
   function react() {
     clearTimeout(reactTimer);
     [...mark.children].forEach((span, i) => {
-      span.textContent = faces[i].replace('\\(^__^)', '\\(^o^) ').replace(' (^__^)/', '  (^o^)/');
+      span.textContent = faces[i].replace('(^__^)', '(^ω^)');
     });
     reactTimer = setTimeout(() => [...mark.children].forEach((span, i) => { span.textContent = faces[i]; }), 700);
   }
