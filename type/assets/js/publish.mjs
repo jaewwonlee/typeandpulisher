@@ -1,5 +1,5 @@
 import { TABS, PUBLISH_HEADERS } from './site-data.mjs?v=6';
-import { initMenu, watchTab, sideIntro, el } from './site.mjs?v=12';
+import { initMenu, watchTab, sideIntro, el } from './site.mjs?v=13';
 
 // 출간물 디자인이 정해지기 전까지는 시트의 제목만 반영하고 본문은 아스키 아트 그림으로 둔다.
 const side = document.querySelector('.list-side .page-title');

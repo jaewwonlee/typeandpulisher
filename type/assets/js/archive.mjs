@@ -1,5 +1,5 @@
 import { TABS, ARCHIVE_HEADERS, archiveFromRows } from './site-data.mjs?v=6';
-import { initMenu, watchTab, seedFrom, el, linkify, sized, sideIntro } from './site.mjs?v=12';
+import { initMenu, watchTab, seedFrom, el, linkify, sized, sideIntro } from './site.mjs?v=13';
 
 const PAGE_SIZE = 15;
 const table = document.querySelector('.archive-table');
