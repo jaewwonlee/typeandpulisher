@@ -90,8 +90,9 @@ function setup(mark) {
   anchor.append(bubble);
 
   // pinned: 눌러서 연 말풍선(마우스를 떼도 남는다). 호버로만 열린 말풍선은 마우스가 떠나면 닫힌다.
+  // 클릭은 항상 열기/닫기: 호버로 열린 상태에서 누르면 닫힌다.
   let pinned = false, leaveTimer = 0;
-  const toggle = () => { if (bubble.hidden) { show(); pinned = true; } else if (!pinned) pinned = true; else hide(); };
+  const toggle = () => { if (bubble.hidden) { show(); pinned = true; } else hide(); };
   function show() {
     document.querySelectorAll('.credit-bubble:not([hidden])').forEach(b => b !== bubble && b.closeBubble());
     fill(bubble);
@@ -130,7 +131,7 @@ function setup(mark) {
     leaveTimer = setTimeout(hide, 300);
   });
   mark.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); bubble.hidden ? toggle() : hide(); }
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
   });
   document.addEventListener('click', event => { if (!anchor.contains(event.target)) hide(); });
   document.addEventListener('keydown', event => {
