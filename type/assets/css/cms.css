@@ -119,7 +119,6 @@ body[data-slug="cake"] .hero__headline { line-height:1.75; }
   font-size:14px; line-height:1.6; letter-spacing:-0.015em; text-align:left; white-space:normal;
   word-break:keep-all; overflow-wrap:break-word;
   transform:translateX(calc(-50% + var(--shift)));
-  transform-origin:calc(50% - var(--shift)) 100%;   /* 누를 때 '톡' 튀는 기준: 꼬리 끝 */
   translate:0 6px; opacity:0;
   transition:opacity 180ms ease, translate 220ms cubic-bezier(.2,.8,.3,1);
 }

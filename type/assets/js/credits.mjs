@@ -92,10 +92,12 @@ function setup(mark) {
   // pinned: 눌러서 연 말풍선(마우스를 떼도 남는다). 호버로만 열린 말풍선은 마우스가 떠나면 닫힌다.
   let pinned = false, leaveTimer = 0;
   const toggle = () => { if (bubble.hidden) { show(); pinned = true; } else if (!pinned) { pinned = true; pop(); } else hide(); };
-  // 호버로 열린 말풍선을 누르면 살짝 '톡' 튀어 고정됐다는 걸 보여준다(꼬리 쪽을 기준으로 커졌다 돌아옴).
+  // 호버로 열린 말풍선을 누르면 위로 5px 살짝 '띵' 튀어올랐다 내려와 고정됐다는 걸 보여준다.
   function pop() {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    bubble.animate([{ scale: '1' }, { scale: '1.05' }, { scale: '1' }], { duration: 220, easing: 'cubic-bezier(.3, .7, .4, 1)' });
+    bubble.animate(
+      [{ translate: '0 0' }, { translate: '0 -5px', offset: 0.35, easing: 'cubic-bezier(.3, .7, .4, 1)' }, { translate: '0 0' }],
+      { duration: 280, easing: 'cubic-bezier(.2, .8, .3, 1)' });
   }
   function show() {
     document.querySelectorAll('.credit-bubble:not([hidden])').forEach(b => b !== bubble && b.closeBubble());
